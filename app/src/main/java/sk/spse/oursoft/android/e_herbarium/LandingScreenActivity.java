@@ -7,14 +7,29 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-public class landingScreenActivity extends Activity {
-    Button button;
+public class LandingScreenActivity extends Activity {
+    private Button button;
+    private Button login;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.landing_screen);
         addListenerOnButton();
+
+        login = (Button) findViewById(R.id.login_button);
+
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                go_login();
+            }
+        });
+
+
+    }
+    private void go_login(){
+       startActivity(new Intent(LandingScreenActivity.this,LoginActivity.class));
     }
 
     public void addListenerOnButton(){
@@ -25,9 +40,11 @@ public class landingScreenActivity extends Activity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, herbariumViewActivity.class);
+                Intent intent = new Intent(context, HerbariumViewActivity.class);
                 startActivity(intent);
             }
         });
     }
+
+
 }

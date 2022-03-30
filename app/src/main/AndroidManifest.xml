@@ -10,7 +10,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EHerbarium">
         <activity
-            android:name=".landingScreenActivity"
+            android:name=".RegisterActivity"
+            android:exported="true"/>
+        <activity
+            android:name=".LoginActivity"
+            android:exported="true"/>
+        <activity
+            android:name=".LandingScreenActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,7 +24,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".herbariumViewActivity">
+        <activity android:name=".HerbariumViewActivity">
         </activity>
     </application>
 

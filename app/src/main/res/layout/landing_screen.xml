@@ -5,7 +5,7 @@
     android:id="@+id/login"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".landingScreenActivity">
+    tools:context=".LandingScreenActivity">
 
     <TextView
         android:layout_width="wrap_content"
@@ -25,7 +25,6 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:text="Login"
-        android:onClick="login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

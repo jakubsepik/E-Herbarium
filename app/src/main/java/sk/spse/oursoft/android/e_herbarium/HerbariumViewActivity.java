@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.widget.Button;
 
-public class herbariumViewActivity extends Activity {
+public class HerbariumViewActivity extends Activity {
 
     Button button;
 
