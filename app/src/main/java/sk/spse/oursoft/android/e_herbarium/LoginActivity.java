@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,6 +32,11 @@ public class LoginActivity extends AppCompatActivity {
         password = findViewById(R.id.login_password);
         btnLogin = findViewById(R.id.login);
         textRegister = findViewById(R.id.text_register);
+
+        //This is just to make a part of the text bold
+        //No, there is literally no other way, I'm surprised as well
+        String registerText = "Not Registered Yet ? Register <b>Here</b>.";
+        textRegister.setText(Html.fromHtml(registerText));
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {

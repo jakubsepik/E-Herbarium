@@ -42,6 +42,7 @@
         android:layout_marginRight="20dp"
         android:layout_marginBottom="5dp"
         android:background="@drawable/bar_background"
+        android:fontFamily="@font/segoe_regular"
         android:hint="E-mail"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
@@ -63,6 +64,7 @@
         android:layout_marginRight="20dp"
         android:layout_marginBottom="5dp"
         android:background="@drawable/bar_background"
+        android:fontFamily="@font/segoe_regular"
         android:hint="Password"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
@@ -107,5 +109,5 @@
         android:text="Not Registered Yet ? Register Here."
         android:textAlignment="center"
         android:textColor="#EBEBEB"
-        android:textSize="16sp" />
+        android:textSize="17sp" />
 </RelativeLayout>

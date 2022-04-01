@@ -4,63 +4,86 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RegisterActivity"
-    android:layout_margin="10dp">
+    android:layout_margin="0dp"
+    android:background="@drawable/register_screen"
+    tools:context=".RegisterActivity">
 
     <TextView
         android:id="@+id/text_register"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Register Here"
-        android:textSize="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="150dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:text="Register"
+        android:textColor="#F1F1F1"
+        android:textColorHint="#F1F1F1"
+        android:textSize="35dp" />
+
+    <EditText
+        android:id="@+id/register_email"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/text_register"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/bar_background"
+        android:fontFamily="@font/segoe_regular"
+        android:hint="E-mail"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:textColorHint="#85EFEFEF" />
+
+    <EditText
+        android:id="@+id/register_password"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/register_email"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="35dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/bar_background"
+        android:fontFamily="@font/segoe_regular"
+        android:hint="Password"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:textColorHint="#85EFEFEF" />
+
+    <Button
+        android:id="@+id/register"
+        android:layout_width="180dp"
+        android:layout_height="55dp"
+        android:layout_below="@+id/register_password"
+        android:layout_centerInParent="true"
         android:layout_marginStart="20dp"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="50dp"
         android:layout_marginEnd="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginBottom="20dp"
-        />
-
-    <EditText
-        android:id="@+id/register_email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="email"
-        android:layout_below="@+id/text_register"
-        android:layout_marginStart="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="5dp"
-        />
-
-    <EditText
-        android:id="@+id/register_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="password"
-        android:layout_below="@+id/register_email"
-        android:layout_marginStart="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="5dp"
-        />
-
-    <Button
-        android:id="@+id/register"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/register_password"
+        android:layout_marginBottom="0dp"
+        android:backgroundTint="#30AB6A"
+        android:fontFamily="@font/segoe_semibold"
+        android:paddingTop="2dp"
         android:text="Register"
-        android:layout_marginStart="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="5dp"
+        android:textAllCaps="false"
+        android:textColor="#EBEBEB"
+        android:textColorHint="#EBEBEB"
+        android:textSize="22sp"
+        app:cornerRadius="5dp"
+        app:rippleColor="#EBEBEB"
         tools:ignore="UsingOnClickInXml" />
 
     <TextView
@@ -68,14 +91,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/register"
+        android:layout_centerHorizontal="true"
         android:layout_marginStart="20dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="70dp"
         android:layout_marginEnd="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginBottom="5dp"
-        android:text="Existing User Login"
+        android:fontFamily="@font/segoe_regular"
+        android:text="Already Have An Account ? Login Here."
         android:textAlignment="center"
+        android:textColor="#EBEBEB"
+        android:textSize="17sp"
         tools:ignore="UsingOnClickInXml" />
 
 </RelativeLayout>
