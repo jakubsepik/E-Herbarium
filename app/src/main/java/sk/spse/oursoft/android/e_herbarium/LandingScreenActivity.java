@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class LandingScreenActivity extends Activity {
-    private Button button;
+    private Button open;
     private Button login;
     private TextView messageText;
 
@@ -45,9 +45,9 @@ public class LandingScreenActivity extends Activity {
     public void addListenerOnButton(){
         final Context context = this;
 
-        button = (Button) findViewById(R.id.button);
+        open = (Button) findViewById(R.id.open);
 
-        button.setOnClickListener(new View.OnClickListener() {
+        open.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, HerbariumViewActivity.class);
