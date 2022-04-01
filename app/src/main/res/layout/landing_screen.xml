@@ -1,44 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/login"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/landing_page"
     tools:context=".LandingScreenActivity">
 
+
     <TextView
+        android:id="@+id/name_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/message_text"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="260dp"
+        android:fontFamily="@font/segoe_regular"
         android:text="E-Herbarium"
-        android:textSize="28sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textColor="#EBEBEB"
+        android:textSize="50sp" />
 
     <Button
         android:id="@+id/login_button"
-       
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="Login"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_below="@id/button"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="500dp"
+        android:layout_marginEnd="10dp"
+        android:background="#00FFFFFF"
+        android:fontFamily="@font/segoe_semibold"
+        android:text="Sign In"
+        android:textAllCaps="false"
+        android:textColor="#EBEBEB"
+        android:textSize="27sp" />
 
-        
     <Button
         android:id="@+id/button"
-        android:layout_width="103dp"
-        android:layout_height="54dp"
-        android:text="OPEN"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.679" />
+        android:layout_width="200dp"
+        android:layout_height="70dp"
+        android:layout_below="@id/name_text"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="2dp"
+        android:backgroundTint="#30AB6A"
+        android:fontFamily="@font/segoe_semibold"
+        android:letterSpacing="0.06"
+        android:paddingTop="1dp"
+        android:text="Open"
+        android:textAllCaps="false"
+        android:textColor="#EBEBEB"
+        android:textColorHint="#EBEBEB"
+        android:textSize="30sp"
+        app:cornerRadius="5dp"
+        app:rippleColor="#F8F8F8" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/message_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="127dp"
+        android:layout_marginTop="170dp"
+        android:text="You Are Signed In"
+        android:textColor="#F8F8F8"
+        android:textSize="20sp" />
+
+</RelativeLayout>
