@@ -15,12 +15,22 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+
+import sk.spse.oursoft.android.e_herbarium.database_objects.User;
 
 public class RegisterActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private EditText email, password;
     private Button btnRegister;
     private TextView textLogin;
+
+    private FirebaseDatabase database ;
+    private DatabaseReference myRef ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +83,13 @@ public class RegisterActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if(task.isSuccessful())
                     {
+                        database = FirebaseDatabase.getInstance("https://e-herbar-default-rtdb.europe-west1.firebasedatabase.app");
+                        myRef = database.getReference("users");
+                        DatabaseReference usersRef = myRef.child("users");
+                        String nickname = user.split("@")[0];
+
+                        myRef.child(nickname).setValue(new User(email.getText().toString(),"herbarium",password.getText().toString()));
+
                         Toast.makeText(RegisterActivity.this, "User registered successfully", Toast.LENGTH_SHORT).show();
                         Intent i = new Intent(RegisterActivity.this,LoginActivity.class);
                         i.putExtra("email",user);

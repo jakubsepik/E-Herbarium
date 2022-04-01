@@ -19,7 +19,6 @@
 
     <Button
         android:id="@+id/login_button"
-       
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -28,7 +27,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-        
+
+    <Button
+        android:id="@+id/test_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="608dp"
+        android:layout_marginEnd="116dp"
+        android:onClick="test_connection"
+        android:text="Tets_connectino"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/button"
         android:layout_width="103dp"
