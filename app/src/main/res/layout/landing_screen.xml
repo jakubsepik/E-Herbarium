@@ -30,9 +30,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-<<<<<<< Updated upstream
-        
-=======
     <Button
         android:id="@+id/test_button"
         android:layout_width="wrap_content"
@@ -42,9 +39,9 @@
         android:onClick="test_connection"
         android:text="Tets_connectino"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="OnClick" />
 
->>>>>>> Stashed changes
     <Button
         android:id="@+id/button"
         android:layout_width="103dp"
