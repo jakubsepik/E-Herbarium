@@ -3,19 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/activity_login.xml" value="0.33" />
+        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/activity_login.xml" value="0.2" />
         <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/activity_main.xml" value="0.2" />
         <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/activity_register.xml" value="0.4" />
-        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/fragment_reset_password.xml" value="0.39947916666666666" />
         <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/herbarium_view.xml" value="0.371875" />
-<<<<<<< Updated upstream
-        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/landing_screen.xml" value="0.371875" />
-=======
-        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/landing_screen.xml" value="0.1" />
+        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/landing_screen.xml" value="0.264" />
         <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/login_view.xml" value="0.1697061803444782" />
->>>>>>> Stashed changes
         <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/register_view.xml" value="0.371875" />
-        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/reset_password.xml" value="0.22135416666666666" />
         <entry key="..\:/Users/Domace/AndroidStudioProjects/E-Herbarium/app/src/main/res/drawable/ic_launcher_background.xml" value="0.18796296296296297" />
         <entry key="..\:/Users/Domace/AndroidStudioProjects/E-Herbarium/app/src/main/res/layout/herbarium_view.xml" value="0.1" />
       </map>
