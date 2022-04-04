@@ -4,7 +4,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,6 +35,13 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
         SubItem subItem = subItemList.get(i);
         subItemViewHolder.textViewHerbName.setText(subItem.getHerbName());
         subItemViewHolder.imageViewHerbIcon.setImageResource(subItem.getIcon());
+
+        subItemViewHolder.subLinearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(view.getContext(), "You clicked " + subItem.getHerbName(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -44,10 +53,14 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
         TextView textViewHerbName;
         ImageView imageViewHerbIcon;
 
+        LinearLayout subLinearLayout;
+
         SubItemViewHolder(View itemView) {
             super(itemView);
-            textViewHerbName = itemView.findViewById(R.id.herbName);
-            imageViewHerbIcon = itemView.findViewById(R.id.herbIcon);
+            textViewHerbName = (TextView) itemView.findViewById(R.id.herbName);
+            imageViewHerbIcon = (ImageView) itemView.findViewById(R.id.herbIcon);
+
+            subLinearLayout = (LinearLayout) itemView.findViewById(R.id.subLinearLayout);
         }
     }
 }

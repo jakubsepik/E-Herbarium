@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import herbariumListOperation.Item;
 import herbariumListOperation.ItemAdapter;
@@ -17,6 +18,10 @@ public class HerbariumViewActivity extends Activity {
 
 
     int icon = R.drawable.listocek_symbolik;
+
+    private Random rd = new Random();
+
+    String[] herbNames = {"Mint", "Echinacea", "Thyme"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +47,8 @@ public class HerbariumViewActivity extends Activity {
     private List<SubItem> buildSubItemList() {
         List<SubItem> subItemList = new ArrayList<>();
         for (int i=0; i<5; i++) {
-            SubItem subItem = new SubItem("Mint", icon);
+            String herbName = herbNames[rd.nextInt(herbNames.length)];
+            SubItem subItem = new SubItem(herbName, icon);
             subItemList.add(subItem);
         }
         return subItemList;
