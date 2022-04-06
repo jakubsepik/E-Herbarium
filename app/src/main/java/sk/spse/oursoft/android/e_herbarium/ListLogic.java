@@ -4,28 +4,50 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ListLogic {
-    static JSONArray array=null;
+    static JSONObject object=null;
     static String author=null;
 
-    static void createList(JSONArray newArray,String newAuthor) {
-        array = newArray;
+    static void createList(JSONObject newArray,String newAuthor) {
+        object = newArray;
         author = newAuthor;
-    }
-    static String getElement(int index) throws JSONException {
-        return  array.get(index).toString();
     }
 
     static void clearAll(){
-        array = null;
+        object = null;
         author = null;
     }
 
-    static void addElement(JSONObject object){
-        array.put(object);
+    static void addOne(JSONObject object,String category){
+        try {
+            ((JSONArray)ListLogic.object.get(category)).put(object);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    static void deleteOne(int index, String category){
+        try {
+            ((JSONArray)ListLogic.object.get(category)).remove(index);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
-    static JSONArray getList(){
-        return array;
+    static void addCategory(String category){
+
+    }
+    static void deleteCategory(int index, String category){
+        object.remove(category);
+    }
+
+    static JSONObject getList(){
+        return object;
+    }
+
+    static void updateOne(){
+
     }
 }
