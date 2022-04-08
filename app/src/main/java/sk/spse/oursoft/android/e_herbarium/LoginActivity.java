@@ -3,6 +3,7 @@ package sk.spse.oursoft.android.e_herbarium;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
@@ -58,6 +59,7 @@ public class LoginActivity extends AppCompatActivity {
                 //i.putExtra("email",email.getText().toString().trim());
                 //i.putExtra("password",password.getText().toString().trim());
                 startActivity(i);
+                finish();
             }
         });
     }

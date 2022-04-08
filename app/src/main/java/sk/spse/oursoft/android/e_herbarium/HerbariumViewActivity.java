@@ -17,7 +17,7 @@ import herbariumListOperation.SubItem;
 public class HerbariumViewActivity extends Activity {
 
 
-    int icon = R.drawable.listocek_symbolik;
+    int[] icons = {R.drawable.listocek_symbolik, R.drawable.klasocek_symbolik, R.drawable.kricek_symbolik, R.drawable.stromcek_symbolik};
 
     private Random rd = new Random();
 
@@ -30,9 +30,12 @@ public class HerbariumViewActivity extends Activity {
 
         RecyclerView rvItem = findViewById(R.id.recyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(HerbariumViewActivity.this);
-        ItemAdapter itemAdapter = new ItemAdapter(buildItemList());
+        List<Item> itemList = buildItemList();
+        ItemAdapter itemAdapter = new ItemAdapter(itemList);
         rvItem.setAdapter(itemAdapter);
         rvItem.setLayoutManager(layoutManager);
+
+        addItem(itemList);
     }
 
     private List<Item> buildItemList() {
@@ -44,10 +47,16 @@ public class HerbariumViewActivity extends Activity {
         return itemList;
     }
 
+    private void addItem(List<Item> itemList){
+        Item item = new Item("New Item", buildSubItemList());
+        itemList.add(item);
+    }
+
     private List<SubItem> buildSubItemList() {
         List<SubItem> subItemList = new ArrayList<>();
         for (int i=0; i<5; i++) {
             String herbName = herbNames[rd.nextInt(herbNames.length)];
+            int icon = icons[rd.nextInt(icons.length)];
             SubItem subItem = new SubItem(herbName, icon);
             subItemList.add(subItem);
         }
