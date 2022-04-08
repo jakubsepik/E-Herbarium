@@ -37,10 +37,6 @@ public class SignUp {
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
-        myRef.setValue("Hel8, 8!");
-
-        myRef.setValue("yuoi, jkl!");
-        myRef.setValue("nm,, v,m!");
 
     }
 
