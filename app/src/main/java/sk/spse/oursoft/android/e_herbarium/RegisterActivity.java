@@ -38,6 +38,8 @@ public class RegisterActivity extends AppCompatActivity {
         btnRegister = findViewById(R.id.register);
         textLogin = findViewById(R.id.text_login);
 
+
+        //I dont send anyting but this code is here if I ever wanted to send the info from the login Activity
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             email.setText(extras.getString("email"));
@@ -61,6 +63,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
+    //registers the user into firebase
     private void register() {
         String user = email.getText().toString().trim();
         String pass = password.getText().toString().trim();

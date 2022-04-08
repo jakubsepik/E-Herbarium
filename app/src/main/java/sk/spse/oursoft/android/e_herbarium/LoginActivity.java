@@ -46,6 +46,8 @@ public class LoginActivity extends AppCompatActivity {
 
         Button btnLogin = findViewById(R.id.login);
         TextView textRegister = findViewById(R.id.text_register);
+
+        //the bundle is sent from the register activity so you don't need to write your info again
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             email.setText(extras.getString("email"));
@@ -68,6 +70,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        //pop up window for reset password
+        //uses the reset_password xml
         TextView resetPassword = (TextView) findViewById(R.id.reset_password);
         Dialog passwordResetDialog = new Dialog(this);
 
@@ -151,6 +155,4 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     }
-
-
 }

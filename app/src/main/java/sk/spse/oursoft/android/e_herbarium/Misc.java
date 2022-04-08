@@ -7,8 +7,9 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class Misc extends AppCompatActivity {
+public class Misc {
 
+    //tests the internet connectin status
     public boolean isConnected(Context context) {
         ConnectivityManager manager = (ConnectivityManager) context.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = manager.getActiveNetworkInfo();
