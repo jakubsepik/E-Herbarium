@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "962545086362",
+    "firebase_url": "https://e-herbar-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "e-herbar",
     "storage_bucket": "e-herbar.appspot.com"
   },
