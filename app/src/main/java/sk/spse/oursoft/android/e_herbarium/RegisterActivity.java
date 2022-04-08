@@ -85,7 +85,6 @@ public class RegisterActivity extends AppCompatActivity {
                     {
                         database = FirebaseDatabase.getInstance("https://e-herbar-default-rtdb.europe-west1.firebasedatabase.app");
                         myRef = database.getReference("users");
-                        DatabaseReference usersRef = myRef.child("users");
                         String nickname = user.split("@")[0];
 
                         myRef.child(nickname).setValue(new User(email.getText().toString(),"herbarium",password.getText().toString()));
