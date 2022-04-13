@@ -1,8 +1,8 @@
 # E-Herbarium
 
-Názov Projektu – E-Herbár (neschválené)
+Názov Projektu – E-Herbár
 
-Realizačný tím – 2. OurSoft (neschválené)
+Realizačný tím – 2. OurSoft
 
 Mená členov tímu – Richard Kuzmišin, Jakub Šepeľa, Jakub Komanický
 
