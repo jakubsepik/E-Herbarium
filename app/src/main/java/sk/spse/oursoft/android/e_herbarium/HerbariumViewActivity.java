@@ -1,5 +1,6 @@
 package sk.spse.oursoft.android.e_herbarium;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,7 +26,7 @@ import herbariumListOperation.ItemAdapter;
 import herbariumListOperation.SubItem;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,25 +43,6 @@ public class HerbariumViewActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.herbarium_view);
-        
-
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-
-    int[] icons = {R.drawable.listocek_symbolik, R.drawable.klasocek_symbolik, R.drawable.kricek_symbolik, R.drawable.stromcek_symbolik};
-
-    private Random rd = new Random();
-
-    String[] herbNames = {"Mint", "Echinacea", "Thyme"};
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.herbarium_view);
 
         RecyclerView rvItem = findViewById(R.id.recyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(HerbariumViewActivity.this);
@@ -71,7 +54,20 @@ public class HerbariumViewActivity extends AppCompatActivity {
         addItem(itemList);
     }
 
-    private List<Item> buildItemList() {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    int[] icons = {R.drawable.listocek_symbolik, R.drawable.klasocek_symbolik, R.drawable.kricek_symbolik, R.drawable.stromcek_symbolik};
+
+    Random rd = new Random();
+
+    String[] herbNames = {"Mint", "Echinacea", "Thyme"};
+
+
+    protected List<Item> buildItemList() {
         List<Item> itemList = new ArrayList<>();
         for (int i=0; i<10; i++) {
             Item item = new Item("Item "+i, buildSubItemList());
@@ -96,6 +92,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
         return subItemList;
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()) {
@@ -109,7 +106,5 @@ public class HerbariumViewActivity extends AppCompatActivity {
     private void addItem() {
 
     }
-
-
 
 }
