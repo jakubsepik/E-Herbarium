@@ -38,7 +38,6 @@
         android:onClick="test_connection"
         android:text="Tets_connectino"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button

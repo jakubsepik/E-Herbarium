@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.nfc.Tag;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -35,11 +36,8 @@ public class LandingScreenActivity extends Activity {
     private FirebaseDatabase database ;
     private DatabaseReference myRef ;
     private static final String TAG = "MyActivity";
-
-    private FirebaseDatabase database ;
     private FirebaseAuth mAuth;
-    private DatabaseReference myRef ;
-    private static final String TAG = "MyActivity";
+    private DatabaseTools databaseTools;
 
 
     @Override
@@ -48,16 +46,13 @@ public class LandingScreenActivity extends Activity {
         setContentView(R.layout.landing_screen);
 
         mAuth = FirebaseAuth.getInstance();
-
         TextView login_status_text = (TextView) findViewById(R.id.login_status_text);
-
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             login_status_text.setText(user.getEmail().split("@")[0]);
         } else {
             login_status_text.setText("no user signed in");
         }
-
 
         login = (Button) findViewById(R.id.login_button);
         addListenerOnButton();
@@ -67,6 +62,8 @@ public class LandingScreenActivity extends Activity {
                 go_login();
             }
         });
+
+        databaseTools = new DatabaseTools(getApplicationContext());
 
 
 
@@ -90,22 +87,8 @@ public class LandingScreenActivity extends Activity {
     }
 
     public void test_connection(View view) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            database = FirebaseDatabase.getInstance("https://e-herbar-default-rtdb.europe-west1.firebasedatabase.app");
+        databaseTools.getUserItems();
 
-            myRef = database.getReference("users/"+user.getEmail().split("@")[0]+"/herbarium");
-            String plantRef = myRef.push().getKey();
-
-            Log.d(TAG,plantRef);
-            myRef.child(plantRef).setValue(new Plant(plantRef,"Ľubovník bodkovaný","Ľubovník je trváca bylina s holou oblou vzpriamenou a v hornej časti rozkonárenou stonkou, vysokou až 80cm. Listy sú sediace, protistojné, podlhovasté a celistvookrajové. V protisve","autor"));
-
-
-            Log.d(TAG,"THE VALUE WAS ADDED ");
-
-        } else {
-            Toast.makeText(this,"you are not signed in",Toast.LENGTH_SHORT).show();
-        }
 
     }
 }
