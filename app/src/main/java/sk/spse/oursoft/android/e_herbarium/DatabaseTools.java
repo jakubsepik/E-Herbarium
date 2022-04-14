@@ -44,7 +44,7 @@ public class DatabaseTools {
     }
 
     //Adds an item to a group if the group doesn't exist creates the group and adds it there
-    public void addItem(String group,Plant plant) {
+    public void addItem(String group, Plant plant) {
 
         System.out.println("I am here");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -60,10 +60,9 @@ public class DatabaseTools {
                 //gets the id of the plant and sets it to the plant
                 String plantRef = myRef.push().getKey();
                 plant.setId(plantRef);
-                if(dataSnapshot.exists()) {
+                if (dataSnapshot.exists()) {
                     myRef.child(plantRef).setValue(plant);
-                }
-                else{
+                } else {
                     myRef.child(group).child(plantRef).setValue(plant);
                 }
             }
@@ -95,7 +94,7 @@ public class DatabaseTools {
 
     //returns an arraylist of plants
     public ArrayList<Plant> getUserItems() {
-        if(!plants.isEmpty()) {
+        if (!plants.isEmpty()) {
             Log.i("aaaaa", String.valueOf(plants.get(0).getAuthor()));
         }
 
@@ -110,17 +109,17 @@ public class DatabaseTools {
                         new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                for(DataSnapshot groupDataSnapshot : dataSnapshot.getChildren()) {
-                                        for(DataSnapshot plantDataSnapshot : groupDataSnapshot.getChildren()) {
-                                            Plant plant = plantDataSnapshot.getValue(Plant.class);
-                                            addPlant(plant);
-                                        }
+                                for (DataSnapshot groupDataSnapshot : dataSnapshot.getChildren()) {
+                                    for (DataSnapshot plantDataSnapshot : groupDataSnapshot.getChildren()) {
+                                        Plant plant = plantDataSnapshot.getValue(Plant.class);
+                                        addPlant(plant);
+                                    }
                                 }
                             }
 
                             @Override
                             public void onCancelled(DatabaseError databaseError) {
-                                Log.e("Database","Erro with the database");
+                                Log.e("Database", "Erro with the database");
                             }
 
                         });

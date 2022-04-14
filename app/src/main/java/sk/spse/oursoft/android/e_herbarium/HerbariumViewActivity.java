@@ -69,21 +69,21 @@ public class HerbariumViewActivity extends AppCompatActivity {
 
     protected List<Item> buildItemList() {
         List<Item> itemList = new ArrayList<>();
-        for (int i=0; i<10; i++) {
-            Item item = new Item("Item "+i, buildSubItemList());
+        for (int i = 0; i < 10; i++) {
+            Item item = new Item("Item " + i, buildSubItemList());
             itemList.add(item);
         }
         return itemList;
     }
 
-    private void addItem(List<Item> itemList){
+    private void addItem(List<Item> itemList) {
         Item item = new Item("New Item", buildSubItemList());
         itemList.add(item);
     }
 
     private List<SubItem> buildSubItemList() {
         List<SubItem> subItemList = new ArrayList<>();
-        for (int i=0; i<5; i++) {
+        for (int i = 0; i < 5; i++) {
             String herbName = herbNames[rd.nextInt(herbNames.length)];
             int icon = icons[rd.nextInt(icons.length)];
             SubItem subItem = new SubItem(herbName, icon);
@@ -95,7 +95,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.add:
                 addItem();
                 return true;

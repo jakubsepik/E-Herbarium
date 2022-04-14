@@ -37,10 +37,12 @@ public class LoginActivity extends AppCompatActivity {
         email = findViewById(R.id.login_email);
         password = findViewById(R.id.login_password);
 
+        //commented it out coz I don't get hte code and It gave errors
+
         //This is just to make a part of the text bold
         //No, there is literally no other way, I'm surprised as well
-        String registerText = "Not Registered Yet ? Register <b>Here</b>.";
-        textRegister.setText(Html.fromHtml(registerText));
+        //String registerText = "Not Registered Yet ? Register <b>Here</b>.";
+        //textRegister.setText(Html.fromHtml(registerText));
 
         Button btnLogin = findViewById(R.id.login);
         TextView textRegister = findViewById(R.id.text_register);
@@ -94,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
 
-                        Toast.makeText(getApplicationContext(),Boolean.toString(databaseTools.isConnected()),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), Boolean.toString(databaseTools.isConnected()), Toast.LENGTH_SHORT).show();
 
                         if (resetArea.getText().toString().isEmpty()) {
                             resetArea.setError("email can not be empty");
@@ -132,7 +134,7 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "No internet connection", Toast.LENGTH_SHORT).show();
             email.setError(null);
             password.setError(null);
-        }else {
+        } else {
             if (user.isEmpty()) {
                 email.setError("Email can not be empty");
             }

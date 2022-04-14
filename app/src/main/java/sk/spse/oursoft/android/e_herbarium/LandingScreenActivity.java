@@ -32,21 +32,20 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 
-
 public class LandingScreenActivity extends Activity {
     private Button open;
     private Button login;
     private TextView messageText;
     private Plant plant;
-    private FirebaseDatabase database ;
-    private DatabaseReference myRef ;
+    private FirebaseDatabase database;
+    private DatabaseReference myRef;
     private static final String TAG = "MyActivity";
     private FirebaseAuth mAuth;
     private DatabaseTools databaseTools;
 
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.landing_screen);
 
@@ -79,13 +78,13 @@ public class LandingScreenActivity extends Activity {
         databaseTools = new DatabaseTools(getApplicationContext());
 
 
-
-    }
-    private void go_login(){
-       startActivity(new Intent(LandingScreenActivity.this,LoginActivity.class));
     }
 
-    public void addListenerOnButton(){
+    private void go_login() {
+        startActivity(new Intent(LandingScreenActivity.this, LoginActivity.class));
+    }
+
+    public void addListenerOnButton() {
         final Context context = this;
 
         open = (Button) findViewById(R.id.open);
@@ -100,7 +99,7 @@ public class LandingScreenActivity extends Activity {
     }
 
     public void test_connection(View view) {
-        databaseTools.addItem("asdf",new Plant("1","1","1"));
+        databaseTools.addItem("asdf", new Plant("1", "1", "1"));
         databaseTools.getUserItems();
 
     }

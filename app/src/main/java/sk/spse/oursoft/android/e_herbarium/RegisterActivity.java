@@ -88,7 +88,7 @@ public class RegisterActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
 
                             //writes the user registry in the database
-                            databaseTools.registerUser(user,pass);
+                            databaseTools.registerUser(user, pass);
 
                             //sends an intenst to the login so the fields are filled
                             Toast.makeText(RegisterActivity.this, "User registered successfully", Toast.LENGTH_SHORT).show();
