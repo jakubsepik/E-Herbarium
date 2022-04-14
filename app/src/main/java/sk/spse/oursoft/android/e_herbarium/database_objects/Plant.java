@@ -12,7 +12,10 @@ public class Plant {
     public String description;
     public String author;
 
-    public Plant(String id, String name, String description, String author) {
+    public Plant(){
+
+    }
+    public Plant(String name, String description, String author) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -33,5 +36,9 @@ public class Plant {
 
     public String getAuthor() {
         return author;
+    }
+    public void setId(String id){
+        this.id = id;
+
     }
 }

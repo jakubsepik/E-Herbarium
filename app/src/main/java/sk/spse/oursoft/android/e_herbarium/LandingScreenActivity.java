@@ -87,8 +87,8 @@ public class LandingScreenActivity extends Activity {
     }
 
     public void test_connection(View view) {
+        databaseTools.addItem("asdf",new Plant("1","1","1"));
         databaseTools.getUserItems();
-
 
     }
 }
