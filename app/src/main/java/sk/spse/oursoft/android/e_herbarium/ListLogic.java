@@ -8,17 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListLogic {
-    static JSONObject object = null;
-    static String author = null;
+    static JSONObject object=null;
 
-    static void createList(JSONObject newArray, String newAuthor) {
+    static void createList(JSONObject newArray) {
         object = newArray;
-        author = newAuthor;
     }
 
     static void clearAll() {
         object = null;
-        author = null;
     }
 
     static void addOne(JSONObject object, String category) {
