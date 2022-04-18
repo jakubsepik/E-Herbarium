@@ -4,8 +4,6 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -18,8 +16,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Map;
 
+import sk.spse.oursoft.android.e_herbarium.database_objects.Group;
 import sk.spse.oursoft.android.e_herbarium.database_objects.Plant;
 import sk.spse.oursoft.android.e_herbarium.database_objects.User;
 
@@ -29,11 +27,13 @@ public class DatabaseTools {
     private DatabaseReference myRef;
     private static final String TAG = "MyActivity";
     private User user;
+    private ArrayList<Group> userPlants;
+
 
     public DatabaseTools(Context context) {
         this.context = context;
         database = FirebaseDatabase.getInstance("https://e-herbar-default-rtdb.europe-west1.firebasedatabase.app");
-        plants = new ArrayList<>();
+        userPlants = new ArrayList<>();
     }
 
     //tests the internet connectin status
@@ -90,13 +90,9 @@ public class DatabaseTools {
 
     }
 
-    private ArrayList<Plant> plants;
 
     //returns an arraylist of plants
-    public ArrayList<Plant> getUserItems() {
-        if (!plants.isEmpty()) {
-            Log.i("aaaaa", String.valueOf(plants.get(0).getAuthor()));
-        }
+    public void getUserItems() {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (isConnected()) {
@@ -109,11 +105,14 @@ public class DatabaseTools {
                         new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
+                                userPlants = new ArrayList<>();
                                 for (DataSnapshot groupDataSnapshot : dataSnapshot.getChildren()) {
+                                    Group group = new Group(groupDataSnapshot.getKey());
                                     for (DataSnapshot plantDataSnapshot : groupDataSnapshot.getChildren()) {
                                         Plant plant = plantDataSnapshot.getValue(Plant.class);
-                                        addPlant(plant);
+                                        group.addPlant(plant);
                                     }
+                                    addGroup(group);
                                 }
                             }
 
@@ -128,22 +127,22 @@ public class DatabaseTools {
         } else {
             Log.i(TAG, "Internet Connection error couldn't connect");
         }
-        if (getPlants() != null) {
+        if (userPlants != null) {
+            Log.i("Values", String.valueOf(userPlants));
             Log.i("Success", "The data was successfully gotten from the db");
         }
-        return getPlants();
     }
+
 
     public FirebaseDatabase getDatabase() {
         return database;
     }
-
-    public void addPlant(Plant plant) {
-        plants.add(plant);
+    public void addGroup(Group group){
+        userPlants.add(group);
     }
 
-    public ArrayList<Plant> getPlants() {
-        return plants;
+    public ArrayList<Group> getUserPlants() {
+        return userPlants;
     }
 
 }

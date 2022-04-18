@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import sk.spse.oursoft.android.e_herbarium.database_objects.Group;
 import sk.spse.oursoft.android.e_herbarium.database_objects.Plant;
 import sk.spse.oursoft.android.e_herbarium.database_objects.User;
 
@@ -30,6 +31,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
 
 
 public class LandingScreenActivity extends Activity {
@@ -76,6 +79,8 @@ public class LandingScreenActivity extends Activity {
         });
 
         databaseTools = new DatabaseTools(getApplicationContext());
+        //runs this method coz else it is one cycle behind
+        databaseTools.getUserItems();
 
 
     }
@@ -98,7 +103,10 @@ public class LandingScreenActivity extends Activity {
         });
     }
 
+
     public void test_connection(View view) {
+        /**/
+        ArrayList<Group> values = new ArrayList<>();
         databaseTools.addItem("asdf", new Plant("1", "1", "1"));
         databaseTools.getUserItems();
 
