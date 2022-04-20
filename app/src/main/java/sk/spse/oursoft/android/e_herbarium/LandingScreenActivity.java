@@ -32,6 +32,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 
@@ -45,6 +46,7 @@ public class LandingScreenActivity extends Activity {
     private static final String TAG = "MyActivity";
     private FirebaseAuth mAuth;
     private DatabaseTools databaseTools;
+    private ArrayList<Group> groups;
 
 
     @Override
@@ -80,7 +82,7 @@ public class LandingScreenActivity extends Activity {
 
         databaseTools = new DatabaseTools(getApplicationContext());
         //runs this method coz else it is one cycle behind
-        databaseTools.getUserItems();
+        groups = new ArrayList<>();
 
 
     }
@@ -106,9 +108,14 @@ public class LandingScreenActivity extends Activity {
 
     public void test_connection(View view) {
         /**/
-        ArrayList<Group> values = new ArrayList<>();
         databaseTools.addItem("asdf", new Plant("1", "1", "1"));
-        databaseTools.getUserItems();
+        databaseTools.getUserItems(groups);
+
+    }
+    public void testing_button(View view) {
+        System.out.println(groups);
+
+
 
     }
 }

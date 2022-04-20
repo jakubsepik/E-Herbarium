@@ -75,10 +75,6 @@ public class DatabaseTools {
 
     }
 
-    public ArrayList<Object> getItems() {
-
-        return null;
-    }
 
     //adds the user registry to the database
     public void registerUser(String email, String password) {
@@ -92,7 +88,7 @@ public class DatabaseTools {
 
 
     //returns an arraylist of plants
-    public void getUserItems() {
+    public void getUserItems(ArrayList<Group> groups) {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (isConnected()) {
@@ -106,13 +102,16 @@ public class DatabaseTools {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 userPlants = new ArrayList<>();
+
+                                //clear the groups so updated data is written
+                                groups.clear();
                                 for (DataSnapshot groupDataSnapshot : dataSnapshot.getChildren()) {
                                     Group group = new Group(groupDataSnapshot.getKey());
                                     for (DataSnapshot plantDataSnapshot : groupDataSnapshot.getChildren()) {
                                         Plant plant = plantDataSnapshot.getValue(Plant.class);
                                         group.addPlant(plant);
                                     }
-                                    addGroup(group);
+                                    groups.add(group);
                                 }
                             }
 
