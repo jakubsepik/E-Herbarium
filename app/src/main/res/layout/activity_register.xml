@@ -41,8 +41,8 @@
         android:hint="E-mail"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:textColorHint="#85EFEFEF"
-        android:textColor="#EFEFEF"/>
+        android:textColor="#EFEFEF"
+        android:textColorHint="#85EFEFEF" />
 
     <EditText
         android:id="@+id/register_password"

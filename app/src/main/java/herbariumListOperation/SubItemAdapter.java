@@ -1,8 +1,11 @@
 package herbariumListOperation;
 
+import android.app.Dialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -39,7 +42,32 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
         subItemViewHolder.subLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(view.getContext(), "You clicked " + subItem.getHerbName(), Toast.LENGTH_SHORT).show();
+                Dialog itemDialog = new Dialog(view.getContext(), android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+                itemDialog.setContentView(R.layout.dialog_view);
+                itemDialog.setTitle("Title");
+
+                TextView name = (TextView) itemDialog.findViewById(R.id.name);
+                name.setText(subItem.getHerbName());
+
+                /*TextView description = (TextView) itemDialog.findViewById(R.id.description);
+                description.setText(subItem.getHerbDescription()); */
+
+                ImageView image = (ImageView) itemDialog.findViewById(R.id.image);
+                image.setImageResource(subItem.getIcon());
+
+                ImageButton dismissButton = (ImageButton) itemDialog.findViewById(R.id.dismissButton);
+                dismissButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        itemDialog.dismiss();
+                    }
+                });
+
+                Button editButton = (Button) itemDialog.findViewById(R.id.editButton);
+
+                Button deleteButton = (Button) itemDialog.findViewById(R.id.deleteButton);
+
+                itemDialog.show();
             }
         });
     }
