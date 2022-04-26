@@ -1,10 +1,15 @@
 package herbariumListOperation;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -21,6 +26,8 @@ import sk.spse.oursoft.android.e_herbarium.R;
 public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemViewHolder> {
 
     private List<SubItem> subItemList;
+
+    Context context;
 
     SubItemAdapter(List<SubItem> subItemList) {
         this.subItemList = subItemList;
@@ -44,7 +51,6 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
             public void onClick(View view) {
                 Dialog itemDialog = new Dialog(view.getContext(), android.R.style.Theme_Black_NoTitleBar_Fullscreen);
                 itemDialog.setContentView(R.layout.dialog_view);
-                itemDialog.setTitle("Title");
 
                 TextView name = (TextView) itemDialog.findViewById(R.id.name);
                 name.setText(subItem.getHerbName());
@@ -70,6 +76,100 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
                 itemDialog.show();
             }
         });
+
+        subItemViewHolder.removeSubitem.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onClick(View view) {
+                context = view.getContext();
+
+                SharedPreferences sharedPreferences = context.getSharedPreferences("SharedPreferences", Context.MODE_MULTI_PROCESS);
+                boolean showDialog = sharedPreferences.getBoolean("showDialog", true);
+
+                @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                int pos = findItemPosition(subItem.getHerbId(), subItemList);
+
+                if (pos == -1){
+
+                    Toast.makeText(view.getContext(), "This Item Doesn't Exist", Toast.LENGTH_SHORT).show();
+
+                }else{
+
+                    if (showDialog){
+
+                        Dialog removeConfirmationDialog = new Dialog(view.getContext());
+                        removeConfirmationDialog.setContentView(R.layout.confirm_subitem_removal_dialog);
+
+                        ImageButton dismissDialogButton = (ImageButton) removeConfirmationDialog.findViewById(R.id.dismissDialogButton);
+
+                        TextView removeQuestion = (TextView) removeConfirmationDialog.findViewById(R.id.removeQuestion);
+                        removeQuestion.setText("Are you sure you want you want to \nremove " + subItem.getHerbName() + " ?");
+
+                        Button confirmRemovalButton = (Button) removeConfirmationDialog.findViewById(R.id.confirmRemovalButton);
+                        Button cancelRemovalButton = (Button) removeConfirmationDialog.findViewById(R.id.cancelRemovalButton);
+
+                        CheckBox dontAskAgainRemoval = (CheckBox) removeConfirmationDialog.findViewById(R.id.dontAskAgainRemoval);
+
+
+                        dismissDialogButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                removeConfirmationDialog.dismiss();
+                            }
+                        });
+
+
+                        confirmRemovalButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                boolean showDialog = !dontAskAgainRemoval.isChecked();
+                                editor.putBoolean("showDialog", showDialog);
+                                editor.apply();
+
+                                removeConfirmationDialog.dismiss();
+
+                                subItemList.remove(pos);
+                                notifyItemRemoved(pos);
+                                notifyItemRangeChanged(pos, getItemCount());
+
+                            }
+                        });
+
+
+                        cancelRemovalButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                removeConfirmationDialog.dismiss();
+                            }
+                        });
+
+                        removeConfirmationDialog.show();
+
+
+                    }else{
+                        subItemList.remove(pos);
+                        notifyItemRemoved(pos);
+                        notifyItemRangeChanged(pos, getItemCount());
+                    }
+
+
+                }
+
+            }
+        });
+    }
+
+    public int findItemPosition(String herbId, List<SubItem> subItemList){
+        int pos = -1;
+
+        for (int i = 0; i < subItemList.size(); i++){
+            if (herbId.equals(subItemList.get(i).getHerbId())){
+                pos = i;
+            }
+        }
+
+        return pos;
     }
 
     @Override
@@ -80,6 +180,7 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
     class SubItemViewHolder extends RecyclerView.ViewHolder {
         TextView textViewHerbName;
         ImageView imageViewHerbIcon;
+        ImageButton removeSubitem;
 
         LinearLayout subLinearLayout;
 
@@ -87,6 +188,7 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
             super(itemView);
             textViewHerbName = (TextView) itemView.findViewById(R.id.herbName);
             imageViewHerbIcon = (ImageView) itemView.findViewById(R.id.herbIcon);
+            removeSubitem = (ImageButton) itemView.findViewById(R.id.removeSubitem);
 
             subLinearLayout = (LinearLayout) itemView.findViewById(R.id.subLinearLayout);
         }
