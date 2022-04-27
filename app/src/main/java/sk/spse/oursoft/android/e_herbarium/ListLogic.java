@@ -34,7 +34,6 @@ public class ListLogic {
                 is.read(buffer);
                 is.close();
                 object = new JSONObject(new String(buffer, "UTF-8"));
-                Context a=context.getApplicationContext();
             } catch (IOException | JSONException ex) {
                 ex.printStackTrace();
 
@@ -73,7 +72,7 @@ public class ListLogic {
         object.remove(category);
     }
 
-    JSONObject getList() {
+    JSONObject getObject() {
         return object;
     }
 
