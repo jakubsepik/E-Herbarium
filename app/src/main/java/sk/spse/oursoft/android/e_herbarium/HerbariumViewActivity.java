@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -51,7 +53,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
         rvItem.setAdapter(itemAdapter);
         rvItem.setLayoutManager(layoutManager);
 
-        addItem(itemList);
+        //addItem(itemList);
     }
 
     @Override
@@ -70,23 +72,24 @@ public class HerbariumViewActivity extends AppCompatActivity {
     protected List<Item> buildItemList() {
         List<Item> itemList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            Item item = new Item("Item " + i, buildSubItemList());
+            Item item = new Item("Item " + i, buildSubItemList(i));
             itemList.add(item);
         }
         return itemList;
     }
 
-    private void addItem(List<Item> itemList) {
+    /*private void addItem(List<Item> itemList) {
         Item item = new Item("New Item", buildSubItemList());
         itemList.add(item);
-    }
+    }*/
 
-    private List<SubItem> buildSubItemList() {
+    private List<SubItem> buildSubItemList(int group) {
         List<SubItem> subItemList = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             String herbName = herbNames[rd.nextInt(herbNames.length)];
             int icon = icons[rd.nextInt(icons.length)];
-            SubItem subItem = new SubItem(herbName, icon);
+            String herbId = "Group " + Integer.toString(group) + " Position " + Integer.toString(i);
+            SubItem subItem = new SubItem(herbId,icon, herbName);
             subItemList.add(subItem);
         }
         return subItemList;

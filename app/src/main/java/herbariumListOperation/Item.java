@@ -1,5 +1,6 @@
 package herbariumListOperation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Item {
@@ -10,6 +11,15 @@ public class Item {
         this.itemTitle = itemTitle;
         this.subItemList = subItemList;
     }
+
+    public Item(String itemTitle) {
+        this.itemTitle = itemTitle;
+        this.subItemList = new ArrayList<>();
+    }
+    public void addSubItem(SubItem subItem){
+        subItemList.add(subItem);
+    }
+
 
     public String getItemTitle() {
         return itemTitle;

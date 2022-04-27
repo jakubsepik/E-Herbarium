@@ -12,6 +12,20 @@ public class SubItem {
         this.herbName = herbName;
         this.icon = icon;
     }
+    public SubItem(){}
+
+    public SubItem(String herbId,int icon,String herbName) {
+        this.herbId = herbId;
+        this.herbDescription = "";
+        this.herbName = herbName;
+        this.icon = icon;
+    }
+    public SubItem(String herbId,String herbName,String herbDescription, int icon) {
+        this.herbId = herbId;
+        this.herbDescription = herbDescription;
+        this.herbName = herbName;
+        this.icon = icon;
+    }
 
     public int getIcon() {
         return icon;

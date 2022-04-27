@@ -3,36 +3,20 @@ package sk.spse.oursoft.android.e_herbarium;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.provider.ContactsContract;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import sk.spse.oursoft.android.e_herbarium.database_objects.Group;
-import sk.spse.oursoft.android.e_herbarium.database_objects.Plant;
-import sk.spse.oursoft.android.e_herbarium.database_objects.User;
+import herbariumListOperation.Item;
+import herbariumListOperation.SubItem;
 
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 
@@ -40,13 +24,12 @@ public class LandingScreenActivity extends Activity {
     private Button open;
     private Button login;
     private TextView messageText;
-    private Plant plant;
     private FirebaseDatabase database;
     private DatabaseReference myRef;
     private static final String TAG = "MyActivity";
     private FirebaseAuth mAuth;
     private DatabaseTools databaseTools;
-    private ArrayList<Group> groups;
+    private ArrayList<Item> items;
 
 
     @Override
@@ -82,7 +65,7 @@ public class LandingScreenActivity extends Activity {
 
         databaseTools = new DatabaseTools(getApplicationContext());
         //runs this method coz else it is one cycle behind
-        groups = new ArrayList<>();
+        items = new ArrayList<>();
 
 
     }
@@ -108,12 +91,17 @@ public class LandingScreenActivity extends Activity {
 
     public void test_connection(View view) {
         /**/
-        databaseTools.addItem("asdf", new Plant("1", "1", "1"));
-        databaseTools.getUserItems(groups);
+        Item item = new Item("pines");
+        databaseTools.addItem(item, new SubItem("1",  R.drawable.listocek_symbolik));
+        databaseTools.getUserItems(items);
 
     }
     public void testing_button(View view) {
-        System.out.println(groups);
+        for (Item subitem:items){
+            for(SubItem sub : subitem.getSubItemList()){
+                System.out.println(sub + " a");
+            }
+        }
 
 
 
