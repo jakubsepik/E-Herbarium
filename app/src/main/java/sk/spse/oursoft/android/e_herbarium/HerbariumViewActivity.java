@@ -1,24 +1,20 @@
 package sk.spse.oursoft.android.e_herbarium;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -29,17 +25,10 @@ import herbariumListOperation.SubItem;
 
 import androidx.annotation.NonNull;
 
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 public class HerbariumViewActivity extends AppCompatActivity {
     ListView listView;
+
+    public static Dialog dialogReference;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,6 +49,23 @@ public class HerbariumViewActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+       if(requestCode == 1 ){
+           assert data != null;
+           ((AddItemDialog) dialogReference).onImageSelect(data.getData());
+       }else{
+           Toast.makeText(this, "Error occurred", Toast.LENGTH_SHORT).show();
+       }
+
+    }
+
+    public static void setCurrentDialog(Dialog d){
+        dialogReference = d;
     }
 
     int[] icons = {R.drawable.listocek_symbolik, R.drawable.klasocek_symbolik, R.drawable.kricek_symbolik, R.drawable.stromcek_symbolik};
