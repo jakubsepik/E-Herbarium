@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/optionsMenu"
+    android:layout_width="match_parent"
+    android:layout_height="152dp"
+    android:layout_gravity="center_horizontal"
+    android:background="#1E334B"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/addSubitem"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <ImageView
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_marginStart="26dp"
+            android:layout_marginBottom="11dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_add_subitem_icon" />
+
+        <TextView
+            android:id="@+id/addItemText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="69dp"
+            android:layout_marginTop="12dp"
+            android:fontFamily="@font/segoe_regular"
+            android:text="Add Item"
+            android:textColor="#EBEBEB"
+            android:textSize="25sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:layout_width="370dp"
+        android:layout_height="1dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/options_menu_divider" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/editGroup"
+        android:layout_width="match_parent"
+        android:layout_height="49dp">
+
+        <ImageView
+            android:layout_width="27dp"
+            android:layout_height="26dp"
+            android:layout_marginStart="26dp"
+            android:layout_marginBottom="11dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_edit_group_icon" />
+
+        <TextView
+            android:id="@+id/editGroupText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="69dp"
+            android:layout_marginTop="12dp"
+            android:fontFamily="@font/segoe_regular"
+            android:text="Edit Group"
+            android:textColor="#EBEBEB"
+            android:textSize="25sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:layout_width="370dp"
+        android:layout_height="1dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/options_menu_divider" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/deleteGroup"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <ImageView
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_marginStart="26dp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_delete_group_icon" />
+
+        <TextView
+            android:id="@+id/deleteGroupText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="69dp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/segoe_regular"
+            android:text="Delete Group"
+            android:textColor="#C93434"
+            android:textSize="25sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

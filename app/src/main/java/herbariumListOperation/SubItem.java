@@ -7,6 +7,15 @@ public class SubItem {
     private String herbName;
     private String herbDescription;
     private int icon;
+    private Uri imageUri;
+
+    public Uri getImageUri() {
+        return imageUri;
+    }
+
+    public void setImageUri(Uri imageUri) {
+        this.imageUri = imageUri;
+    }
 
     public SubItem(String herbName, int icon) {
         this.herbName = herbName;

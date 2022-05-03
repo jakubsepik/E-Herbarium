@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="326dp"
+    android:layout_height="413dp"
+    android:layout_gravity="center_horizontal"
+    android:background="@drawable/forgor_dialog">
+
+    <ImageButton
+        android:id="@+id/dismissDialog"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_close_button_forgor" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="53dp"
+        android:fontFamily="@font/segoe_regular"
+        android:text="Please Pick An Icon"
+        android:textColor="#E8E8E8"
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="270dp"
+        android:layout_height="54dp"
+        android:layout_marginTop="114dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/leavesIcon"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:layout_weight="1"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            app:srcCompat="@drawable/listocek_symbolik" />
+
+        <ImageView
+            android:id="@+id/bushIcon"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:layout_weight="1"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            app:srcCompat="@drawable/kricek_symbolik" />
+
+        <ImageView
+            android:id="@+id/earIcon"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:layout_weight="1"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            app:srcCompat="@drawable/klasocek_symbolik" />
+
+        <ImageView
+            android:id="@+id/treeIcon"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:layout_weight="1"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            app:srcCompat="@drawable/stromcek_symbolik" />
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="272dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="208dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/showIcon"
+            android:layout_width="24dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginBottom="7dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/showName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="42dp"
+            android:layout_marginBottom="5dp"
+            android:fontFamily="@font/segoe_regular"
+            android:text="Placeholder"
+            android:textColor="#F9F9F9"
+            android:textSize="23sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <View
+            android:id="@+id/showDivider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@drawable/options_menu_divider"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <CheckBox
+        android:id="@+id/withoutPickingIconCheckbox"
+        android:layout_width="199dp"
+        android:layout_height="37dp"
+        android:layout_marginStart="55dp"
+        android:layout_marginTop="28dp"
+        android:backgroundTint="#355374"
+        android:buttonTint="#355374"
+        android:text="Continue without picking"
+        android:textColor="#5C82AD"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/cancelIconButton"
+        android:layout_width="108dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="59dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/border_for_widgets"
+        android:foregroundTint="#355374"
+        android:gravity="center_horizontal|center_vertical"
+        android:paddingLeft="8dp"
+        android:paddingTop="0dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="0dp"
+        android:text="Cancel"
+        android:textAllCaps="false"
+        android:textColor="#EBEBEB"
+        android:textSize="24sp"
+        app:iconPadding="0dp"
+        app:iconTint="#355374"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/withoutPickingIconCheckbox" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/addIconButton"
+        android:layout_width="62dp"
+        android:layout_height="54dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginEnd="58dp"
+        android:backgroundTint="#486E5A"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:text="OK"
+        android:textColor="#EBEBEB"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/withoutPickingIconCheckbox" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
