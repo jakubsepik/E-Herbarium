@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,10 +34,9 @@ public class ListLogic {
                 byte[] buffer = new byte[size];
                 is.read(buffer);
                 is.close();
-                object = new JSONObject(new String(buffer, "UTF-8"));
+                object = new JSONObject(new String(buffer, StandardCharsets.UTF_8));
             } catch (IOException | JSONException ex) {
                 ex.printStackTrace();
-
             }
         }else
         object = newObject;
