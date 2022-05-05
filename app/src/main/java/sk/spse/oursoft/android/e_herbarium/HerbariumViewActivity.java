@@ -3,6 +3,7 @@ package sk.spse.oursoft.android.e_herbarium;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,6 +11,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,7 +31,9 @@ public class HerbariumViewActivity extends AppCompatActivity {
     ListView listView;
 
     public static Dialog dialogReference;
+    public static ListLogic listLogic;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +46,14 @@ public class HerbariumViewActivity extends AppCompatActivity {
         rvItem.setAdapter(itemAdapter);
         rvItem.setLayoutManager(layoutManager);
 
+        listLogic=new ListLogic(null,getApplicationContext());
         //addItem(itemList);
+    }
+
+    @Override
+    protected void onPause() {
+        listLogic.saveAll(getApplicationContext());
+        super.onPause();
     }
 
     @Override
