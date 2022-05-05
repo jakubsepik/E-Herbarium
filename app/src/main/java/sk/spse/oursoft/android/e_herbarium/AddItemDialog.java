@@ -16,6 +16,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import herbariumListOperation.Item;
+import sk.spse.oursoft.android.e_herbarium.DatabaseTools;
+
 import androidx.annotation.NonNull;
 
 import herbariumListOperation.SubItem;
@@ -40,8 +43,10 @@ public class AddItemDialog extends Dialog {
     private boolean continueWithoutIcon = false;
 
     
-    public AddItemDialog(@NonNull Context context, int theme_Black_NoTitleBar_Fullscreen, SubItemAdapter subItemAdapter) {
+    public AddItemDialog(@NonNull Context context, int theme_Black_NoTitleBar_Fullscreen, SubItemAdapter subItemAdapter, Item item) {
         super(context, theme_Black_NoTitleBar_Fullscreen);
+
+        DatabaseTools databaseTools = new DatabaseTools(this.getContext());
 
         HerbariumViewActivity.setCurrentDialog(this);
 
@@ -291,9 +296,12 @@ public class AddItemDialog extends Dialog {
                                     subItem.setIcon(iconList[3]);
 
                                 }
+                                //add the name of the Item
+                                subItem.setHerbId(databaseTools.getSubItemID(item));
                                 addIconDialog.dismiss();
                                 AddItemDialog.this.dismiss();
                                 subItemAdapter.addSubItem(subItem);
+                                databaseTools.addItem(item,subItem);
                             }
                         }
                     });

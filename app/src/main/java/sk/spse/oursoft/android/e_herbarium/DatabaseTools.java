@@ -55,13 +55,10 @@ public class DatabaseTools {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                //gets the id of the plant and sets it to the plant
-                String plantRef = myRef.push().getKey();
-                subItem.setHerbId(plantRef);
                 if (dataSnapshot.exists()) {
-                    myRef.child(plantRef).setValue(subItem);
+                    myRef.child(subItem.getHerbId()).setValue(subItem);
                 } else {
-                    myRef.child(item.getItemTitle()).child(plantRef).setValue(subItem);
+                    myRef.child(item.getItemTitle()).child(subItem.getHerbId()).setValue(subItem);
                 }
             }
 
@@ -129,6 +126,16 @@ public class DatabaseTools {
 
     public FirebaseDatabase getDatabase() {
         return database;
+    }
+
+
+//    get ID method returns an id as input it takes the name of the group where the item is located
+
+    public String getSubItemID(Item item){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        myRef = database.getReference().child("users").child(user.getEmail().split("@")[0]).child(item.getItemTitle());
+
+        return myRef.push().getKey();
     }
 
 

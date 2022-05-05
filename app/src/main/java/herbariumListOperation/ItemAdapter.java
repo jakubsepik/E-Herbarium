@@ -125,7 +125,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
                 bottomSheetDialog.dismiss();
 
-                AddItemDialog newItemDialog = new AddItemDialog(context, android.R.style.Theme_Black_NoTitleBar_Fullscreen, subItemAdapter);
+                AddItemDialog newItemDialog = new AddItemDialog(context, android.R.style.Theme_Black_NoTitleBar_Fullscreen, subItemAdapter,item);
 
                 newItemDialog.show();
             }
