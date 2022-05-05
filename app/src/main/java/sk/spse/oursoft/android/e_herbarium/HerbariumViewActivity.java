@@ -31,7 +31,6 @@ public class HerbariumViewActivity extends AppCompatActivity {
     ListView listView;
 
     public static Dialog dialogReference;
-    public static ListLogic listLogic;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -46,13 +45,13 @@ public class HerbariumViewActivity extends AppCompatActivity {
         rvItem.setAdapter(itemAdapter);
         rvItem.setLayoutManager(layoutManager);
 
-        listLogic=new ListLogic(null,getApplicationContext());
+        ListLogic.begin(null,getApplicationContext());
         //addItem(itemList);
     }
 
     @Override
     protected void onPause() {
-        listLogic.saveAll(getApplicationContext());
+        ListLogic.saveAll(getApplicationContext());
         super.onPause();
     }
 

@@ -29,13 +29,14 @@ import herbariumListOperation.Item;
 import herbariumListOperation.SubItem;
 
 public class ListLogic {
-    private JSONObject object = null;
+    static JSONObject object=null;
+    static List<Item> list=null;
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public ListLogic(JSONObject newObject, Context context) {
-        if (newObject == null) {
-            try {
+    static void begin(JSONObject newObject, Context context) {
+        try {
+            if (newObject == null) {
                 SharedPreferences sharedPreferences = context.getSharedPreferences("EHerbarium", MODE_PRIVATE);
                 if (sharedPreferences.contains("items")) {
                     object = new JSONObject(sharedPreferences.getString("items", null));
@@ -48,26 +49,30 @@ public class ListLogic {
                 is.read(buffer);
                 is.close();
                 object = new JSONObject(new String(buffer, StandardCharsets.UTF_8));
-            } catch (IOException | JSONException ex) {
-                ex.printStackTrace();
+
+            } else
+                object = newObject;
+            Iterator<String> temp = object.keys();
+            while (temp.hasNext()) {
+                String key = temp.next();
+                JSONArray value = (JSONArray) object.get(key);
+                List<SubItem> items = new ArrayList<>();
+                for (int i = 0; i < value.length(); i++) {
+                    JSONObject item = value.getJSONObject(i);
+                    SubItem subItem = new SubItem(item.getString("id"), item.getString("name"), item.getString("description"), 0);
+                    items.add(subItem);
+                }
+                list.add(new Item(key, items));
             }
-        } else
-            object = newObject;
-    }
-
-    void clearAll() {
-        object = null;
-    }
-
-    void addOne(JSONObject object, String category) {
-        try {
-            ((JSONArray) object.get(category)).put(object);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        } catch (IOException | JSONException ex) {
+            ex.printStackTrace();
         }
     }
+    static void addOne(SubItem item, int index) {
+        list.get(index).addSubItem(item);
+    }
 
-    void deleteOne(int index, String category) {
+    static void deleteOne(int index, String category) {
         try {
             ((JSONArray) object.get(category)).remove(index);
         } catch (JSONException e) {
@@ -75,37 +80,30 @@ public class ListLogic {
         }
     }
 
-    void addCategory(String category) {
+    static boolean addCategory(Item category) {
+        for(Item tmp : list){
+            if(tmp.getItemTitle().equals(category.getItemTitle()))
+                return false;
+        }
+        list.add(category);
+        return true;
 
     }
 
 
-    void deleteCategory(int index, String category) {
-        object.remove(category);
+    static void deleteCategory(int index, String category) {
+
     }
 
-    JSONObject getObject() {
+    static JSONObject getObject() {
         return object;
     }
-    List<Item> getList() throws JSONException {
 
-        List<Item> list = new ArrayList<>();
-        Iterator<String> temp = object.keys();
-        while (temp.hasNext()) {
-            String key = temp.next();
-            JSONArray value = (JSONArray) object.get(key);
-            List<SubItem> items = new ArrayList<>();
-            for(int i=0;i< value.length();i++){
-                JSONObject item = value.getJSONObject(i);
-                SubItem subItem = new SubItem(item.getString("id"),item.getString("name"),item.getString("description"),0);
-                items.add(subItem);
-            }
-            Item category = new Item(key,items);
-            list.add(category);
-        }
+    List<Item> getList() {
         return list;
     }
-    void saveAll(Context context) {
+
+    static void saveAll(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("EHerbarium", MODE_PRIVATE);
 
         SharedPreferences.Editor myEdit = sharedPreferences.edit();
