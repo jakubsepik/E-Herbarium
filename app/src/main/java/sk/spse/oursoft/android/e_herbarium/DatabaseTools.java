@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -42,20 +43,45 @@ public class DatabaseTools {
     }
 
     //Adds an item to a group if the group doesn't exist creates the group and adds it there
-    public void addEditItem(Item item, SubItem subItem) {
+    public void addEditSubItem(Item item, SubItem subItem) {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        myRef = database.getReference().child("users").child(user.getEmail().split("@")[0]);
-        myRef.child(item.getItemTitle()).child(subItem.getHerbId()).setValue(subItem);
-
+        if(user != null) {
+            myRef = database.getReference().child("users").child(user.getEmail().split("@")[0]);
+            myRef.child(item.getItemTitle()).child(subItem.getHerbId()).setValue(subItem);
+        }
+        else{
+            Toast.makeText(context,"User not signed in",Toast.LENGTH_SHORT).show();
+            Log.i("add/edit subitem","user not signed in");
+        }
     }
 
+//deletes a sub item
+    public void deleteSub(Item item, SubItem subItem) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user != null) {
+            myRef = database.getReference().child("users").child(user.getEmail().split("@")[0]).child(item.getItemTitle());
+            myRef.child(subItem.getHerbId()).removeValue();
+        }
+         else{
+            Toast.makeText(context,"User not signed in",Toast.LENGTH_SHORT).show();
+            Log.i("delete subItem","user not signed in");
+        }
+    }
 
+    //deletes an item
     public void deleteItem(Item item, SubItem subItem) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        myRef = database.getReference().child("users").child(user.getEmail().split("@")[0]).child(item.getItemTitle());
-        myRef.child(subItem.getHerbId()).removeValue();
+        if(user != null) {
+            myRef = database.getReference().child("users").child(user.getEmail().split("@")[0]);
+            myRef.child(item.getItemTitle()).removeValue();
+        }
+        else{
+            Toast.makeText(context,"User not signed in",Toast.LENGTH_SHORT).show();
+            Log.i("delete item","user not signed in");
+        }
     }
+
 
 
     //adds the user registry to the database
@@ -98,6 +124,9 @@ public class DatabaseTools {
                             }
 
                         });
+            }else{
+                Toast.makeText(context,"User not signed in",Toast.LENGTH_SHORT).show();
+                Log.i("get subitems","user not signed in");
             }
 
         } else {
@@ -116,12 +145,22 @@ public class DatabaseTools {
 
 
 //    get ID method returns an id as input it takes the name of the group where the item is located
-
     public String getSubItemID(Item item) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        myRef = database.getReference().child("users").child(user.getEmail().split("@")[0]).child(item.getItemTitle());
 
-        return myRef.push().getKey();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        //if user not signed in returns null
+        if(user != null) {
+            myRef = database.getReference().child("users").child(user.getEmail().split("@")[0]).child(item.getItemTitle());
+            return myRef.push().getKey();
+        }
+        else{
+            Toast.makeText(context,"User not signed in",Toast.LENGTH_SHORT).show();
+            Log.e("get id","user not signed in ");
+
+            return null;
+        }
+
+
     }
 
 

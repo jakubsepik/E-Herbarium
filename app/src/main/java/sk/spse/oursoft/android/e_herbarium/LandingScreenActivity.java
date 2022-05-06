@@ -97,20 +97,17 @@ public class LandingScreenActivity extends Activity {
 
     public void test_connection(View view) {
         /**/
-        databaseTools.addEditItem(item,sub);
+        databaseTools.addEditSubItem(item,sub);
         databaseTools.getUserItems(items);
     }
     public void testing_button(View view) {
         SubItem sub2 = new SubItem("11",  R.drawable.ic_delete_group_icon);
-        databaseTools.addEditItem(item,sub2);
+        databaseTools.addEditSubItem(item,sub2);
 
         for (Item subitem:items){
             for(SubItem sub : subitem.getSubItemList()){
                 System.out.println(sub + " a");
             }
         }
-
-
-
     }
 }

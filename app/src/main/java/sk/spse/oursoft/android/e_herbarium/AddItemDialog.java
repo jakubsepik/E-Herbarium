@@ -303,7 +303,7 @@ public class AddItemDialog extends Dialog {
                                 addIconDialog.dismiss();
                                 AddItemDialog.this.dismiss();
                                 subItemAdapter.addSubItem(subItem);
-                                databaseTools.addEditItem(item,subItem);
+                                databaseTools.addEditSubItem(item,subItem);
                                 ListLogic.addOne(subItem, 1);
 //                                databaseTools.addItem(item,subItem);
                                 ListLogic.addOne(subItem, index);
