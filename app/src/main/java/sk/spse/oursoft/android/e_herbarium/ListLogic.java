@@ -40,15 +40,16 @@ public class ListLogic {
                 SharedPreferences sharedPreferences = context.getSharedPreferences("EHerbarium", MODE_PRIVATE);
                 if (sharedPreferences.contains("items")) {
                     object = new JSONObject(sharedPreferences.getString("items", null));
-                    return;
+                }else{
+                    InputStream is = context.getAssets().open("startingTemplate.json");
+                    int size = is.available();
+                    byte[] buffer = new byte[size];
+                    is.read(buffer);
+                    is.close();
+                    object = new JSONObject(new String(buffer, StandardCharsets.UTF_8));
                 }
 
-                InputStream is = context.getAssets().open("startingTemplate.json");
-                int size = is.available();
-                byte[] buffer = new byte[size];
-                is.read(buffer);
-                is.close();
-                object = new JSONObject(new String(buffer, StandardCharsets.UTF_8));
+
 
             } else
                 object = newObject;
