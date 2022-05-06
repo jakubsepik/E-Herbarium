@@ -184,8 +184,7 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
         notifyItemRangeChanged(pos, getItemCount());
     }
 
-    public void addSubItem(SubItem subItem){
-        subItemList.add(subItem);
+    public void addSubItem(){
         notifyItemInserted(subItemList.size()-1);
     }
 
