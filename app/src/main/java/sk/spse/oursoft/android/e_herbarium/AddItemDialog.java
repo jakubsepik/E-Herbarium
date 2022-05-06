@@ -44,7 +44,7 @@ public class AddItemDialog extends Dialog {
     private boolean continueWithoutIcon = false;
 
     
-    public AddItemDialog(@NonNull Context context, int theme_Black_NoTitleBar_Fullscreen, SubItemAdapter subItemAdapter, Item item) {
+    public AddItemDialog(@NonNull Context context, int theme_Black_NoTitleBar_Fullscreen, SubItemAdapter subItemAdapter, Item item, int index) {
         super(context, theme_Black_NoTitleBar_Fullscreen);
 
         DatabaseTools databaseTools = new DatabaseTools(this.getContext());
@@ -298,12 +298,12 @@ public class AddItemDialog extends Dialog {
 
                                 }
                                 //add the name of the Item
-                                subItem.setHerbId(databaseTools.getSubItemID(item));
+//                                subItem.setHerbId(databaseTools.getSubItemID(item));
                                 addIconDialog.dismiss();
                                 AddItemDialog.this.dismiss();
                                 subItemAdapter.addSubItem(subItem);
-                                databaseTools.addItem(item,subItem);
-                                ListLogic.addOne(subItem, item.);
+//                                databaseTools.addItem(item,subItem);
+                                ListLogic.addOne(subItem, index);
                             }
                         }
                     });
