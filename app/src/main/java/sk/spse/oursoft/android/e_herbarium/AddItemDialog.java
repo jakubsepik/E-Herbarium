@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import herbariumListOperation.Item;
+import herbariumListOperation.ItemAdapter;
 import sk.spse.oursoft.android.e_herbarium.DatabaseTools;
 
 import androidx.annotation.NonNull;
@@ -302,6 +303,7 @@ public class AddItemDialog extends Dialog {
                                 AddItemDialog.this.dismiss();
                                 subItemAdapter.addSubItem(subItem);
                                 databaseTools.addItem(item,subItem);
+                                ListLogic.addOne(subItem, item.);
                             }
                         }
                     });

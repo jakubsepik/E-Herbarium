@@ -38,14 +38,16 @@ public class HerbariumViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.herbarium_view);
 
+        ListLogic.begin(null,getApplicationContext());
+
         RecyclerView rvItem = findViewById(R.id.recyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(HerbariumViewActivity.this);
-        List<Item> itemList = buildItemList();
+        List<Item> itemList = ListLogic.getList();
         ItemAdapter itemAdapter = new ItemAdapter(itemList);
         rvItem.setAdapter(itemAdapter);
         rvItem.setLayoutManager(layoutManager);
 
-        ListLogic.begin(null,getApplicationContext());
+
         //addItem(itemList);
     }
 

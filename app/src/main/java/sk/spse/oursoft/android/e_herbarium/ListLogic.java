@@ -30,7 +30,7 @@ import herbariumListOperation.SubItem;
 
 public class ListLogic {
     static JSONObject object=null;
-    static List<Item> list=null;
+    static List<Item> list=new ArrayList<>();
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -99,7 +99,7 @@ public class ListLogic {
         return object;
     }
 
-    List<Item> getList() {
+    static List<Item> getList() {
         return list;
     }
 
