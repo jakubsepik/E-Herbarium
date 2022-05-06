@@ -48,9 +48,6 @@ public class ListLogic {
                     is.close();
                     object = new JSONObject(new String(buffer, StandardCharsets.UTF_8));
                 }
-
-
-
             } else
                 object = newObject;
             Iterator<String> temp = object.keys();
@@ -60,7 +57,7 @@ public class ListLogic {
                 List<SubItem> items = new ArrayList<>();
                 for (int i = 0; i < value.length(); i++) {
                     JSONObject item = value.getJSONObject(i);
-                    SubItem subItem = new SubItem(item.getString("id"), item.getString("name"), item.getString("description"), 0);
+                    SubItem subItem = new SubItem(item.getString("id"), item.getString("name"), item.getString("description"), item.getInt("icon"));
                     items.add(subItem);
                 }
                 list.add(new Item(key, items));

@@ -53,7 +53,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        ListLogic.saveAll(getApplicationContext());
+        //ListLogic.saveAll(getApplicationContext());
         super.onPause();
     }
 
