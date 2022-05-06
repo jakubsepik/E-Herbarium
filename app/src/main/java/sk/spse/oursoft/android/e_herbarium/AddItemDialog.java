@@ -302,11 +302,11 @@ public class AddItemDialog extends Dialog {
 //                                subItem.setHerbId(databaseTools.getSubItemID(item));
                                 addIconDialog.dismiss();
                                 AddItemDialog.this.dismiss();
-                                subItemAdapter.addSubItem(subItem);
-                                databaseTools.addEditSubItem(item,subItem);
-                                ListLogic.addOne(subItem, 1);
-//                                databaseTools.addItem(item,subItem);
+                                //databaseTools.addEditSubItem(item,subItem);
                                 ListLogic.addOne(subItem, index);
+                                subItemAdapter.addSubItem();
+//                                databaseTools.addItem(item,subItem);
+
                             }
                         }
                     });
