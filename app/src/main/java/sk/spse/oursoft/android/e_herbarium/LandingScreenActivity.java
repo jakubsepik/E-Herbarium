@@ -89,14 +89,21 @@ public class LandingScreenActivity extends Activity {
     }
 
 
+    //these are testing methods that I will move to my own branch
+
+    public Item item = new Item("pines");
+    public SubItem sub = new SubItem("11",  R.drawable.listocek_symbolik);
+
+
     public void test_connection(View view) {
         /**/
-        Item item = new Item("pines");
-        databaseTools.addItem(item, new SubItem("1",  R.drawable.listocek_symbolik));
+        databaseTools.addEditItem(item,sub);
         databaseTools.getUserItems(items);
-
     }
     public void testing_button(View view) {
+        SubItem sub2 = new SubItem("11",  R.drawable.ic_delete_group_icon);
+        databaseTools.addEditItem(item,sub2);
+
         for (Item subitem:items){
             for(SubItem sub : subitem.getSubItemList()){
                 System.out.println(sub + " a");

@@ -21,23 +21,25 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+//activity to login the user
 
 public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private EditText email, password;
     private DatabaseTools databaseTools;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_login);
         databaseTools = new DatabaseTools(getApplicationContext());
 
         mAuth = FirebaseAuth.getInstance();
         email = findViewById(R.id.login_email);
         password = findViewById(R.id.login_password);
-
-        //commented it out coz I don't get hte code and It gave errors
 
         //This is just to make a part of the text bold
         //No, there is literally no other way, I'm surprised as well
@@ -54,6 +56,7 @@ public class LoginActivity extends AppCompatActivity {
             password.setText(extras.getString("password"));
         }
 
+        //when the button is pressed try to login
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,7 +129,11 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+
+    //the login method
     private void login() {
+
+        //gets values from the email and password fields
         String user = email.getText().toString().trim();
         String pass = password.getText().toString().trim();
 

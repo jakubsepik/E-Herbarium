@@ -17,8 +17,8 @@ public class SubItem {
         this.imageUri = imageUri;
     }
 
-    public SubItem(String herbName, int icon) {
-        this.herbName = herbName;
+    public SubItem(String herbId, int icon) {
+        this.herbId = herbId;
         this.icon = icon;
     }
     public SubItem(){}

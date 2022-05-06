@@ -29,7 +29,6 @@ public class DatabaseTools {
     private User user;
 
 
-
     public DatabaseTools(Context context) {
         this.context = context;
         database = FirebaseDatabase.getInstance("https://e-herbar-default-rtdb.europe-west1.firebasedatabase.app");
@@ -43,31 +42,19 @@ public class DatabaseTools {
     }
 
     //Adds an item to a group if the group doesn't exist creates the group and adds it there
-    public void addItem(Item item, SubItem subItem) {
+    public void addEditItem(Item item, SubItem subItem) {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        myRef = database.getReference().child("users").child(user.getEmail().split("@")[0]);
+        myRef.child(item.getItemTitle()).child(subItem.getHerbId()).setValue(subItem);
 
-        //need to change the @ to a . but haven't made the database compatable yet
+    }
 
+
+    public void deleteItem(Item item, SubItem subItem) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         myRef = database.getReference().child("users").child(user.getEmail().split("@")[0]).child(item.getItemTitle());
-
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                if (dataSnapshot.exists()) {
-                    myRef.child(subItem.getHerbId()).setValue(subItem);
-                } else {
-                    myRef.child(item.getItemTitle()).child(subItem.getHerbId()).setValue(subItem);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.d(TAG, databaseError.getMessage()); //Don't ignore errors!
-            }
-        });
-
+        myRef.child(subItem.getHerbId()).removeValue();
     }
 
 
@@ -84,7 +71,6 @@ public class DatabaseTools {
 
     //returns an arraylist of plants
     public void getUserItems(ArrayList<Item> items) {
-
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (isConnected()) {
             if (user != null) {
@@ -131,7 +117,7 @@ public class DatabaseTools {
 
 //    get ID method returns an id as input it takes the name of the group where the item is located
 
-    public String getSubItemID(Item item){
+    public String getSubItemID(Item item) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         myRef = database.getReference().child("users").child(user.getEmail().split("@")[0]).child(item.getItemTitle());
 

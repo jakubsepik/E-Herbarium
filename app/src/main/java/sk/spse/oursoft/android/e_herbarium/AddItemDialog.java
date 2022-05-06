@@ -302,8 +302,8 @@ public class AddItemDialog extends Dialog {
                                 addIconDialog.dismiss();
                                 AddItemDialog.this.dismiss();
                                 subItemAdapter.addSubItem(subItem);
-                                databaseTools.addItem(item,subItem);
-                                ListLogic.addOne(subItem, item.);
+                                databaseTools.addEditItem(item,subItem);
+                                ListLogic.addOne(subItem, 1);
                             }
                         }
                     });

@@ -21,6 +21,9 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import sk.spse.oursoft.android.e_herbarium.database_objects.User;
 
+//Activity for registering the user
+
+
 public class RegisterActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private EditText email, password;
@@ -45,15 +48,8 @@ public class RegisterActivity extends AppCompatActivity {
         String loginText = "Already Have An Account ? Login <b>Here</b>.";
         textLogin.setText(Html.fromHtml(loginText));
 
-        /*
-        //I dont send anyting but this code is here if I ever wanted to send the info from the login Activity
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            email.setText(extras.getString("email"));
-            password.setText(extras.getString("password"));
-        }*/
 
-
+        //when button is slicker try to register user
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,6 +57,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
+        //switches to the login activity
         textLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,8 +70,12 @@ public class RegisterActivity extends AppCompatActivity {
 
     //registers the user into firebase
     private void register() {
+
+        //gets the values from the email and password fields
         String user = email.getText().toString().trim();
         String pass = password.getText().toString().trim();
+
+
         if (databaseTools.isConnected()) {
             if (user.isEmpty()) {
                 email.setError("Email can not be empty");
