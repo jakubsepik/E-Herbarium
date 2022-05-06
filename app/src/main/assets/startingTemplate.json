@@ -4,19 +4,22 @@
       "id": "123456789",
       "name": "Ľubovník bodkovaný",
       "description": "Ľubovník je trváca bylina s holou oblou vzpriamenou a v hornej časti rozkonárenou stonkou, vysokou až 80cm. Listy sú sediace, protistojné, podlhovasté a celistvookrajové. V protisvetle vidieť na nich priesvitné bodky - žliazky naplnené silicou a menejpočetné tmavé bodky obsahujúce červené farbivo hypericín. Vytvára zlatožlté voľnolupíenkové kvety, ktoré majú v priemere 2 - 2,5 cm a sú zoskupené do zloženého súkvetia. Plod je tobolka. Aj v plode sú žliazky v tvare bodiek.",
-      "image": "obrázok"
+      "image": "obrázok",
+      "icon": 0
     },
     {
       "id": "223456789",
       "name": "Ďatelina lúčna",
       "description": "Je to trváca bylina s plazivým podzemkom, z ktorého vyrastá prízemná ružica listov a rozkonárená, až 50 cm vysoká stonka. Listy sú striedavé, dolné dlhostopkaté, horné krátkostopkaté, trojpočetné, so sediacimi lístkami. Na listoch je bledozelená oblúkovitá kresba. Drobné purpurovočervené až mäsovočervené, zriedka aj biele kvety sú päťpočetné, obojpohlavné a usporiadané v guľatých hlávkach. Plod je malý nepukavý struk s 1 - 2 semenami, v zrelosti obalený zaschnutou korunou.",
-      "image": "obrázok"
+      "image": "obrázok",
+      "icon": 0
     },
     {
       "id": "323456789",
       "name": "Šalvia lekárska",
       "description": "Šalvia je príjemne voňajúci rozkonárený poloker, vysoký až 1 m. Stonky sú štvorhranné fialkasté, zvyčajne odstávajúco chlpaté, v dolnej časti zdrevnatené. Zelenkasté až striebristé stopkaté listy sú vajcovité až kopijovité, 5 -10 cm dlhé, s vráskavým povrchom. Kvety sú usporiadané v riedkych papraslenoch. Majú modrofialové dvojpyskové koruny. V obojpohlavnom kvete sú iba dve tyčinky, čím sa šalvia líši od väčšiny druhov čeľade hluchavkovitých. Plody sú štyri vajcovité hladké tvrdky.",
-      "image": "obrázok"
+      "image": "obrázok",
+      "icon": 0
     }
   ],
   "gruphub": [
@@ -24,19 +27,22 @@
       "id": "123456789",
       "name": "Ľubovník bodkovaný",
       "description": "Ľubovník je trváca bylina s holou oblou vzpriamenou a v hornej časti rozkonárenou stonkou, vysokou až 80cm. Listy sú sediace, protistojné, podlhovasté a celistvookrajové. V protisvetle vidieť na nich priesvitné bodky - žliazky naplnené silicou a menejpočetné tmavé bodky obsahujúce červené farbivo hypericín. Vytvára zlatožlté voľnolupíenkové kvety, ktoré majú v priemere 2 - 2,5 cm a sú zoskupené do zloženého súkvetia. Plod je tobolka. Aj v plode sú žliazky v tvare bodiek.",
-      "image": "obrázok"
+      "image": "obrázok",
+      "icon": 0
     },
     {
       "id": "223456789",
       "name": "Ďatelina lúčna",
       "description": "Je to trváca bylina s plazivým podzemkom, z ktorého vyrastá prízemná ružica listov a rozkonárená, až 50 cm vysoká stonka. Listy sú striedavé, dolné dlhostopkaté, horné krátkostopkaté, trojpočetné, so sediacimi lístkami. Na listoch je bledozelená oblúkovitá kresba. Drobné purpurovočervené až mäsovočervené, zriedka aj biele kvety sú päťpočetné, obojpohlavné a usporiadané v guľatých hlávkach. Plod je malý nepukavý struk s 1 - 2 semenami, v zrelosti obalený zaschnutou korunou.",
-      "image": "obrázok"
+      "image": "obrázok",
+      "icon": 0
     },
     {
       "id": "323456789",
       "name": "Šalvia lekárska",
       "description": "Šalvia je príjemne voňajúci rozkonárený poloker, vysoký až 1 m. Stonky sú štvorhranné fialkasté, zvyčajne odstávajúco chlpaté, v dolnej časti zdrevnatené. Zelenkasté až striebristé stopkaté listy sú vajcovité až kopijovité, 5 -10 cm dlhé, s vráskavým povrchom. Kvety sú usporiadané v riedkych papraslenoch. Majú modrofialové dvojpyskové koruny. V obojpohlavnom kvete sú iba dve tyčinky, čím sa šalvia líši od väčšiny druhov čeľade hluchavkovitých. Plody sú štyri vajcovité hladké tvrdky.",
-      "image": "obrázok"
+      "image": "obrázok",
+      "icon": 0
     }
   ]
 }

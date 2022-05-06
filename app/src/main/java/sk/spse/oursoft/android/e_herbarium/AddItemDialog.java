@@ -44,7 +44,7 @@ public class AddItemDialog extends Dialog {
     private boolean continueWithoutIcon = false;
 
     
-    public AddItemDialog(@NonNull Context context, int theme_Black_NoTitleBar_Fullscreen, SubItemAdapter subItemAdapter, Item item) {
+    public AddItemDialog(@NonNull Context context, int theme_Black_NoTitleBar_Fullscreen, SubItemAdapter subItemAdapter, Item item, int index) {
         super(context, theme_Black_NoTitleBar_Fullscreen);
 
         DatabaseTools databaseTools = new DatabaseTools(this.getContext());
@@ -59,7 +59,7 @@ public class AddItemDialog extends Dialog {
         EditText itemDescriptionInput = this.findViewById(R.id.itemDescriptionInput);
         Button addItemButton = this.findViewById(R.id.addItemButton);
 
-
+//        Intent that manages the image picking from the gallery
         insertImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -112,7 +112,7 @@ public class AddItemDialog extends Dialog {
 
 
                     showName.setText(herbName);
-
+//                    Cancelling buttons
                     dismissDialog.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -126,7 +126,7 @@ public class AddItemDialog extends Dialog {
                             addIconDialog.dismiss();
                         }
                     });
-
+//                    What happens when you choose the leaves icon
                     leavesIcon.setOnClickListener(new View.OnClickListener() {
                         @SuppressLint("UseCompatLoadingForColorStateLists")
                         @Override
@@ -157,7 +157,7 @@ public class AddItemDialog extends Dialog {
 
                         }
                     });
-
+//                  What happens when you choose the bush icon
                     bushIcon.setOnClickListener(new View.OnClickListener() {
                         @SuppressLint("UseCompatLoadingForColorStateLists")
                         @Override
@@ -186,7 +186,7 @@ public class AddItemDialog extends Dialog {
                             }
                         }
                     });
-
+//                    What happens when you choose the ear icon
                     earIcon.setOnClickListener(new View.OnClickListener() {
                         @SuppressLint("UseCompatLoadingForColorStateLists")
                         @Override
@@ -215,7 +215,7 @@ public class AddItemDialog extends Dialog {
                             }
                         }
                     });
-
+//                  What happens when you choose the tree icon
                     treeIcon.setOnClickListener(new View.OnClickListener() {
                         @SuppressLint("UseCompatLoadingForColorStateLists")
                         @Override
@@ -244,7 +244,7 @@ public class AddItemDialog extends Dialog {
                             }
                         }
                     });
-
+//                  What happens when you don't choose an icon, but choose the "Continue without icon" checkbox
                     withoutPickingCheck.setOnClickListener(new View.OnClickListener() {
                         @SuppressLint("UseCompatLoadingForColorStateLists")
                         @Override
@@ -274,6 +274,7 @@ public class AddItemDialog extends Dialog {
                         }
                     });
 
+//                    Add item button and adding the icon to the subitem
                     addIconButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -298,12 +299,14 @@ public class AddItemDialog extends Dialog {
 
                                 }
                                 //add the name of the Item
-                                subItem.setHerbId(databaseTools.getSubItemID(item));
+//                                subItem.setHerbId(databaseTools.getSubItemID(item));
                                 addIconDialog.dismiss();
                                 AddItemDialog.this.dismiss();
                                 subItemAdapter.addSubItem(subItem);
                                 databaseTools.addEditItem(item,subItem);
                                 ListLogic.addOne(subItem, 1);
+//                                databaseTools.addItem(item,subItem);
+                                ListLogic.addOne(subItem, index);
                             }
                         }
                     });
@@ -314,7 +317,7 @@ public class AddItemDialog extends Dialog {
             }
         });
     }
-
+//    Saving selected image and setting it to the imageView
     public void onImageSelect(Uri imageURI){
         this.imageURI = imageURI;
         insertImage.setImageURI(imageURI);

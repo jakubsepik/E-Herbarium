@@ -53,7 +53,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        ListLogic.saveAll(getApplicationContext());
+        //ListLogic.saveAll(getApplicationContext());
         super.onPause();
     }
 
@@ -63,13 +63,18 @@ public class HerbariumViewActivity extends AppCompatActivity {
         return true;
     }
 
+//    Selecting image from the gallery
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
        if(requestCode == 1 ){
-           assert data != null;
-           ((AddItemDialog) dialogReference).onImageSelect(data.getData());
+
+           if(data == null){
+               Toast.makeText(this, "No Image Selected", Toast.LENGTH_SHORT).show();
+           }else{
+               ((AddItemDialog) dialogReference).onImageSelect(data.getData());
+           }
        }else{
            Toast.makeText(this, "Error occurred", Toast.LENGTH_SHORT).show();
        }
