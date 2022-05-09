@@ -83,56 +83,30 @@
             android:textColor="#E1E1E1"
             android:textSize="20sp" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:id="@+id/relativeLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center|center_horizontal"
             android:layout_marginTop="30dp"
+            android:gravity="center"
             android:minHeight="42dp">
 
-            <Button
-                android:id="@+id/deleteButton"
-                android:layout_width="114dp"
-                android:layout_height="42dp"
-                android:layout_marginEnd="50dp"
-                android:background="@drawable/subitem_delete_button"
-                android:fontFamily="@font/segoe_regular"
-                android:gravity="center"
-                android:paddingTop="0dp"
-                android:paddingBottom="0dp"
-                android:text="Delete"
-                android:textAllCaps="false"
-                android:textColor="#C93434"
-                android:textSize="24sp"
-                app:backgroundTint="@null"
-                app:cornerRadius="5dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0"
-                app:strokeColor="#C93434"
-                app:strokeWidth="2dp" />
-
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/editButton"
-                android:layout_width="114dp"
-                android:layout_height="42dp"
-                android:layout_marginStart="50dp"
-                android:background="@drawable/subitem_edit_button"
+                android:layout_width="112dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center|center_horizontal"
+                android:background="@drawable/border_for_widgets"
+                android:backgroundTint="#30AB6A"
+                android:gravity="center|center_horizontal|center_vertical"
                 android:paddingTop="0dp"
                 android:text="Edit"
                 android:textAllCaps="false"
                 android:textColor="#30AB6A"
-                android:textSize="24sp"
-                app:backgroundTint="@null"
-                app:cornerRadius="5dp"
-                app:iconPadding="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                android:textSize="28sp" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

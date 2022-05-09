@@ -5,9 +5,15 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -18,7 +24,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Random;
 
 import herbariumListOperation.Item;
@@ -47,8 +56,61 @@ public class HerbariumViewActivity extends AppCompatActivity {
         rvItem.setAdapter(itemAdapter);
         rvItem.setLayoutManager(layoutManager);
 
+        ImageButton hamburgerMenu = (ImageButton) findViewById(R.id.hamburgerMenu);
 
-        //addItem(itemList);
+        hamburgerMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popupMenu = new PopupMenu(HerbariumViewActivity.this, hamburgerMenu);
+                popupMenu.getMenuInflater().inflate(R.menu.popup_menu, popupMenu.getMenu());
+
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        if (menuItem.getTitle().equals("Add Group")){
+                            Dialog addGroupDialog = new Dialog(view.getContext());
+                            addGroupDialog.setContentView(R.layout.add_group_view);
+
+                            ImageButton dismissButton = addGroupDialog.findViewById(R.id.dismissAddGroup);
+                            dismissButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    addGroupDialog.dismiss();
+                                }
+                            });
+
+                            EditText nameInput = addGroupDialog.findViewById(R.id.groupName);
+
+                            Button addGroupButton = addGroupDialog.findViewById(R.id.addGroupButton);
+                            addGroupButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if(nameInput.getText().toString().equals("") || nameInput.getText().toString().length() == 0){
+                                        Toast.makeText(view.getContext(), "You have to enter a name!", Toast.LENGTH_SHORT).show();
+
+                                    }else if (groupExists(nameInput.getText().toString(), itemList)){
+                                        Toast.makeText(view.getContext(), "The group's name has to be unique!", Toast.LENGTH_SHORT).show();
+                                    }else{
+                                        List<SubItem> subItemList = new ArrayList<SubItem>();
+                                        Item item = new Item(nameInput.getText().toString(), subItemList);
+
+                                        itemList.add(item);
+                                        itemAdapter.notifyItemInserted(itemList.size()-1);
+
+                                        addGroupDialog.dismiss();
+                                    }
+                                }
+                            });
+
+                            addGroupDialog.show();
+                        }
+                        return true;
+                    }
+                });
+
+                popupMenu.show();
+            }
+        });
     }
 
     @Override
@@ -57,13 +119,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
         super.onPause();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-//    Selecting image from the gallery
+    //    Selecting image from the gallery
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -101,11 +157,6 @@ public class HerbariumViewActivity extends AppCompatActivity {
         return itemList;
     }
 
-    /*private void addItem(List<Item> itemList) {
-        Item item = new Item("New Item", buildSubItemList());
-        itemList.add(item);
-    }*/
-
     private List<SubItem> buildSubItemList(int group) {
         List<SubItem> subItemList = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
@@ -118,19 +169,14 @@ public class HerbariumViewActivity extends AppCompatActivity {
         return subItemList;
     }
 
-    @SuppressLint("NonConstantResourceId")
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.add:
-                addItem();
+    private boolean groupExists(String name, List<Item> itemList){
+        for (Item item:itemList){
+            if(item.getItemTitle().equals(name)){
                 return true;
+            }
         }
-        return super.onOptionsItemSelected(item);
+        return false;
     }
 
-    private void addItem() {
-
-    }
 
 }

@@ -77,8 +77,6 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
 
                 Button editButton = (Button) itemDialog.findViewById(R.id.editButton);
 
-                Button deleteButton = (Button) itemDialog.findViewById(R.id.deleteButton);
-
                 itemDialog.show();
             }
         });
@@ -89,72 +87,7 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
             public void onClick(View view) {
                 context = view.getContext();
 
-                SharedPreferences sharedPreferences = context.getSharedPreferences("SharedPreferences", Context.MODE_MULTI_PROCESS);
-                boolean showDialog = sharedPreferences.getBoolean("showSubitemDeletionDialog", true);
-
-                @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sharedPreferences.edit();
-
-                int pos = findItemPosition(subItem.getHerbId(), subItemList);
-
-                if (pos == -1){
-
-                    Toast.makeText(view.getContext(), "This Item Doesn't Exist", Toast.LENGTH_SHORT).show();
-
-                }else{
-
-                    if (showDialog){
-
-                        Dialog removeConfirmationDialog = new Dialog(view.getContext());
-                        removeConfirmationDialog.setContentView(R.layout.confirm_subitem_removal_dialog);
-
-                        ImageButton dismissDialogButton = (ImageButton) removeConfirmationDialog.findViewById(R.id.dismissDialogButton);
-
-                        TextView removeQuestion = (TextView) removeConfirmationDialog.findViewById(R.id.removeQuestion);
-                        removeQuestion.setText("Are you sure you want you want to \nremove " + subItem.getHerbName() + " ?");
-
-                        Button confirmRemovalButton = (Button) removeConfirmationDialog.findViewById(R.id.confirmRemovalButton);
-                        Button cancelRemovalButton = (Button) removeConfirmationDialog.findViewById(R.id.cancelRemovalButton);
-
-                        CheckBox dontAskAgainRemoval = (CheckBox) removeConfirmationDialog.findViewById(R.id.dontAskAgainRemoval);
-
-
-                        dismissDialogButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                removeConfirmationDialog.dismiss();
-                            }
-                        });
-
-
-                        confirmRemovalButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                boolean showDialog = !dontAskAgainRemoval.isChecked();
-                                editor.putBoolean("showSubitemDeletionDialog", showDialog);
-                                editor.apply();
-
-                                removeConfirmationDialog.dismiss();
-
-                                removeItem(pos);
-
-                            }
-                        });
-
-
-                        cancelRemovalButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                removeConfirmationDialog.dismiss();
-                            }
-                        });
-
-                        removeConfirmationDialog.show();
-
-                    }else{
-                        removeItem(pos);
-                    }
-
-                }
+                removeItemMethod(context, subItem, view);
 
             }
         });
@@ -203,5 +136,73 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
         return subItemList.size();
     }
 
+    public void removeItemMethod(Context context, SubItem subItem, View view){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("SharedPreferences", Context.MODE_MULTI_PROCESS);
+        boolean showDialog = sharedPreferences.getBoolean("showSubitemDeletionDialog", true);
 
+        @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        int pos = findItemPosition(subItem.getHerbId(), subItemList);
+
+        if (pos == -1){
+
+            Toast.makeText(view.getContext(), "This Item Doesn't Exist", Toast.LENGTH_SHORT).show();
+
+        }else{
+
+            if (showDialog){
+
+                Dialog removeConfirmationDialog = new Dialog(view.getContext());
+                removeConfirmationDialog.setContentView(R.layout.confirm_subitem_removal_dialog);
+
+                ImageButton dismissDialogButton = (ImageButton) removeConfirmationDialog.findViewById(R.id.dismissDialogButton);
+
+                TextView removeQuestion = (TextView) removeConfirmationDialog.findViewById(R.id.removeQuestion);
+                removeQuestion.setText("Are you sure you want you want to \nremove " + subItem.getHerbName() + " ?");
+
+                Button confirmRemovalButton = (Button) removeConfirmationDialog.findViewById(R.id.confirmRemovalButton);
+                Button cancelRemovalButton = (Button) removeConfirmationDialog.findViewById(R.id.cancelRemovalButton);
+
+                CheckBox dontAskAgainRemoval = (CheckBox) removeConfirmationDialog.findViewById(R.id.dontAskAgainRemoval);
+
+
+                dismissDialogButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        removeConfirmationDialog.dismiss();
+                    }
+                });
+
+
+                confirmRemovalButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        boolean showDialog = !dontAskAgainRemoval.isChecked();
+                        editor.putBoolean("showSubitemDeletionDialog", showDialog);
+                        editor.apply();
+
+                        removeConfirmationDialog.dismiss();
+
+                        removeItem(pos);
+
+                    }
+                });
+
+
+                cancelRemovalButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        removeConfirmationDialog.dismiss();
+                    }
+                });
+
+                removeConfirmationDialog.show();
+
+            }else{
+                removeItem(pos);
+            }
+
+        }
+
+    }
 }

@@ -10,4 +10,8 @@
     <color name="green">#16D81E</color>
     <color name="buttonUnclickable">#486E5A</color>
     <color name="buttonClickable">#30AB6A</color>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="skyBlue">#87CEEB</color>
 </resources>

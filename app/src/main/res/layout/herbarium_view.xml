@@ -22,6 +22,8 @@
             android:id="@+id/appName"
             android:layout_width="wrap_content"
             android:layout_height="64dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="113dp"
             android:layout_marginTop="0dp"
             android:layout_marginEnd="0dp"
             android:background="#1E334B"
@@ -30,6 +32,15 @@
             android:text="E-Herbarium"
             android:textColor="#F1F1F1"
             android:textSize="33sp" />
+
+        <ImageButton
+            android:id="@+id/hamburgerMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:layout_marginLeft="35dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/ic_hamburger" />
 
     </LinearLayout>
 
