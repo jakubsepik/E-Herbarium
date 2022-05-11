@@ -89,8 +89,14 @@ public class ListLogic {
     }
 
 
-    static void deleteCategory(int index, String category) {
-
+    static void deleteCategory(String category) {
+        for(int i=0;i<list.toArray().length;i++){
+            if(list.get(i).getItemTitle().equals(category)){
+                list.remove(i);
+                return;
+            }
+                
+        }
     }
 
     static JSONObject getObject() {
@@ -108,5 +114,8 @@ public class ListLogic {
         myEdit.putString("items", object.toString());
 
         myEdit.apply();
+    }
+    private void listToJSON(){
+
     }
 }
