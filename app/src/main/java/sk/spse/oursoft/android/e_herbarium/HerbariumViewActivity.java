@@ -141,34 +141,6 @@ public class HerbariumViewActivity extends AppCompatActivity {
         dialogReference = d;
     }
 
-    int[] icons = {R.drawable.listocek_symbolik, R.drawable.klasocek_symbolik, R.drawable.kricek_symbolik, R.drawable.stromcek_symbolik};
-
-    Random rd = new Random();
-
-    String[] herbNames = {"Mint", "Echinacea", "Thyme"};
-
-
-    protected List<Item> buildItemList() {
-        List<Item> itemList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            Item item = new Item("Item " + i, buildSubItemList(i));
-            itemList.add(item);
-        }
-        return itemList;
-    }
-
-    private List<SubItem> buildSubItemList(int group) {
-        List<SubItem> subItemList = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            String herbName = herbNames[rd.nextInt(herbNames.length)];
-            int icon = icons[rd.nextInt(icons.length)];
-            String herbId = "Group " + Integer.toString(group) + " Position " + Integer.toString(i);
-            SubItem subItem = new SubItem(herbId,icon, herbName);
-            subItemList.add(subItem);
-        }
-        return subItemList;
-    }
-
     private boolean groupExists(String name, List<Item> itemList){
         for (Item item:itemList){
             if(item.getItemTitle().equals(name)){

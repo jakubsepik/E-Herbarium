@@ -111,7 +111,7 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
     }
 
 
-    public void removeItem(int pos){
+    public void removeItem(int pos, View view){
         subItemList.remove(pos);
         notifyItemRemoved(pos);
         notifyItemRangeChanged(pos, getItemCount());
@@ -183,7 +183,7 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
 
                         removeConfirmationDialog.dismiss();
 
-                        removeItem(pos);
+                        removeItem(pos, view);
 
                     }
                 });
@@ -199,7 +199,7 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
                 removeConfirmationDialog.show();
 
             }else{
-                removeItem(pos);
+                removeItem(pos, view);
             }
 
         }
