@@ -94,8 +94,8 @@ public class HerbariumViewActivity extends AppCompatActivity {
                                         List<SubItem> subItemList = new ArrayList<SubItem>();
                                         Item item = new Item(nameInput.getText().toString(), subItemList);
 
-                                        itemList.add(item);
-                                        itemAdapter.notifyItemInserted(itemList.size()-1);
+                                        ListLogic.addCategory(item);
+                                        itemAdapter.notifyItemInserted(ListLogic.getList().size()-1);
 
                                         addGroupDialog.dismiss();
                                     }
