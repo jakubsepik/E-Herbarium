@@ -33,9 +33,12 @@ public class Item {
     public String toString() {
         StringBuilder output= new StringBuilder();
         for(int i=0;i<subItemList.size();i++){
-            output.insert(0, subItemList.get(i).toString() + ",");
+            if(i==0)
+                output.insert(0, subItemList.get(i).toString());
+            else
+                output.insert(0, subItemList.get(i).toString() + ",");
         }
-        return this.itemTitle+":["+output.toString()+"]";
+        return "\""+this.itemTitle+"\":["+output.toString()+"]";
     }
 
     public List<SubItem> getSubItemList() {
