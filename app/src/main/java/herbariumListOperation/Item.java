@@ -1,5 +1,7 @@
 package herbariumListOperation;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,8 +34,9 @@ public class Item {
     @Override
     public String toString() {
         StringBuilder output= new StringBuilder();
-        for(int i=0;i<subItemList.size();i++){
-            if(i==0)
+        for(int i=subItemList.size()-1;i>=0;i--){
+            Log.d("EH", String.valueOf(i));
+            if(i==subItemList.size()-1)
                 output.insert(0, subItemList.get(i).toString());
             else
                 output.insert(0, subItemList.get(i).toString() + ",");

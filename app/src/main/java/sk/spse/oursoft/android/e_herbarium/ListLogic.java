@@ -72,10 +72,9 @@ public class ListLogic {
     }
 
     public static void deleteOne(int index, String category) {
-        try {
-            ((JSONArray) object.get(category)).remove(index);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        for(Item tmp : list){
+            if(tmp.getItemTitle().equals(category))
+                tmp.getSubItemList().remove(index);
         }
     }
 
