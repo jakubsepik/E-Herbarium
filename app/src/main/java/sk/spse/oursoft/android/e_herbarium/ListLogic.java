@@ -65,6 +65,7 @@ public class ListLogic {
         } catch (IOException | JSONException ex) {
             ex.printStackTrace();
         }
+        Log.d("EH",object.toString());
     }
     static void addOne(SubItem item, int index) {
         list.get(index).addSubItem(item);
@@ -95,7 +96,7 @@ public class ListLogic {
                 list.remove(i);
                 return;
             }
-                
+
         }
     }
 
@@ -108,14 +109,22 @@ public class ListLogic {
     }
 
     static void saveAll(Context context) {
+        listToJSON();
         SharedPreferences sharedPreferences = context.getSharedPreferences("EHerbarium", MODE_PRIVATE);
-
         SharedPreferences.Editor myEdit = sharedPreferences.edit();
         myEdit.putString("items", object.toString());
-
         myEdit.apply();
     }
-    private void listToJSON(){
-
+    static void listToJSON(){
+        StringBuilder output= new StringBuilder();
+        for(int i=0;i<list.size();i++){
+            output.insert(0, list.get(i).toString() + ",");
+        }
+        try {
+            object=new JSONObject(output.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Log.d("EH",object.toString());
     }
 }

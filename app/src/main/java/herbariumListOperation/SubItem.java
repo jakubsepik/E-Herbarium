@@ -29,7 +29,19 @@ public class SubItem {
         this.herbName = herbName;
         this.icon = icon;
     }
-    public SubItem(String herbId,String herbName,String herbDescription, int icon) {
+
+    @Override
+    public String toString() {
+        return "{" +
+                "      \"id\": "+this.herbId+"," +
+                "      \"name\": "+this.herbName+"," +
+                "      \"description\": "+this.herbDescription+"," +
+                "      \"image\": "+this.imageUri+"," +
+                "      \"icon\": "+this.icon+
+                "    }";
+    }
+
+    public SubItem(String herbId, String herbName, String herbDescription, int icon) {
         this.herbId = herbId;
         this.herbDescription = herbDescription;
         this.herbName = herbName;
