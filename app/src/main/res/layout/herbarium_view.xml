@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center_horizontal"
@@ -9,40 +10,44 @@
     android:orientation="vertical"
     app:layout_anchorGravity="center_horizontal">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center|center_horizontal"
         android:background="#1E334B"
         android:backgroundTint="#1E334B"
         android:gravity="center|center_horizontal"
-        android:orientation="horizontal">
+        app:layout_constraintBottom_toTopOf="@+id/hamburgerMenu"
+        app:layout_constraintTop_toTopOf="@+id/hamburgerMenu">
 
         <TextView
             android:id="@+id/appName"
             android:layout_width="wrap_content"
             android:layout_height="64dp"
-            android:layout_gravity="center"
-            android:layout_marginStart="113dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
             android:background="#1E334B"
             android:fontFamily="@font/segoe_regular"
             android:gravity="center"
             android:text="E-Herbarium"
             android:textColor="#F1F1F1"
-            android:textSize="33sp" />
+            android:textSize="33sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
             android:id="@+id/hamburgerMenu"
-            android:layout_width="wrap_content"
-            android:layout_height="25dp"
-            android:layout_marginLeft="35dp"
-            android:layout_weight="1"
+            android:layout_width="53dp"
+            android:layout_height="53dp"
+            android:layout_marginStart="40dp"
             android:background="@android:color/transparent"
-            app:srcCompat="@drawable/ic_hamburger" />
+            android:src="@drawable/ic_hamburger"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/appName"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.545" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
