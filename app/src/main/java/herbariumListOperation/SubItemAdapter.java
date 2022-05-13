@@ -21,16 +21,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import sk.spse.oursoft.android.e_herbarium.ListLogic;
 import sk.spse.oursoft.android.e_herbarium.R;
 
 public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemViewHolder> {
 
     private List<SubItem> subItemList;
+    private String itemTitle;
 
     Context context;
 
-    SubItemAdapter(List<SubItem> subItemList) {
+    SubItemAdapter(List<SubItem> subItemList, String itemTitle) {
         this.subItemList = subItemList;
+        this.itemTitle = itemTitle;
     }
 
     @NonNull
@@ -86,8 +89,7 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
             @Override
             public void onClick(View view) {
                 context = view.getContext();
-
-                removeItemMethod(context, subItem, view);
+                removeItemMethod(context, subItem, view, itemTitle);
 
             }
         });
@@ -111,8 +113,8 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
     }
 
 
-    public void removeItem(int pos, View view){
-        subItemList.remove(pos);
+    public void removeItem(int pos, String itemTitle){
+        ListLogic.deleteOne(pos, itemTitle);
         notifyItemRemoved(pos);
         notifyItemRangeChanged(pos, getItemCount());
     }
@@ -121,9 +123,9 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
         notifyItemInserted(subItemList.size()-1);
     }
 
-    public int findItemPosition(String herbId, List<SubItem> subItemList){
+    public int findItemPosition(String herbName, List<SubItem> subItemList){
         for (int i = 0; i < subItemList.size(); i++){
-            if (herbId.equals(subItemList.get(i).getHerbId())){
+            if (herbName.equals(subItemList.get(i).getHerbName())){
                 return i;
             }
         }
@@ -136,13 +138,13 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
         return subItemList.size();
     }
 
-    public void removeItemMethod(Context context, SubItem subItem, View view){
+    public void removeItemMethod(Context context, SubItem subItem, View view, String itemTitle){
         SharedPreferences sharedPreferences = context.getSharedPreferences("SharedPreferences", Context.MODE_MULTI_PROCESS);
         boolean showDialog = sharedPreferences.getBoolean("showSubitemDeletionDialog", true);
 
         @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        int pos = findItemPosition(subItem.getHerbId(), subItemList);
+        int pos = findItemPosition(subItem.getHerbName(), subItemList);
 
         if (pos == -1){
 
@@ -183,7 +185,7 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
 
                         removeConfirmationDialog.dismiss();
 
-                        removeItem(pos, view);
+                        removeItem(pos, itemTitle);
 
                     }
                 });
@@ -199,7 +201,7 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
                 removeConfirmationDialog.show();
 
             }else{
-                removeItem(pos, view);
+                removeItem(pos, itemTitle);
             }
 
         }

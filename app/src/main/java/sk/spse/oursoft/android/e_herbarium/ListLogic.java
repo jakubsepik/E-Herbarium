@@ -71,7 +71,7 @@ public class ListLogic {
         list.get(index).addSubItem(item);
     }
 
-    static void deleteOne(int index, String category) {
+    public static void deleteOne(int index, String category) {
         try {
             ((JSONArray) object.get(category)).remove(index);
         } catch (JSONException e) {
