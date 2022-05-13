@@ -17,11 +17,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -37,10 +33,14 @@ public class ListLogic {
     static void begin(JSONObject newObject, Context context) {
         try {
             if (newObject == null) {
+
                 SharedPreferences sharedPreferences = context.getSharedPreferences("EHerbarium", MODE_PRIVATE);
                 if (sharedPreferences.contains("items")) {
-                    object = new JSONObject(sharedPreferences.getString("items", null));
+                    Log.d("EH","Begin sharedpreferences");
+                    object = new JSONObject(sharedPreferences.getString("items", "{}"));
+                    Log.d("EH",object.toString());
                 }else{
+                    Log.d("EH","Begin startingtemplate");
                     InputStream is = context.getAssets().open("startingTemplate.json");
                     int size = is.available();
                     byte[] buffer = new byte[size];
@@ -65,7 +65,7 @@ public class ListLogic {
         } catch (IOException | JSONException ex) {
             ex.printStackTrace();
         }
-        Log.d("EH",object.toString());
+        Log.d("EH",list.toString());
     }
     static void addOne(SubItem item, int index) {
         list.get(index).addSubItem(item);
@@ -109,22 +109,14 @@ public class ListLogic {
     }
 
     static void saveAll(Context context) {
-        listToJSON();
+        Log.d("EH","saving");
+        StringBuilder listText = new StringBuilder(list.toString());
+        listText.setCharAt(0,'{');
+        listText.setCharAt(listText.length()-1,'}');
+        Log.d("EH",listText.toString());
         SharedPreferences sharedPreferences = context.getSharedPreferences("EHerbarium", MODE_PRIVATE);
         SharedPreferences.Editor myEdit = sharedPreferences.edit();
-        myEdit.putString("items", object.toString());
+        myEdit.putString("items", listText.toString());
         myEdit.apply();
-    }
-    static void listToJSON(){
-        StringBuilder output= new StringBuilder();
-        for(int i=0;i<list.size();i++){
-            output.insert(0, list.get(i).toString() + ",");
-        }
-        try {
-            object=new JSONObject(output.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        Log.d("EH",object.toString());
     }
 }

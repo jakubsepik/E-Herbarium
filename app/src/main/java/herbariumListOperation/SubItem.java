@@ -2,6 +2,8 @@ package herbariumListOperation;
 
 import android.net.Uri;
 
+import androidx.annotation.NonNull;
+
 public class SubItem {
     private String herbId;
     private String herbName;
@@ -30,14 +32,15 @@ public class SubItem {
         this.icon = icon;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "{" +
-                "      \"id\": "+this.herbId+"," +
-                "      \"name\": "+this.herbName+"," +
-                "      \"description\": "+this.herbDescription+"," +
-                "      \"image\": "+this.imageUri+"," +
-                "      \"icon\": "+this.icon+
+                "      \"id\": \""+this.herbId+"\"," +
+                "      \"name\": \""+this.herbName+"\"," +
+                "      \"description\": \""+this.herbDescription+"\"," +
+                "      \"image\": \""+this.imageUri+"\"," +
+                "      \"icon\": \""+this.icon+"\""+
                 "    }";
     }
 
