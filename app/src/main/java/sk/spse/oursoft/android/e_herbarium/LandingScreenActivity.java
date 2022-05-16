@@ -1,13 +1,25 @@
 package sk.spse.oursoft.android.e_herbarium;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -17,7 +29,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import herbariumListOperation.Item;
 import herbariumListOperation.SubItem;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class LandingScreenActivity extends Activity {
@@ -30,6 +47,13 @@ public class LandingScreenActivity extends Activity {
     private FirebaseAuth mAuth;
     private DatabaseTools databaseTools;
     private ArrayList<Item> items;
+
+    String currentPhotoPath;
+    public File photoFile;
+    private final int REQUEST_IMAGE_CAPTURE = 1;
+    private final int RESULT_LOAD_IMAGE = 2;
+    private Uri uri;
+    private final int CAMERA_REQUEST = 1888;
 
 
     @Override
@@ -68,6 +92,7 @@ public class LandingScreenActivity extends Activity {
         items = new ArrayList<>();
 
 
+
     }
 
     private void go_login() {
@@ -92,22 +117,29 @@ public class LandingScreenActivity extends Activity {
     //these are testing methods that I will move to my own branch
 
     public Item item = new Item("pines");
-    public SubItem sub = new SubItem("11",  R.drawable.listocek_symbolik);
+    public SubItem sub = new SubItem("11", R.drawable.listocek_symbolik);
 
 
     public void test_connection(View view) {
         /**/
-        databaseTools.addEditSubItem(item,sub);
-        databaseTools.getUserItems(items);
-    }
-    public void testing_button(View view) {
-        SubItem sub2 = new SubItem("11",  R.drawable.ic_delete_group_icon);
-        databaseTools.addEditSubItem(item,sub2);
+//        databaseTools.addEditSubItem(item,sub);
+//        databaseTools.getUserItems(items);
+//        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+//        startActivityForResult(cameraIntent, CAMERA_REQUEST);
 
-        for (Item subitem:items){
-            for(SubItem sub : subitem.getSubItemList()){
+    }
+
+
+    public void testing_button(View view) {
+        SubItem sub2 = new SubItem("11", R.drawable.ic_delete_group_icon);
+        databaseTools.addEditSubItem(item, sub2);
+
+        for (Item subitem : items) {
+            for (SubItem sub : subitem.getSubItemList()) {
                 System.out.println(sub + " a");
             }
         }
     }
+
 }
+

@@ -1,18 +1,28 @@
 package sk.spse.oursoft.android.e_herbarium;
 
+import static androidx.core.content.FileProvider.getUriForFile;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,15 +31,24 @@ import herbariumListOperation.ItemAdapter;
 import sk.spse.oursoft.android.e_herbarium.DatabaseTools;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
+
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+
+import org.w3c.dom.Text;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import herbariumListOperation.SubItem;
 import herbariumListOperation.SubItemAdapter;
 
 public class AddItemDialog extends Dialog {
-    
+
     private String herbName;
     private String herbDescription;
-    private Uri imageURI;
 
     private SubItem subItem = new SubItem();
 
@@ -43,9 +62,15 @@ public class AddItemDialog extends Dialog {
     private boolean treePicked = false;
     private boolean continueWithoutIcon = false;
 
-    
+    public File photoFile;
+    private final int REQUEST_IMAGE_CAPTURE = 1;
+    private final int RESULT_LOAD_IMAGE = 2;
+    private Uri imageURI;
+
+
     public AddItemDialog(@NonNull Context context, int theme_Black_NoTitleBar_Fullscreen, SubItemAdapter subItemAdapter, Item item, int index) {
         super(context, theme_Black_NoTitleBar_Fullscreen);
+
 
         DatabaseTools databaseTools = new DatabaseTools(this.getContext());
 
@@ -63,8 +88,78 @@ public class AddItemDialog extends Dialog {
         insertImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                ((Activity) context).startActivityForResult(intent, 1);
+
+                //bottom sheet dialog containing gallery or camera options
+                final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
+                bottomSheetDialog.setContentView(R.layout.camera_choose);
+
+                LinearLayout chooseCameraLayout = bottomSheetDialog.findViewById(R.id.chooseCamera);
+                LinearLayout chooseGalleryLayout = bottomSheetDialog.findViewById(R.id.chooseGallery);
+
+                //camera intent
+                chooseCameraLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+//                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                        try {
+//                            ((Activity) context).startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+//
+//                        } catch (ActivityNotFoundException e) {
+//                            Log.i("Image taking", "error occured while taking the image");
+//                        }
+//                        bottomSheetDialog.dismiss();
+
+                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+                        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                        String imageFileName = "JPEG_" + timeStamp + "_";
+                        File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+                        Uri photoURI = null;
+                        try {
+                            File image = File.createTempFile(
+                                    imageFileName,
+                                    ".jpg",
+                                    storageDir
+                            );
+                             photoURI = FileProvider.getUriForFile(context,
+                                    "sk.spse.oursoft.android.e_herbarium.FileProvider",
+                                    image);
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+
+                        Toast.makeText(context, photoURI.toString(), Toast.LENGTH_SHORT).show();
+                        // Save a file: path for use with ACTION_VIEW intents
+
+                        //takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                        //takePictureIntent.setData(photoURI);
+
+                        ((Activity) context).startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+
+                        bottomSheetDialog.dismiss();
+
+                    }
+                });
+
+                //gallery intent
+                chooseGalleryLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(context, "Gallery", Toast.LENGTH_SHORT).show();
+                        Intent galleryChoose = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        ((Activity) context).startActivityForResult(galleryChoose, RESULT_LOAD_IMAGE);
+
+                        bottomSheetDialog.dismiss();
+                    }
+                });
+
+                bottomSheetDialog.show();
+
+//
             }
         });
 
@@ -82,14 +177,14 @@ public class AddItemDialog extends Dialog {
                 herbName = herbNameInput.getText().toString();
                 herbDescription = itemDescriptionInput.getText().toString();
 
-                if (herbName.length() == 0){
+                if (herbName.length() == 0) {
                     Toast.makeText(context, "Please input a valid herb name.", Toast.LENGTH_SHORT).show();
-                }else{
+                } else {
 
                     subItem.setHerbName(herbName);
                     subItem.setHerbDescription(herbDescription);
 
-                    if (imageURI != null){
+                    if (imageURI != null) {
                         subItem.setImageUri(imageURI);
                     }
 
@@ -132,12 +227,12 @@ public class AddItemDialog extends Dialog {
                         @Override
                         public void onClick(View view) {
 
-                            if (leavesPicked){
+                            if (leavesPicked) {
                                 leavesPicked = false;
                                 addIconButton.setBackgroundTintList(context.getResources().getColorStateList(R.color.buttonUnclickable));
                                 showIcon.setImageResource(0);
                                 leavesIcon.setBackgroundResource(0);
-                            }else{
+                            } else {
                                 leavesPicked = true;
                                 bushPicked = false;
                                 earPicked = false;
@@ -250,7 +345,7 @@ public class AddItemDialog extends Dialog {
                         @Override
                         public void onClick(View view) {
 
-                            if (withoutPickingCheck.isChecked()){
+                            if (withoutPickingCheck.isChecked()) {
                                 continueWithoutIcon = true;
 
                                 leavesPicked = false;
@@ -266,7 +361,7 @@ public class AddItemDialog extends Dialog {
                                 treeIcon.setBackgroundResource(0);
 
                                 addIconButton.setBackgroundTintList(context.getResources().getColorStateList(R.color.buttonClickable));
-                            }else{
+                            } else {
                                 continueWithoutIcon = false;
                                 addIconButton.setBackgroundTintList(context.getResources().getColorStateList(R.color.buttonUnclickable));
                             }
@@ -294,7 +389,7 @@ public class AddItemDialog extends Dialog {
                                 } else if (earPicked) {
                                     subItem.setIcon(iconList[2]);
 
-                                }else{
+                                } else {
                                     subItem.setIcon(iconList[3]);
 
                                 }
@@ -317,10 +412,13 @@ public class AddItemDialog extends Dialog {
             }
         });
     }
-//    Saving selected image and setting it to the imageView
-    public void onImageSelect(Uri imageURI){
+
+
+    //    Saving selected image and setting it to the imageView
+    public void setSubItemImage(Uri imageURI) {
         this.imageURI = imageURI;
         insertImage.setImageURI(imageURI);
     }
+
 
 }
