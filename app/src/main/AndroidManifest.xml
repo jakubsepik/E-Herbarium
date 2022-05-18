@@ -28,7 +28,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".HerbariumViewActivity">
+        <activity android:name=".HerbariumViewActivity"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 

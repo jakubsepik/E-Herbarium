@@ -80,6 +80,13 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
 
                 Button editButton = (Button) itemDialog.findViewById(R.id.editButton);
 
+                editButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                    }
+                });
+
                 itemDialog.show();
             }
         });
@@ -189,7 +196,6 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
 
                     }
                 });
-
 
                 cancelRemovalButton.setOnClickListener(new View.OnClickListener() {
                     @Override
