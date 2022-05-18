@@ -1,10 +1,12 @@
 package sk.spse.oursoft.android.e_herbarium;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,10 +33,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -48,6 +53,8 @@ import herbariumListOperation.ItemAdapter;
 import herbariumListOperation.SubItem;
 
 import androidx.annotation.NonNull;
+import android.graphics.Matrix;
+
 
 public class HerbariumViewActivity extends AppCompatActivity {
     ListView listView;
@@ -55,6 +62,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
     private final int RESULT_LOAD_IMAGE = 2;
 
     public static Dialog dialogReference;
+    public String TAG = "HerbariumViewActivity";
 
     public String currentPhotoPath;
 
@@ -137,92 +145,156 @@ public class HerbariumViewActivity extends AppCompatActivity {
         super.onPause();
     }
 
-    //    Selecting image from the gallery
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
 
 
             if (data == null) {
                 Log.i("information", String.valueOf(data.getData()));
-
                 Toast.makeText(this, "No Image taken", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, (CharSequence) data.getExtras().get("data"), Toast.LENGTH_SHORT).show();
 
-                Bitmap photo = (Bitmap) data.getExtras().get("data");
-                Uri uri = getImageUri(this.getApplicationContext(),photo);
-                ((AddItemDialog) dialogReference).setSubItemImage(uri);
+                Bundle extras = data.getExtras();
+                Bitmap imageBitmap = (Bitmap) extras.get("data");
+                File imageFile = storeImage(imageBitmap,REQUEST_IMAGE_CAPTURE);
+                Uri imageUri = Uri.fromFile(imageFile);
+
+                ((AddItemDialog) dialogReference).setImageURI(imageUri);
+                Toast.makeText(this, "Added camera image", Toast.LENGTH_SHORT).show();
+
             }
-
-
-        }
-
-     else if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK) {
+        } else if (requestCode == RESULT_LOAD_IMAGE && resultCode == Activity.RESULT_OK) {
 
             if (data == null) {
                 Toast.makeText(this, "No Image Selected", Toast.LENGTH_SHORT).show();
             } else {
+                try {
+                    Uri imageURI = data.getData();
+                    Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageURI);
 
-                ((AddItemDialog) dialogReference).setSubItemImage(data.getData());
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    imageBitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
+                    out.close();
+                    String path = data.getData().getPath();
+
+                    File imageFile = storeImage(imageBitmap,RESULT_LOAD_IMAGE);
+                    Uri imageUri = Uri.fromFile(imageFile);
+
+                    ((AddItemDialog) dialogReference).setImageURI(imageUri);
+
+                }catch (Exception e){
+                    Log.e(TAG,"failed to load image from gallery" + Arrays.toString(e.getStackTrace()));
+                }
+
             }
         } else {
             Toast.makeText(this, "Error occurred", Toast.LENGTH_SHORT).show();
         }
-
-
-    }
-    public Uri getImageUri(Context inContext, Bitmap inImage) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-        return Uri.parse(path);
-
     }
 
-    public static void setCurrentDialog(Dialog d) {
-        dialogReference = d;
-    }
 
-    int[] icons = {R.drawable.listocek_symbolik, R.drawable.klasocek_symbolik, R.drawable.kricek_symbolik, R.drawable.stromcek_symbolik};
+    //    Selecting image from the gallery
 
-    Random rd = new Random();
+    private File storeImage(Bitmap image,int requestCode) {
+        File pictureFile = getOutputMediaFile();
 
-    String[] herbNames = {"Mint", "Echinacea", "Thyme"};
-
-
-    protected List<Item> buildItemList() {
-        List<Item> itemList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            Item item = new Item("Item " + i, buildSubItemList(i));
-            itemList.add(item);
+        if (pictureFile == null) {
+            Log.d("herbarium View Activity","Error creating media file, check storage permissions: ");// e.getMessage());
+            return null;
         }
-        return itemList;
-    }
+        try {
+            image = getResizedBitmap(image,650,800);
 
-    private List<SubItem> buildSubItemList(int group) {
-        List<SubItem> subItemList = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            String herbName = herbNames[rd.nextInt(herbNames.length)];
-            int icon = icons[rd.nextInt(icons.length)];
-            String herbId = "Group " + Integer.toString(group) + " Position " + Integer.toString(i);
-            SubItem subItem = new SubItem(herbId, icon, herbName);
-            subItemList.add(subItem);
-        }
-        return subItemList;
-    }
-
-    private boolean groupExists(String name, List<Item> itemList) {
-        for (Item item : itemList) {
-            if (item.getItemTitle().equals(name)) {
-                return true;
+            if(requestCode == REQUEST_IMAGE_CAPTURE){
+                FileOutputStream fos = new FileOutputStream(pictureFile);
+                image.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                fos.close();
             }
+
+                else if(requestCode == RESULT_LOAD_IMAGE){
+                    FileOutputStream fos = new FileOutputStream(pictureFile);
+                    image.compress(Bitmap.CompressFormat.JPEG, 80, fos);
+                    fos.close();
+
+            }
+        } catch (FileNotFoundException e) {
+            Log.d("herbarium View Activity", "File not found: " + e.getMessage());
+        } catch (IOException e) {
+            Log.d("herbarium View Activity", "Error accessing file: " + e.getMessage());
         }
-        return false;
+        return pictureFile;
+    }
+
+    public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+
+        Bitmap resizedBitmap = Bitmap.createBitmap(
+                bm, 0, 0, width, height, matrix, false);
+        bm.recycle();
+        return resizedBitmap;
+    }
+
+    private  File getOutputMediaFile(){
+        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_.jpg";
+        File storageDir = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+        File mediaFile;
+        mediaFile = new File(storageDir + File.separator + imageFileName);
+        return mediaFile;
     }
 
 
 
-}
+        public static void setCurrentDialog (Dialog d){
+            dialogReference = d;
+        }
+
+        int[] icons = {R.drawable.listocek_symbolik, R.drawable.klasocek_symbolik, R.drawable.kricek_symbolik, R.drawable.stromcek_symbolik};
+
+        Random rd = new Random();
+
+        String[] herbNames = {"Mint", "Echinacea", "Thyme"};
+
+
+        protected List<Item> buildItemList () {
+            List<Item> itemList = new ArrayList<>();
+            for (int i = 0; i < 10; i++) {
+                Item item = new Item("Item " + i, buildSubItemList(i));
+                itemList.add(item);
+            }
+            return itemList;
+        }
+
+        private List<SubItem> buildSubItemList ( int group){
+            List<SubItem> subItemList = new ArrayList<>();
+            for (int i = 0; i < 5; i++) {
+                String herbName = herbNames[rd.nextInt(herbNames.length)];
+                int icon = icons[rd.nextInt(icons.length)];
+                String herbId = "Group " + Integer.toString(group) + " Position " + Integer.toString(i);
+                SubItem subItem = new SubItem(herbId, icon, herbName);
+                subItemList.add(subItem);
+            }
+            return subItemList;
+        }
+
+        private boolean groupExists (String name, List < Item > itemList){
+            for (Item item : itemList) {
+                if (item.getItemTitle().equals(name)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+    }

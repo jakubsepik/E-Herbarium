@@ -112,33 +112,36 @@ public class AddItemDialog extends Dialog {
 
                         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-                        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                        String imageFileName = "JPEG_" + timeStamp + "_";
-                        File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+                        if (takePictureIntent.resolveActivity(context.getPackageManager()) != null) {
 
-                        Uri photoURI = null;
-                        try {
-                            File image = File.createTempFile(
-                                    imageFileName,
-                                    ".jpg",
-                                    storageDir
-                            );
-                             photoURI = FileProvider.getUriForFile(context,
-                                    "sk.spse.oursoft.android.e_herbarium.FileProvider",
-                                    image);
+//                            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+//                            String imageFileName = "JPEG_" + timeStamp + "_";
+//                            File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+//
+//                            Uri imageURI = null;
+//                            try {
+//                                File image = File.createTempFile(
+//                                        imageFileName,
+//                                        ".jpg",
+//                                        storageDir
+//                                );
+//                                imageURI = FileProvider.getUriForFile(context,
+//                                        "sk.spse.oursoft.android.e_herbarium.FileProvider",
+//                                        image);
+//
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
 
-                        } catch (IOException e) {
-                            e.printStackTrace();
+//                            Toast.makeText(context, imageURI.toString(), Toast.LENGTH_SHORT).show();
+                            // Save a file: path for use with ACTION_VIEW intents
+
+                            //takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                            //takePictureIntent.setData(photoURI);
+                            //takePictureIntent.setData(imageURI);
+                            //takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageURI);
+                            ((Activity) context).startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
                         }
-
-
-                        Toast.makeText(context, photoURI.toString(), Toast.LENGTH_SHORT).show();
-                        // Save a file: path for use with ACTION_VIEW intents
-
-                        //takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                        //takePictureIntent.setData(photoURI);
-
-                        ((Activity) context).startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
 
                         bottomSheetDialog.dismiss();
 
@@ -415,9 +418,14 @@ public class AddItemDialog extends Dialog {
 
 
     //    Saving selected image and setting it to the imageView
-    public void setSubItemImage(Uri imageURI) {
-        this.imageURI = imageURI;
+    public void setImageURI(Uri ImageUri) {
+        this.imageURI = ImageUri;
+        insertImage.setImageURI(null);
+        Toast.makeText(this.getContext(), imageURI.toString(), Toast.LENGTH_SHORT).show();
         insertImage.setImageURI(imageURI);
+
+
+
     }
 
 
