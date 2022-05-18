@@ -87,7 +87,7 @@ public class ListLogic {
         return true;
 
     }
-    static void editCategory(int index,String name){
+    public static void editCategory(int index, String name){
         list.get(index).setItemTitle(name);
     }
 

@@ -33,11 +33,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import sk.spse.oursoft.android.e_herbarium.AddItemDialog;
 import sk.spse.oursoft.android.e_herbarium.HerbariumViewActivity;
+import sk.spse.oursoft.android.e_herbarium.ListLogic;
 import sk.spse.oursoft.android.e_herbarium.R;
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder> {
@@ -133,9 +135,54 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
 
         Objects.requireNonNull(editGroup).setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "Edit item clicked", Toast.LENGTH_SHORT).show();
+
+                Dialog editGroupDialog = new Dialog(view.getContext());
+                editGroupDialog.setContentView(R.layout.add_group_view);
+
+                ImageButton dismissButton = editGroupDialog.findViewById(R.id.dismissAddGroup);
+                dismissButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        editGroupDialog.dismiss();
+                    }
+                });
+
+                EditText nameInput = editGroupDialog.findViewById(R.id.groupName);
+                nameInput.setText(item.getItemTitle());
+
+                Button editGroupButton = editGroupDialog.findViewById(R.id.addGroupButton);
+                editGroupButton.setText("Edit Item");
+                editGroupButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(nameInput.getText().toString().equals("") || nameInput.getText().toString().length() == 0){
+                            Toast.makeText(view.getContext(), "You have to enter a name!", Toast.LENGTH_SHORT).show();
+
+                        }else if (groupExists(nameInput.getText().toString())){
+                            Toast.makeText(view.getContext(), "The group's name has to be unique!", Toast.LENGTH_SHORT).show();
+                        }else{
+
+                            String newName = nameInput.getText().toString();
+
+                            int index = findItemPosition(item.getItemTitle(), itemList);
+
+                            if (index == -1){
+                                Toast.makeText(view.getContext(), "This group doesn't exist", Toast.LENGTH_SHORT).show();
+                            }else{
+                                ListLogic.editCategory(index, newName);
+                                ItemAdapter.this.notifyItemChanged(index);
+                            }
+
+                            editGroupDialog.dismiss();
+                        }
+                    }
+                });
+
+                editGroupDialog.show();
+
                 bottomSheetDialog.dismiss();
             }
         });
@@ -235,6 +282,15 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
             }
         }
         return -1;
+    }
+
+    public boolean groupExists(String itemTitle){
+        for (Item item : itemList){
+            if(item.getItemTitle().equals(itemTitle)){
+                return true;
+            }
+        }
+       return false;
     }
 
 }
