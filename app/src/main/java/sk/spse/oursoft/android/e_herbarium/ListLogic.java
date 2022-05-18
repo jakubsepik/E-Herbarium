@@ -91,6 +91,13 @@ public class ListLogic {
         list.get(index).setItemTitle(name);
     }
 
+    public static void editOne(String category, int index, SubItem subItem){
+        for(Item tmp : list){
+            if(tmp.getItemTitle().equals(category))
+                tmp.getSubItemList().add(index,subItem);
+        }
+    }
+
 
     static void deleteCategory(String category) {
         for(int i=0;i<list.toArray().length;i++){
