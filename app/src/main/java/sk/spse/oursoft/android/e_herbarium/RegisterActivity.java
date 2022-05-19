@@ -83,7 +83,7 @@ public class RegisterActivity extends AppCompatActivity {
             if (pass.isEmpty()) {
                 password.setError("Password can not be empty");
             } else {
-                mAuth.createUserWithEmailAndPassword(user, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    mAuth.createUserWithEmailAndPassword(user, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {

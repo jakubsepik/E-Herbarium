@@ -25,7 +25,7 @@ public class SubItem {
     }
     public SubItem(){}
 
-    public SubItem(String herbId,int icon,String herbName) {
+    public SubItem(String herbId,String herbName,int icon) {
         this.herbId = herbId;
         this.herbDescription = "";
         this.herbName = herbName;
@@ -49,6 +49,13 @@ public class SubItem {
         this.herbDescription = herbDescription;
         this.herbName = herbName;
         this.icon = icon;
+    }
+    public SubItem(String herbId,String herbName,int icon,Uri imageUri){
+        this.herbId = herbId;
+        this.herbDescription = "";
+        this.herbName = herbName;
+        this.icon = icon;
+        this.imageUri = imageUri;
     }
 
     public int getIcon() {
