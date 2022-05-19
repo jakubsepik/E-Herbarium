@@ -1,46 +1,37 @@
 package sk.spse.oursoft.android.e_herbarium;
 
-import static androidx.core.content.FileProvider.getUriForFile;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import herbariumListOperation.Item;
-import herbariumListOperation.ItemAdapter;
-import sk.spse.oursoft.android.e_herbarium.DatabaseTools;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.FileProvider;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
-import org.w3c.dom.Text;
-
 import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.Arrays;
+
 
 import herbariumListOperation.SubItem;
 import herbariumListOperation.SubItemAdapter;
@@ -50,7 +41,7 @@ public class AddItemDialog extends Dialog {
     private String herbName;
     private String herbDescription;
 
-    private SubItem subItem = new SubItem();
+    private SubItem subItem;
 
     private ImageView insertImage;
 
@@ -62,7 +53,6 @@ public class AddItemDialog extends Dialog {
     private boolean treePicked = false;
     private boolean continueWithoutIcon = false;
 
-    public File photoFile;
     private final int REQUEST_IMAGE_CAPTURE = 1;
     private final int RESULT_LOAD_IMAGE = 2;
     private Uri imageURI;
@@ -71,6 +61,7 @@ public class AddItemDialog extends Dialog {
     public AddItemDialog(@NonNull Context context, int theme_Black_NoTitleBar_Fullscreen, SubItemAdapter subItemAdapter, Item item, int index) {
         super(context, theme_Black_NoTitleBar_Fullscreen);
 
+        subItem = new SubItem();
 
         DatabaseTools databaseTools = new DatabaseTools(this.getContext());
 
@@ -101,46 +92,13 @@ public class AddItemDialog extends Dialog {
                     @Override
                     public void onClick(View view) {
 
-//                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                        try {
-//                            ((Activity) context).startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-//
-//                        } catch (ActivityNotFoundException e) {
-//                            Log.i("Image taking", "error occured while taking the image");
-//                        }
-//                        bottomSheetDialog.dismiss();
-
                         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-                        if (takePictureIntent.resolveActivity(context.getPackageManager()) != null) {
-
-//                            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-//                            String imageFileName = "JPEG_" + timeStamp + "_";
-//                            File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-//
-//                            Uri imageURI = null;
-//                            try {
-//                                File image = File.createTempFile(
-//                                        imageFileName,
-//                                        ".jpg",
-//                                        storageDir
-//                                );
-//                                imageURI = FileProvider.getUriForFile(context,
-//                                        "sk.spse.oursoft.android.e_herbarium.FileProvider",
-//                                        image);
-//
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                            }
-
-//                            Toast.makeText(context, imageURI.toString(), Toast.LENGTH_SHORT).show();
-                            // Save a file: path for use with ACTION_VIEW intents
-
-                            //takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                            //takePictureIntent.setData(photoURI);
-                            //takePictureIntent.setData(imageURI);
-                            //takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageURI);
+                        try {
                             ((Activity) context).startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+
+                        } catch (ActivityNotFoundException e) {
+                            Toast.makeText(context, "error opening camera", Toast.LENGTH_SHORT).show();
+                            Log.e("Camera", "error occured while taking the image" + e.getStackTrace());
                         }
 
                         bottomSheetDialog.dismiss();
@@ -152,9 +110,14 @@ public class AddItemDialog extends Dialog {
                 chooseGalleryLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(context, "Gallery", Toast.LENGTH_SHORT).show();
                         Intent galleryChoose = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                        ((Activity) context).startActivityForResult(galleryChoose, RESULT_LOAD_IMAGE);
+                        try {
+                            ((Activity) context).startActivityForResult(galleryChoose, RESULT_LOAD_IMAGE);
+
+                        } catch (Exception e) {
+                            Toast.makeText(context, "error opening gallery", Toast.LENGTH_SHORT).show();
+                            Log.e("Gallery", "error occured while opening the gallery" + e.getStackTrace());
+                        }
 
                         bottomSheetDialog.dismiss();
                     }
@@ -187,8 +150,23 @@ public class AddItemDialog extends Dialog {
                     subItem.setHerbName(herbName);
                     subItem.setHerbDescription(herbDescription);
 
-                    if (imageURI != null) {
-                        subItem.setImageUri(imageURI);
+                    if (imageURI == null) {
+                        //sets the URI to the placeholder tree
+                        Uri uri = (new Uri.Builder())
+                                .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+                                .authority(context.getResources().getResourcePackageName(R.drawable.tree_placeholder))
+                                .appendPath(context.getResources().getResourceTypeName(R.drawable.tree_placeholder))
+                                .appendPath(context.getResources().getResourceEntryName(R.drawable.tree_placeholder))
+                                .build();
+
+                        Toast.makeText(context, String.valueOf(uri), Toast.LENGTH_SHORT).show();
+
+                        try {
+                            setImageURI(uri);
+
+                        } catch (Exception e) {
+                            Log.e("set Image", "tried to set default image " + Arrays.toString(e.getStackTrace()));
+                        }
                     }
 
                     Dialog addIconDialog = new Dialog(context);
@@ -418,12 +396,18 @@ public class AddItemDialog extends Dialog {
 
 
     //    Saving selected image and setting it to the imageView
-    public void setImageURI(Uri ImageUri) {
-        this.imageURI = ImageUri;
+    public void setImageURI(Uri pictureURI) {
+
+        this.imageURI = pictureURI;
+
         insertImage.setImageURI(null);
         Toast.makeText(this.getContext(), imageURI.toString(), Toast.LENGTH_SHORT).show();
+
+        Log.e("IMAGEURI",pictureURI.toString());
+
         insertImage.setImageURI(imageURI);
 
+        subItem.setImageUri(imageURI);
 
 
     }

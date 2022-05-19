@@ -3,36 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2682291666666667" />
-        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/drawable/border_for_widgets.xml" value="0.3974358974358974" />
-        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/drawable/custion_icon.xml" value="0.2682291666666667" />
-        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/drawable/custion_icon_right.xml" value="0.2682291666666667" />
-        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/drawable/custom_top.xml" value="0.2682291666666667" />
-        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/drawable/ic_add_subitem_icon.xml" value="0.3974358974358974" />
-        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2682291666666667" />
-        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/drawable/ic_options_menu_background.xml" value="0.3974358974358974" />
-        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/drawable/ic_options_menu_icon.xml" value="0.3974358974358974" />
-        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/drawable/ic_remove_dialog_dismiss.xml" value="0.3974358974358974" />
+        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/drawable/border_for_widgets.xml" value="0.37552083333333336" />
         <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/activity_login.xml" value="0.264" />
         <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/activity_main.xml" value="0.2" />
         <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/activity_register.xml" value="0.4" />
-        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/add_group_view.xml" value="0.2520833333333333" />
-        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/add_subitem_view.xml" value="0.2520833333333333" />
-        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/camera_choose.xml" value="0.2520833333333333" />
-        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/camera_choose_left.xml" value="0.2520833333333333" />
-        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/confirm_subitem_removal_dialog.xml" value="0.264" />
-        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/dialog_view.xml" value="0.25" />
-        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/file_paths.xml" value="0.15364583333333334" />
         <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/herbarium_view.xml" value="0.371875" />
-        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/icon_select_view.xml" value="0.2520833333333333" />
         <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/landing_screen.xml" value="0.371875" />
-        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/options_menu_view.xml" value="0.10526315789473684" />
-        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/recycler_view_item.xml" value="0.2520833333333333" />
         <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/recycler_view_subitem.xml" value="0.275" />
         <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/register_view.xml" value="0.371875" />
-        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/layout/reset_password.xml" value="0.2520833333333333" />
-        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/xml/file_paths.xml" value="0.15364583333333334" />
-        <entry key="..\:/Programing/Android/Herbarium/E-Herbarium/app/src/main/res/xml/provider_paths.xml" value="0.165625" />
         <entry key="..\:/Users/kuzmi/Documents/GitHub/E-Herbarium/app/src/main/res/drawable/ic_close_button_forgor.xml" value="0.1" />
         <entry key="..\:/Users/kuzmi/Documents/GitHub/E-Herbarium/app/src/main/res/drawable/ic_delete_subitem.xml" value="0.1" />
         <entry key="..\:/Users/kuzmi/Documents/GitHub/E-Herbarium/app/src/main/res/drawable/ic_dialog_questinmark.xml" value="0.2335" />
