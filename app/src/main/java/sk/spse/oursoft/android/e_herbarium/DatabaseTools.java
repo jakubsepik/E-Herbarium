@@ -1,11 +1,20 @@
 package sk.spse.oursoft.android.e_herbarium;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -13,8 +22,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
@@ -25,16 +40,20 @@ public class DatabaseTools {
     private Context context;
     private DatabaseReference myRef;
     private static final String TAG = "MyActivity";
-    private User user;
+    private FirebaseUser user;
+    private Activity activity;
 
-
-    public DatabaseTools(Context context) {
+    public DatabaseTools(Context context,Activity activity) {
+        this.activity = activity;
         this.context = context;
         database = FirebaseDatabase.getInstance("https://e-herbar-default-rtdb.europe-west1.firebasedatabase.app");
+
     }
 
     //tests the internet connectin status
     public boolean isConnected() {
+        user =  getCurrentUser();
+
         ConnectivityManager manager = (ConnectivityManager) context.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = manager.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnectedOrConnecting();
@@ -43,7 +62,8 @@ public class DatabaseTools {
     //Adds an item to a group if the group doesn't exist creates the group and adds it there
     public void addEditSubItem(Item item, SubItem subItem) {
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        user =  getCurrentUser();
+
         if(user != null) {
             myRef = database.getReference().child("users").child(user.getEmail().split("@")[0]);
             myRef.child(item.getItemTitle()).child(subItem.getHerbId()).setValue(subItem);
@@ -56,7 +76,9 @@ public class DatabaseTools {
 
 //deletes a sub item
     public void deleteSub(Item item, SubItem subItem) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        user =  getCurrentUser();
+
         if(user != null) {
             myRef = database.getReference().child("users").child(user.getEmail().split("@")[0]).child(item.getItemTitle());
             myRef.child(subItem.getHerbId()).removeValue();
@@ -69,7 +91,9 @@ public class DatabaseTools {
 
     //deletes an item
     public void deleteItem(Item item, SubItem subItem) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        user =  getCurrentUser();
+
         if(user != null) {
             myRef = database.getReference().child("users").child(user.getEmail().split("@")[0]);
             myRef.child(item.getItemTitle()).removeValue();
@@ -95,8 +119,10 @@ public class DatabaseTools {
 
     //returns an arraylist of plants
     public void getUserItems(ArrayList<Item> items) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (isConnected()) {
+
+            user =  getCurrentUser();
+
             if (user != null) {
                 //change to fit new objects by changing regex
                 myRef = database.getReference(("users/" + user.getEmail().split("\\.")[0] + "/herbarium"));
@@ -145,7 +171,7 @@ public class DatabaseTools {
 //    get ID method returns an id as input it takes the name of the group where the item is located
     public String getSubItemID(Item item) {
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        user =  getCurrentUser();
         //if user not signed in returns null
         if(user != null) {
             myRef = database.getReference().child("users").child(user.getEmail().split("@")[0]).child(item.getItemTitle());
@@ -160,6 +186,61 @@ public class DatabaseTools {
 
 
     }
+    public FirebaseUser getCurrentUser(){
+        return FirebaseAuth.getInstance().getCurrentUser();
+    }
+
+    public void saveImage(Uri imageUri) {
+
+        user = getCurrentUser();
+       String userName = user.getEmail().split("@")[0];
+
+        if (user != null) {
+
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            //this is some scuffed code here
+            String[] temp = imageUri.toString().split("/");
+
+            String path = "fireImages/" + temp[temp.length - 1] + ".png";
+
+            StorageReference storageRef = storage.getReference(path);
+            StorageMetadata metadata = new StorageMetadata.Builder().setCustomMetadata("caption", "made by " + user.getEmail()).build();
+            UploadTask uploadTask = storageRef.putFile(imageUri, metadata);
+
+            uploadTask.addOnCompleteListener(activity, new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    Log.i("MA", "Upload complete");
+
+                }
+            });
+
+            Task<Uri> getDownloadUriTask = uploadTask.continueWithTask(
+                    new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                        @Override
+                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                            if (!task.isSuccessful()) {
+                                throw task.getException();
+                            }
+                            return storageRef.getDownloadUrl();
+                        }
+                    }
+            );
+            getDownloadUriTask.addOnCompleteListener(activity, new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+                        Uri downlaodUri = task.getResult();
+
+                        Toast.makeText(context, downlaodUri.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }else{
+            Toast.makeText(context,"Sign in to save",Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
 
 }
