@@ -16,7 +16,7 @@
         android:paddingBottom="0dp">
 
         <ImageView
-            android:id="@+id/image"
+            android:id="@+id/insertImage"
             android:layout_width="226dp"
             android:layout_height="226dp"
             android:layout_gravity="center"
@@ -43,104 +43,74 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:scrollbars="vertical">
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="35dp"
+            android:layout_marginTop="20dp"
+            android:background="@android:color/transparent"
+            android:fontFamily="@font/segoe_regular"
+            android:maxLength="14"
+            android:scrollbars="vertical"
+            android:text="Spruce"
+            android:textColor="#F9F9F9"
+            android:textSize="35sp" />
+
+        <View
+            android:id="@+id/nameDivider"
+            android:layout_width="330dp"
+            android:layout_height="2dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="5dp"
+            android:background="@color/white"
+            android:backgroundTint="#E1E1E1" />
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="wrap_content"
+            android:layout_height="270dp"
+            android:layout_marginLeft="35dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="40dp"
+            android:background="@android:color/transparent"
+            android:gravity="left"
+            android:scrollbars="vertical"
+            android:text="This is only a placeholder text to hold a place and shouldn't be used for anything else"
+            android:textColor="#E1E1E1"
+            android:textSize="20sp" />
 
         <LinearLayout
+            android:id="@+id/relativeLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:scrollbarAlwaysDrawVerticalTrack="true"
-            android:scrollbars="vertical">
+            android:layout_gravity="center|center_horizontal"
+            android:layout_marginTop="30dp"
+            android:gravity="center"
+            android:minHeight="42dp">
 
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="35dp"
-                android:layout_marginTop="20dp"
-                android:fontFamily="@font/segoe_regular"
-                android:text="Spruce"
-                android:textColor="#F9F9F9"
-                android:textSize="35sp" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/editButton"
+                android:layout_width="112dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center|center_horizontal"
+                android:background="@drawable/border_for_widgets"
+                android:backgroundTint="#30AB6A"
+                android:gravity="center|center_horizontal|center_vertical"
+                android:paddingTop="0dp"
+                android:text="Edit"
+                android:textAllCaps="false"
+                android:textColor="#30AB6A"
+                android:textSize="28sp" />
 
-            <View
-                android:id="@+id/nameDivider"
-                android:layout_width="350dp"
-                android:layout_height="2dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="5dp"
-                android:background="@color/white"
-                android:backgroundTint="#E1E1E1" />
-
-            <TextView
-                android:id="@+id/description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="35dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="40dp"
-                android:layout_marginBottom="10dp"
-                android:text="This is only a placeholder text to hold a place and shouldn't be used for anything else"
-                android:textColor="#E1E1E1"
-                android:textSize="20sp" />
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="35dp"
-                android:layout_marginBottom="38dp"
-                android:minHeight="42dp">
-
-                <Button
-                    android:id="@+id/deleteButton"
-                    android:layout_width="114dp"
-                    android:layout_height="42dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginEnd="60dp"
-                    android:layout_marginBottom="0dp"
-                    android:background="@drawable/subitem_delete_button"
-                    android:fontFamily="@font/segoe_regular"
-                    android:gravity="center"
-                    android:paddingTop="0dp"
-                    android:paddingBottom="0dp"
-                    android:text="Delete"
-                    android:textAllCaps="false"
-                    android:textColor="#C93434"
-                    android:textSize="24sp"
-                    app:backgroundTint="@null"
-                    app:cornerRadius="5dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.2"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="1.0"
-                    app:strokeColor="#C93434"
-                    app:strokeWidth="2dp" />
-
-                <Button
-                    android:id="@+id/editButton"
-                    android:layout_width="114dp"
-                    android:layout_height="42dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginStart="60dp"
-                    android:background="@drawable/subitem_edit_button"
-                    android:paddingTop="0dp"
-                    android:text="Edit"
-                    android:textAllCaps="false"
-                    android:textColor="#30AB6A"
-                    android:textSize="24sp"
-                    app:backgroundTint="@null"
-                    app:cornerRadius="5dp"
-                    app:iconPadding="8dp"
-                    app:layout_constraintBottom_toBottomOf="parent" />
-
-            </RelativeLayout>
         </LinearLayout>
-    </ScrollView>
+    </LinearLayout>
 
 </LinearLayout>

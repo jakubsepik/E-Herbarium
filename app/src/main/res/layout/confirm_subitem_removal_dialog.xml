@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="326dp"
+    android:layout_height="156dp"
+    android:layout_gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="34dp"
+        android:background="#192D44"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="26dp"
+            android:layout_height="22dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/listocek_symbolik" />
+
+        <TextView
+            android:id="@+id/confirmRemoval"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="46dp"
+            android:fontFamily="@font/segoe_regular"
+            android:text="Confirm Removal"
+            android:textColor="#EFEFEF"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/dismissDialogButton"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginEnd="14dp"
+            android:background="@android:color/transparent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.523"
+            app:srcCompat="@drawable/ic_remove_dialog_dismiss" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#2A4461">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_dialog_questinmark" />
+
+        <TextView
+            android:id="@+id/removeQuestion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="76dp"
+            android:layout_marginTop="12dp"
+            android:fontFamily="@font/segoe_regular"
+            android:text="Are you sure you want you want to \nremove Echinacea ?"
+            android:textColor="#EBEBEB"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <CheckBox
+            android:id="@+id/dontAskAgainRemoval"
+            android:layout_width="132dp"
+            android:layout_height="26dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="12dp"
+            android:buttonTint="#4D75A4"
+            android:fontFamily="@font/segoe_regular"
+            android:text="Don't ask again"
+            android:textColor="#EBEBEB"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/confirmRemovalButton"
+            android:layout_width="58dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="170dp"
+            android:layout_marginBottom="8dp"
+            android:backgroundTint="#436FA1"
+            android:fontFamily="@font/segoe_regular"
+            android:paddingLeft="0dp"
+            android:paddingTop="0dp"
+            android:paddingRight="0dp"
+            android:paddingBottom="0dp"
+            android:text="ok"
+            android:textColor="#EBEBEB"
+            android:textSize="19sp"
+            app:cornerRadius="3dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/cancelRemovalButton"
+            android:layout_width="74dp"
+            android:layout_height="35dp"
+            android:layout_marginEnd="13dp"
+            android:layout_marginBottom="8dp"
+            android:backgroundTint="#385A81"
+            android:fontFamily="@font/segoe_regular"
+            android:paddingLeft="0dp"
+            android:paddingTop="0dp"
+            android:paddingRight="0dp"
+            android:paddingBottom="0dp"
+            android:text="cancel"
+            android:textColor="#BFD2E6"
+            android:textSize="15sp"
+            app:cornerRadius="3dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

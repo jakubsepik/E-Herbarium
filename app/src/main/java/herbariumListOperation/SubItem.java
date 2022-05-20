@@ -2,15 +2,60 @@ package herbariumListOperation;
 
 import android.net.Uri;
 
+import androidx.annotation.NonNull;
+
 public class SubItem {
     private String herbId;
     private String herbName;
     private String herbDescription;
     private int icon;
+    private Uri imageUri;
 
-    public SubItem(String herbName, int icon) {
+    public Uri getImageUri() {
+        return imageUri;
+    }
+
+    public void setImageUri(Uri imageUri) {
+        this.imageUri = imageUri;
+    }
+
+    public SubItem(String herbId, int icon) {
+        this.herbId = herbId;
+        this.icon = icon;
+    }
+    public SubItem(){}
+
+    public SubItem(String herbId,String herbName,int icon) {
+        this.herbId = herbId;
+        this.herbDescription = "";
         this.herbName = herbName;
         this.icon = icon;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "{" +
+                "      \"id\": \""+this.herbId+"\"," +
+                "      \"name\": \""+this.herbName+"\"," +
+                "      \"description\": \""+this.herbDescription+"\"," +
+                "      \"image\": \""+this.imageUri+"\"," +
+                "      \"icon\": \""+this.icon+"\""+
+                "    }";
+    }
+
+    public SubItem(String herbId, String herbName, String herbDescription, int icon) {
+        this.herbId = herbId;
+        this.herbDescription = herbDescription;
+        this.herbName = herbName;
+        this.icon = icon;
+    }
+    public SubItem(String herbId,String herbName,int icon,Uri imageUri){
+        this.herbId = herbId;
+        this.herbDescription = "";
+        this.herbName = herbName;
+        this.icon = icon;
+        this.imageUri = imageUri;
     }
 
     public int getIcon() {

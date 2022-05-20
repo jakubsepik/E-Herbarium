@@ -1,52 +1,59 @@
 package sk.spse.oursoft.android.e_herbarium;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.nfc.Tag;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.Html;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
-
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
-import sk.spse.oursoft.android.e_herbarium.database_objects.Group;
-import sk.spse.oursoft.android.e_herbarium.database_objects.Plant;
-import sk.spse.oursoft.android.e_herbarium.database_objects.User;
-
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.lang.reflect.Array;
+import herbariumListOperation.Item;
+import herbariumListOperation.SubItem;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class LandingScreenActivity extends Activity {
     private Button open;
     private Button login;
     private TextView messageText;
-    private Plant plant;
     private FirebaseDatabase database;
     private DatabaseReference myRef;
     private static final String TAG = "MyActivity";
     private FirebaseAuth mAuth;
     private DatabaseTools databaseTools;
-    private ArrayList<Group> groups;
+    private ArrayList<Item> items;
+
+    String currentPhotoPath;
+    public File photoFile;
+    private final int REQUEST_IMAGE_CAPTURE = 1;
+    private final int RESULT_LOAD_IMAGE = 2;
+    private Uri uri;
+    private final int CAMERA_REQUEST = 1888;
 
 
     @Override
@@ -82,7 +89,8 @@ public class LandingScreenActivity extends Activity {
 
         databaseTools = new DatabaseTools(getApplicationContext());
         //runs this method coz else it is one cycle behind
-        groups = new ArrayList<>();
+        items = new ArrayList<>();
+
 
 
     }
@@ -106,16 +114,32 @@ public class LandingScreenActivity extends Activity {
     }
 
 
+    //these are testing methods that I will move to my own branch
+
+    public Item item = new Item("pines");
+    public SubItem sub = new SubItem("11", R.drawable.listocek_symbolik);
+
+
     public void test_connection(View view) {
         /**/
-        databaseTools.addItem("asdf", new Plant("1", "1", "1"));
-        databaseTools.getUserItems(groups);
+//        databaseTools.addEditSubItem(item,sub);
+//        databaseTools.getUserItems(items);
+//        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+//        startActivityForResult(cameraIntent, CAMERA_REQUEST);
 
     }
+
+
     public void testing_button(View view) {
-        System.out.println(groups);
+        SubItem sub2 = new SubItem("11", R.drawable.ic_delete_group_icon);
+        databaseTools.addEditSubItem(item, sub2);
 
-
-
+        for (Item subitem : items) {
+            for (SubItem sub : subitem.getSubItemList()) {
+                System.out.println(sub + " a");
+            }
+        }
     }
+
 }
+

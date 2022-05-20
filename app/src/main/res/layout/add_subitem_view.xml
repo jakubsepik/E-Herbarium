@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#182A3E"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="26dp"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:scrollbars="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="275dp"
+            android:background="#243A52"
+            android:backgroundTint="#243A52"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp">
+
+            <ImageView
+                android:id="@+id/insertImage"
+                android:layout_width="226dp"
+                android:layout_height="226dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:maxWidth="226dp"
+                android:maxHeight="226dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/tree_placeholder" />
+
+            <ImageButton
+                android:id="@+id/dismissButton"
+                android:layout_width="34dp"
+                android:layout_height="31dp"
+                android:layout_marginStart="22dp"
+                android:layout_marginTop="22dp"
+                android:background="@null"
+                android:backgroundTint="@null"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/dismiss_icon" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <EditText
+            android:id="@+id/itemNameInput"
+            android:layout_width="335dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="35dp"
+            android:layout_marginTop="20dp"
+            android:background="@android:color/transparent"
+            android:ems="10"
+            android:hint="Item Name"
+            android:inputType="textPersonName"
+            android:maxLength="14"
+            android:textColor="#F9F9F9"
+            android:textColorHint="#85EFEFEF"
+            android:textSize="35sp" />
+
+        <View
+            android:id="@+id/nameDivider"
+            android:layout_width="330dp"
+            android:layout_height="1dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="5dp"
+            android:background="@color/white"
+            android:backgroundTint="#E1E1E1" />
+
+        <EditText
+            android:id="@+id/itemDescriptionInput"
+            android:layout_width="340dp"
+            android:layout_height="250dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/description_bg"
+            android:ems="10"
+            android:gravity="start"
+            android:hint="Item description"
+            android:inputType="textMultiLine"
+            android:maxHeight="330dp"
+            android:paddingStart="11dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="11dp"
+            android:paddingBottom="8dp"
+            android:scrollbars="vertical"
+            android:textColor="#D6E1E1E1"
+            android:textColorHint="#85EFEFEF"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/addItemButton"
+            android:layout_width="181dp"
+            android:layout_height="55dp"
+            android:layout_below="@+id/login_password"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="30dp"
+            android:backgroundTint="#30AB6A"
+            android:fontFamily="@font/segoe_semibold"
+            android:gravity="center_horizontal|center_vertical"
+            android:paddingTop="1dp"
+            android:text="Add Item"
+            android:textAllCaps="false"
+            android:textColor="#EBEBEB"
+            android:textColorHint="#EBEBEB"
+            android:textSize="25sp"
+            app:cornerRadius="5dp"
+            app:rippleColor="#EBEBEB" />
+
+    </LinearLayout>
+
+</LinearLayout>
