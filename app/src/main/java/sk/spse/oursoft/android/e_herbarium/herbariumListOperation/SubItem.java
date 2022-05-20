@@ -1,4 +1,4 @@
-package herbariumListOperation;
+package sk.spse.oursoft.android.e_herbarium.herbariumListOperation;
 
 import android.net.Uri;
 

@@ -1,28 +1,17 @@
-package herbariumListOperation;
-
-import static androidx.core.app.ActivityCompat.startActivityForResult;
+package sk.spse.oursoft.android.e_herbarium.herbariumListOperation;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.provider.MediaStore;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,12 +22,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import sk.spse.oursoft.android.e_herbarium.AddItemDialog;
-import sk.spse.oursoft.android.e_herbarium.HerbariumViewActivity;
 import sk.spse.oursoft.android.e_herbarium.ListLogic;
 import sk.spse.oursoft.android.e_herbarium.R;
 

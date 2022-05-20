@@ -1,10 +1,9 @@
-package herbariumListOperation;
+package sk.spse.oursoft.android.e_herbarium.herbariumListOperation;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Build;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
@@ -12,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -23,10 +21,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.net.URI;
 import java.util.List;
 
-import sk.spse.oursoft.android.e_herbarium.AddItemDialog;
 import sk.spse.oursoft.android.e_herbarium.ListLogic;
 import sk.spse.oursoft.android.e_herbarium.R;
 

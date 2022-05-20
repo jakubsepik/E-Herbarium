@@ -1,21 +1,16 @@
 package sk.spse.oursoft.android.e_herbarium;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -25,10 +20,8 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -37,23 +30,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Objects;
 import java.util.Random;
 
-import herbariumListOperation.Item;
-import herbariumListOperation.ItemAdapter;
-import herbariumListOperation.SubItem;
-
-import androidx.annotation.NonNull;
+import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
+import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.ItemAdapter;
+import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
 
 import android.graphics.Matrix;
 

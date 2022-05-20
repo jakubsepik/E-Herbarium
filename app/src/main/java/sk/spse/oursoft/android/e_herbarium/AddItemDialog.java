@@ -21,20 +21,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import herbariumListOperation.Item;
+import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
 
 import androidx.annotation.NonNull;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.Arrays;
 
 
-import herbariumListOperation.SubItem;
-import herbariumListOperation.SubItemAdapter;
+import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
+import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItemAdapter;
 
 public class AddItemDialog extends Dialog {
 

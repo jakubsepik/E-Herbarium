@@ -6,8 +6,6 @@ import android.net.NetworkInfo;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -18,8 +16,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-import herbariumListOperation.Item;
-import herbariumListOperation.SubItem;
+import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
+import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
 import sk.spse.oursoft.android.e_herbarium.database_objects.User;
 
 public class DatabaseTools {

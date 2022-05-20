@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import herbariumListOperation.Item;
-import herbariumListOperation.SubItem;
+import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
+import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
 
 public class ListLogic {
     static JSONObject object=null;
