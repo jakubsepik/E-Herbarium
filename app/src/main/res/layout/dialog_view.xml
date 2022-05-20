@@ -56,7 +56,9 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="35dp"
             android:layout_marginTop="20dp"
+            android:background="@android:color/transparent"
             android:fontFamily="@font/segoe_regular"
+            android:maxLength="14"
             android:scrollbars="vertical"
             android:text="Spruce"
             android:textColor="#F9F9F9"
@@ -64,7 +66,7 @@
 
         <View
             android:id="@+id/nameDivider"
-            android:layout_width="350dp"
+            android:layout_width="330dp"
             android:layout_height="2dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="5dp"
@@ -78,6 +80,8 @@
             android:layout_marginLeft="35dp"
             android:layout_marginTop="15dp"
             android:layout_marginRight="40dp"
+            android:background="@android:color/transparent"
+            android:gravity="left"
             android:scrollbars="vertical"
             android:text="This is only a placeholder text to hold a place and shouldn't be used for anything else"
             android:textColor="#E1E1E1"

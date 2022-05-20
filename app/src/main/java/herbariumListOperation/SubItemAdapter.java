@@ -4,12 +4,15 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.Build;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -17,10 +20,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.net.URI;
 import java.util.List;
 
+import sk.spse.oursoft.android.e_herbarium.AddItemDialog;
 import sk.spse.oursoft.android.e_herbarium.ListLogic;
 import sk.spse.oursoft.android.e_herbarium.R;
 
@@ -80,12 +86,6 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
 
                 Button editButton = (Button) itemDialog.findViewById(R.id.editButton);
 
-                editButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                    }
-                });
 
                 itemDialog.show();
             }
@@ -145,6 +145,10 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
         return subItemList.size();
     }
 
+    public List<SubItem> getSubItemList(){
+        return subItemList;
+    }
+
     public void removeItemMethod(Context context, SubItem subItem, View view, String itemTitle){
         SharedPreferences sharedPreferences = context.getSharedPreferences("SharedPreferences", Context.MODE_MULTI_PROCESS);
         boolean showDialog = sharedPreferences.getBoolean("showSubitemDeletionDialog", true);
@@ -184,6 +188,7 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
 
 
                 confirmRemovalButton.setOnClickListener(new View.OnClickListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
                     @Override
                     public void onClick(View view) {
                         boolean showDialog = !dontAskAgainRemoval.isChecked();

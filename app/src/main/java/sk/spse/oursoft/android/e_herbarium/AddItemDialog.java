@@ -145,7 +145,13 @@ public class AddItemDialog extends Dialog {
 
                 if (herbName.length() == 0) {
                     Toast.makeText(context, "Please input a valid herb name.", Toast.LENGTH_SHORT).show();
+<<<<<<< Updated upstream
                 } else {
+=======
+                }else if (subItemAdapter.findItemPosition(herbName, subItemAdapter.getSubItemList()) != -1){
+                    Toast.makeText(context, "Please input a unique herb name", Toast.LENGTH_SHORT).show();
+                }else{
+>>>>>>> Stashed changes
 
                     subItem.setHerbName(herbName);
                     subItem.setHerbDescription(herbDescription);
