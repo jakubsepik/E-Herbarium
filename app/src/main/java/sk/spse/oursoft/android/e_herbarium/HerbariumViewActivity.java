@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -40,6 +41,7 @@ import java.util.Random;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.ItemAdapter;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
+import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
 
 import android.graphics.Matrix;
 
@@ -61,8 +63,11 @@ public class HerbariumViewActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         databaseTools = new DatabaseTools(getApplicationContext(),this);
 
+        databaseTools.initializeNetworkCallback();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.herbarium_view);
+
 
         ListLogic.begin(null, getApplicationContext());
 

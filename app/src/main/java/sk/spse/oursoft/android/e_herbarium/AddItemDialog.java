@@ -32,6 +32,7 @@ import java.util.Arrays;
 
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItemAdapter;
+import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
 
 public class AddItemDialog extends Dialog {
 

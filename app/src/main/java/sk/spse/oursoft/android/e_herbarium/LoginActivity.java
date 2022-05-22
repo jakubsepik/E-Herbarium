@@ -3,11 +3,9 @@ package sk.spse.oursoft.android.e_herbarium;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,6 +19,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+
+import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
 //activity to login the user
 
 public class LoginActivity extends AppCompatActivity {
@@ -29,6 +29,8 @@ public class LoginActivity extends AppCompatActivity {
     private DatabaseTools databaseTools;
 
 
+    private final int NETWORK_STATUS_NOT_CONNECTED = 0;
+    private final int NETWORK_STATUS_CONNECTED = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,11 +101,13 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
 
-                        Toast.makeText(getApplicationContext(), Boolean.toString(databaseTools.isConnected()), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), databaseTools.isConnected(), Toast.LENGTH_SHORT).show();
+
+                        int networkStatus = databaseTools.isConnected();
 
                         if (resetArea.getText().toString().isEmpty()) {
                             resetArea.setError("email can not be empty");
-                        } else if (!databaseTools.isConnected()) {
+                        } else if (networkStatus == NETWORK_STATUS_NOT_CONNECTED) {
                             Toast.makeText(getApplicationContext(), "No internet connection", Toast.LENGTH_SHORT).show();
                             resetArea.setError(null);
                         } else {
@@ -137,7 +141,8 @@ public class LoginActivity extends AppCompatActivity {
         String user = email.getText().toString().trim();
         String pass = password.getText().toString().trim();
 
-        if (!databaseTools.isConnected()) {
+        int networkStatus = databaseTools.isConnected();
+        if (networkStatus == NETWORK_STATUS_NOT_CONNECTED) {
             Toast.makeText(getApplicationContext(), "No internet connection", Toast.LENGTH_SHORT).show();
             email.setError(null);
             password.setError(null);

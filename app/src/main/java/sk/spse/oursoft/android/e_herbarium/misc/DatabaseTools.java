@@ -1,14 +1,19 @@
-package sk.spse.oursoft.android.e_herbarium;
+package sk.spse.oursoft.android.e_herbarium.misc;
 
 import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
+import android.net.NetworkRequest;
 import android.net.Uri;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -43,67 +48,100 @@ public class DatabaseTools {
     private FirebaseUser user;
     private Activity activity;
 
-    public DatabaseTools(Context context,Activity activity) {
+    private final int NETWORK_STATUS_NOT_CONNECTED = 0;
+    private final int NETWORK_STATUS_CONNECTED = 1;
+
+    public DatabaseTools(Context context, Activity activity) {
         this.activity = activity;
         this.context = context;
         database = FirebaseDatabase.getInstance("https://e-herbar-default-rtdb.europe-west1.firebasedatabase.app");
 
+
+
+    }
+    ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {
+        @Override
+        public void onAvailable(Network network) {
+            Toast.makeText(context, "Connected", Toast.LENGTH_SHORT).show();
+            //Write code for  uploading the images here
+        }
+
+        @Override
+        public void onLost(Network network) {
+            //put value that is set to false when network cnnection gets lost
+        }
+    };
+    public void initializeNetworkCallback() {
+
+    ConnectivityManager connectivityManager =
+            (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+    if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.N){
+        connectivityManager.registerDefaultNetworkCallback(networkCallback);
+    } else
+
+    {
+        NetworkRequest request = new NetworkRequest.Builder()
+                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET).build();
+        connectivityManager.registerNetworkCallback(request, networkCallback);
     }
 
+}
+
+
     //tests the internet connectin status
-    public boolean isConnected() {
-        user =  getCurrentUser();
+    public int isConnected() {
+        user = getCurrentUser();
 
         ConnectivityManager manager = (ConnectivityManager) context.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = manager.getActiveNetworkInfo();
-        return networkInfo != null && networkInfo.isConnectedOrConnecting();
+        int status = NETWORK_STATUS_NOT_CONNECTED;
+        if (networkInfo != null && networkInfo.isConnectedOrConnecting()) {
+            status = NETWORK_STATUS_CONNECTED;
+        }
+        return status;
     }
 
     //Adds an item to a group if the group doesn't exist creates the group and adds it there
     public void addEditSubItem(Item item, SubItem subItem) {
 
-        user =  getCurrentUser();
+        user = getCurrentUser();
 
-        if(user != null) {
+        if (user != null) {
             myRef = database.getReference().child("users").child(user.getEmail().split("@")[0]);
             myRef.child(item.getItemTitle()).child(subItem.getHerbId()).setValue(subItem);
-        }
-        else{
-            Toast.makeText(context,"User not signed in",Toast.LENGTH_SHORT).show();
-            Log.i("add/edit subitem","user not signed in");
+        } else {
+            Toast.makeText(context, "User not signed in", Toast.LENGTH_SHORT).show();
+            Log.i("add/edit subitem", "user not signed in");
         }
     }
 
-//deletes a sub item
+    //deletes a sub item
     public void deleteSub(Item item, SubItem subItem) {
 
-        user =  getCurrentUser();
+        user = getCurrentUser();
 
-        if(user != null) {
+        if (user != null) {
             myRef = database.getReference().child("users").child(user.getEmail().split("@")[0]).child(item.getItemTitle());
             myRef.child(subItem.getHerbId()).removeValue();
-        }
-         else{
-            Toast.makeText(context,"User not signed in",Toast.LENGTH_SHORT).show();
-            Log.i("delete subItem","user not signed in");
+        } else {
+            Toast.makeText(context, "User not signed in", Toast.LENGTH_SHORT).show();
+            Log.i("delete subItem", "user not signed in");
         }
     }
 
     //deletes an item
     public void deleteItem(Item item, SubItem subItem) {
 
-        user =  getCurrentUser();
-
-        if(user != null) {
+        user = getCurrentUser();
+        if (user != null) {
             myRef = database.getReference().child("users").child(user.getEmail().split("@")[0]);
             myRef.child(item.getItemTitle()).removeValue();
-        }
-        else{
-            Toast.makeText(context,"User not signed in",Toast.LENGTH_SHORT).show();
-            Log.i("delete item","user not signed in");
+        } else {
+            Toast.makeText(context, "User not signed in", Toast.LENGTH_SHORT).show();
+            Log.i("delete item", "user not signed in");
         }
     }
-
 
 
     //adds the user registry to the database
@@ -119,9 +157,14 @@ public class DatabaseTools {
 
     //returns an arraylist of plants
     public void getUserItems(ArrayList<Item> items) {
-        if (isConnected()) {
 
-            user =  getCurrentUser();
+        int networkStatus = isConnected();
+        if (networkStatus == NETWORK_STATUS_NOT_CONNECTED) {
+            Toast.makeText(context, "No internet Connection", Toast.LENGTH_SHORT).show();
+            Log.i("get subitems", "user not connected to internet");
+        } else {
+
+            user = getCurrentUser();
 
             if (user != null) {
                 //change to fit new objects by changing regex
@@ -148,13 +191,11 @@ public class DatabaseTools {
                             }
 
                         });
-            }else{
-                Toast.makeText(context,"User not signed in",Toast.LENGTH_SHORT).show();
-                Log.i("get subitems","user not signed in");
+            } else {
+                Toast.makeText(context, "User not signed in", Toast.LENGTH_SHORT).show();
+                Log.i("get subitems", "user not signed in");
             }
 
-        } else {
-            Log.i(TAG, "Internet Connection error couldn't connect");
         }
         if (items != null) {
             Log.i("Values", String.valueOf(items));
@@ -168,32 +209,32 @@ public class DatabaseTools {
     }
 
 
-//    get ID method returns an id as input it takes the name of the group where the item is located
+    //    get ID method returns an id as input it takes the name of the group where the item is located
     public String getSubItemID(Item item) {
 
-        user =  getCurrentUser();
+        user = getCurrentUser();
         //if user not signed in returns null
-        if(user != null) {
+        if (user != null) {
             myRef = database.getReference().child("users").child(user.getEmail().split("@")[0]).child(item.getItemTitle());
             return myRef.push().getKey();
-        }
-        else{
-            Toast.makeText(context,"User not signed in",Toast.LENGTH_SHORT).show();
-            Log.e("get id","user not signed in ");
+        } else {
+            Toast.makeText(context, "User not signed in", Toast.LENGTH_SHORT).show();
+            Log.e("get id", "user not signed in ");
 
             return null;
         }
 
 
     }
-    public FirebaseUser getCurrentUser(){
+
+    public FirebaseUser getCurrentUser() {
         return FirebaseAuth.getInstance().getCurrentUser();
     }
 
     public void saveImage(Uri imageUri) {
 
         user = getCurrentUser();
-       String userName = user.getEmail().split("@")[0];
+        String userName = user.getEmail().split("@")[0];
 
         if (user != null) {
 
@@ -236,11 +277,10 @@ public class DatabaseTools {
                     }
                 }
             });
-        }else{
-            Toast.makeText(context,"Sign in to save",Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Sign in to save", Toast.LENGTH_SHORT).show();
         }
     }
-
 
 
 }

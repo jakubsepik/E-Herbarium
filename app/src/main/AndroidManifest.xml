@@ -6,6 +6,7 @@
         android:required="true" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="18" />
+    
 
     <application
         android:allowBackup="true"

@@ -19,6 +19,7 @@ import com.google.firebase.storage.StorageReference;
 
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
+import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
 
 import java.io.File;
 import java.util.ArrayList;
