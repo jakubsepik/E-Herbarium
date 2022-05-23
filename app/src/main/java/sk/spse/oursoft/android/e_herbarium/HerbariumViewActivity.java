@@ -42,6 +42,7 @@ import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.ItemAdapter;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
 import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
+import sk.spse.oursoft.android.e_herbarium.misc.UserListCallback;
 
 import android.graphics.Matrix;
 
@@ -69,8 +70,17 @@ public class HerbariumViewActivity extends AppCompatActivity {
         setContentView(R.layout.herbarium_view);
         DatabaseTools databaseTools = new DatabaseTools(getApplicationContext(),this);
 
-        ArrayList<Item> items = new ArrayList<>();
-        ListLogic.begin(items, getApplicationContext());
+        databaseTools.getUserItems(new UserListCallback() {
+            @Override
+            public void onCallback(ArrayList<Item> value) {
+
+                //finally use the database items here
+                //od the stuff here
+                ListLogic.begin(databaseTools.getItems(), getApplicationContext());
+
+            }
+        });
+
 
         databaseTools.initializeNetworkCallback();
 

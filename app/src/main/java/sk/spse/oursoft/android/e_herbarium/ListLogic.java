@@ -33,11 +33,11 @@ public class ListLogic {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     static void begin(ArrayList<Item> newObject, Context context) {
-        list=new ArrayList<>();
+        list = new ArrayList<>();
         JSONObject object = null;
         ListLogic.context = context;
         try {
-            if (newObject.size() == 0) {
+            if (newObject == null || newObject.size() == 0) {
                 SharedPreferences sharedPreferences = context.getSharedPreferences("EHerbarium", MODE_PRIVATE);
                 if (sharedPreferences.contains("items")) {
                     Log.d("EH", "Begin sharedpreferences");
@@ -131,7 +131,7 @@ public class ListLogic {
     }
 
     public static void saveAll(Context context) {
-        Log.d("EH","saving");
+        Log.d("EH", "saving");
         StringBuilder listText = new StringBuilder(list.toString());
         listText.setCharAt(0, '{');
         listText.setCharAt(listText.length() - 1, '}');
