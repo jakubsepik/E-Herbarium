@@ -71,7 +71,7 @@ public class DatabaseTools {
 
         @Override
         public void onLost(Network network) {
-            //put value that is set to false when network cnnection gets lost
+            //put value that is set to false when network connection gets lost
         }
     };
     public void initializeNetworkCallback() {

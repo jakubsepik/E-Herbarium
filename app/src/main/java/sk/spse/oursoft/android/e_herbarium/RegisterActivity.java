@@ -36,7 +36,7 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        databaseTools = new DatabaseTools(getApplicationContext(),this);
+        databaseTools = new DatabaseTools(getApplicationContext(), this);
 
         mAuth = FirebaseAuth.getInstance();
         email = findViewById(R.id.register_email);
@@ -79,13 +79,15 @@ public class RegisterActivity extends AppCompatActivity {
         int networkStatus = databaseTools.isConnected();
 
         if (networkStatus == NETWORK_STATUS_NOT_CONNECTED) {
+            Toast.makeText(RegisterActivity.this, "Internet connection error", Toast.LENGTH_SHORT).show();
+        } else {
             if (user.isEmpty()) {
                 email.setError("Email can not be empty");
             }
             if (pass.isEmpty()) {
                 password.setError("Password can not be empty");
             } else {
-                    mAuth.createUserWithEmailAndPassword(user, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                mAuth.createUserWithEmailAndPassword(user, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
@@ -108,8 +110,7 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                 });
             }
-        } else {
-            Toast.makeText(RegisterActivity.this, "Internet connection error", Toast.LENGTH_SHORT).show();
+        
         }
     }
 }
