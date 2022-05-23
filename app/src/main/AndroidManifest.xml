@@ -6,10 +6,6 @@
         android:required="true" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="18" />
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 
     <application
         android:allowBackup="true"

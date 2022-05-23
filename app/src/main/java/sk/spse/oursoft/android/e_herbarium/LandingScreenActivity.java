@@ -20,6 +20,7 @@ import com.google.firebase.storage.StorageReference;
 
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
+import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
 
 import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
 import sk.spse.oursoft.android.e_herbarium.misc.UserListCallback;
@@ -78,7 +79,7 @@ public class LandingScreenActivity extends Activity {
             }
         });
 
-        databaseTools = new DatabaseTools(getApplicationContext());
+        databaseTools = new DatabaseTools(getApplicationContext(),this);
         //runs this method coz else it is one cycle behind
         items = new ArrayList<>();
 
@@ -122,15 +123,8 @@ public class LandingScreenActivity extends Activity {
 
 
     public void test_connection(View view) {
-
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference reference = storage.getReference();
-
-
-        items = databaseTools.getItems();
-        System.out.println(items);
-
-
         /**/
 //        databaseTools.addEditSubItem(item,sub);
 //        databaseTools.getUserItems(items);

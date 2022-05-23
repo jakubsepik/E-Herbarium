@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -40,6 +41,7 @@ import java.util.Random;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.ItemAdapter;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
+import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
 
 import android.graphics.Matrix;
 
@@ -53,11 +55,16 @@ public class HerbariumViewActivity extends AppCompatActivity {
     public String TAG = "HerbariumViewActivity";
 
     public String currentPhotoPath;
+    public DatabaseTools databaseTools;
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        databaseTools = new DatabaseTools(getApplicationContext(),this);
+
+        databaseTools.initializeNetworkCallback();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.herbarium_view);
         DatabaseTools database_tools = new DatabaseTools(this.getApplicationContext());
@@ -72,6 +79,8 @@ public class HerbariumViewActivity extends AppCompatActivity {
         databaseTools = new DatabaseTools(getApplicationContext(),this);
         databaseTools.initializeNetworkCallback();
 
+
+        ListLogic.begin(null, getApplicationContext());
 
         RecyclerView rvItem = findViewById(R.id.recyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(HerbariumViewActivity.this);
@@ -162,8 +171,9 @@ public class HerbariumViewActivity extends AppCompatActivity {
                     if (imageFile != null) {
                         Uri imageUri = Uri.fromFile(imageFile);
                         ((AddItemDialog) dialogReference).setImageURI(imageUri);
-                        Toast.makeText(this, "success", Toast.LENGTH_SHORT).show();
 
+                        databaseTools.saveImage(imageUri);
+                        Toast.makeText(this, "success", Toast.LENGTH_SHORT).show();
 
                     } else {
                         Log.e("Camera", "failed to save image");
@@ -189,14 +199,17 @@ public class HerbariumViewActivity extends AppCompatActivity {
                     Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageURI);
 
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    imageBitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
-                    out.close();
+
 
                     File imageFile = storeImage(imageBitmap, RESULT_LOAD_IMAGE);
                     if (imageFile != null) {
                         Uri imageUri = Uri.fromFile(imageFile);
                         ((AddItemDialog) dialogReference).setImageURI(imageUri);
+
+                        databaseTools.saveImage(imageUri);
+
                         Toast.makeText(this, "success", Toast.LENGTH_SHORT).show();
+
                     } else {
                         Log.e("Gallery", "failed to save image");
                         Toast.makeText(this, "Couldn't save image", Toast.LENGTH_SHORT).show();

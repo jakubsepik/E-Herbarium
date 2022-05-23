@@ -34,10 +34,8 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
-import sk.spse.oursoft.android.e_herbarium.ListLogic;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
 import sk.spse.oursoft.android.e_herbarium.database_objects.User;
@@ -70,7 +68,6 @@ public class DatabaseTools {
         @Override
         public void onAvailable(Network network) {
             Toast.makeText(context, "Connected", Toast.LENGTH_SHORT).show();
-
         }
 
         @Override
