@@ -50,7 +50,6 @@ public class DatabaseTools {
     private ArrayList<Item> items;
 
 
-    private ListLogic listLogic;
     private final int NETWORK_STATUS_NOT_CONNECTED = 0;
     private final int NETWORK_STATUS_CONNECTED = 1;
 

@@ -78,7 +78,7 @@ public class ListLogic {
 
     static void addOne(SubItem item, int index) {
         list.get(index).addSubItem(item);
-        saveAll();
+        saveAll(context);
     }
 
     public static void deleteOne(int index, String category) {

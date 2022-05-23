@@ -67,20 +67,13 @@ public class HerbariumViewActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.herbarium_view);
-        DatabaseTools database_tools = new DatabaseTools(this.getApplicationContext());
+        DatabaseTools databaseTools = new DatabaseTools(getApplicationContext(),this);
 
         ArrayList<Item> items = new ArrayList<>();
-        database_tools.getUserItems(items);
         ListLogic.begin(items, getApplicationContext());
 
-
-
-
-        databaseTools = new DatabaseTools(getApplicationContext(),this);
         databaseTools.initializeNetworkCallback();
 
-
-        ListLogic.begin(null, getApplicationContext());
 
         RecyclerView rvItem = findViewById(R.id.recyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(HerbariumViewActivity.this);
@@ -148,7 +141,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        ListLogic.saveAll();
+        ListLogic.saveAll(getApplicationContext());
         super.onPause();
     }
 
