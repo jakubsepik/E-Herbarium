@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -15,8 +16,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
+import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
+
+import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
+import sk.spse.oursoft.android.e_herbarium.misc.UserListCallback;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -72,13 +80,23 @@ public class LandingScreenActivity extends Activity {
             }
         });
 
-        databaseTools = new DatabaseTools(getApplicationContext());
+        databaseTools = new DatabaseTools(getApplicationContext(),this);
         //runs this method coz else it is one cycle behind
         items = new ArrayList<>();
 
+        databaseTools.getUserItems(new UserListCallback() {
+            @Override
+            public void onCallback(ArrayList<Item> value) {
 
+                //finally use the database items here
+                //od the stuff here 
+                System.out.println(databaseTools.getItems());
+
+            }
+        });
 
     }
+
 
     private void go_login() {
         startActivity(new Intent(LandingScreenActivity.this, LoginActivity.class));
@@ -106,6 +124,8 @@ public class LandingScreenActivity extends Activity {
 
 
     public void test_connection(View view) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference reference = storage.getReference();
         /**/
 //        databaseTools.addEditSubItem(item,sub);
 //        databaseTools.getUserItems(items);
