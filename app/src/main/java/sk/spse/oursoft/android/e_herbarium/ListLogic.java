@@ -2,6 +2,7 @@ package sk.spse.oursoft.android.e_herbarium;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,22 +27,24 @@ import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
 
 public class ListLogic {
-    static List<Item> list=new ArrayList<>();
-
+    static List<Item> list = new ArrayList<>();
+    @SuppressLint("StaticFieldLeak")
+    static Context context = null;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    static void begin(JSONObject newObject, Context context) {
-        JSONObject object=null;
+    static void begin(ArrayList<Item> newObject, Context context) {
+        list=new ArrayList<>();
+        JSONObject object = null;
+        ListLogic.context = context;
         try {
-            if (newObject == null) {
-
+            if (newObject.size() == 0) {
                 SharedPreferences sharedPreferences = context.getSharedPreferences("EHerbarium", MODE_PRIVATE);
                 if (sharedPreferences.contains("items")) {
-                    Log.d("EH","Begin sharedpreferences");
+                    Log.d("EH", "Begin sharedpreferences");
                     object = new JSONObject(sharedPreferences.getString("items", "{}"));
-                    Log.d("EH",object.toString());
-                }else{
-                    Log.d("EH","Begin startingtemplate");
+                    Log.d("EH", object.toString());
+                } else {
+                    Log.d("EH", "Begin startingtemplate");
                     InputStream is = context.getAssets().open("startingTemplate.json");
                     int size = is.available();
                     byte[] buffer = new byte[size];
@@ -48,60 +52,67 @@ public class ListLogic {
                     is.close();
                     object = new JSONObject(new String(buffer, StandardCharsets.UTF_8));
                 }
-            } else
-                object = newObject;
-            Iterator<String> temp = object.keys();
-            while (temp.hasNext()) {
-                String key = temp.next();
-                JSONArray value = (JSONArray) object.get(key);
-                List<SubItem> items = new ArrayList<>();
-                for (int i = 0; i < value.length(); i++) {
-                    JSONObject item = value.getJSONObject(i);
-                    SubItem subItem = new SubItem(item.getString("id"), item.getString("name"), item.getString("description"), item.getInt("icon"));
-                    items.add(subItem);
+                Iterator<String> temp = object.keys();
+                while (temp.hasNext()) {
+                    String key = temp.next();
+                    JSONArray value = (JSONArray) object.get(key);
+                    List<SubItem> items = new ArrayList<>();
+                    for (int i = 0; i < value.length(); i++) {
+                        JSONObject item = value.getJSONObject(i);
+                        SubItem subItem = new SubItem(item.getString("id"), item.getString("name"), item.getString("description"), item.getInt("icon"));
+                        items.add(subItem);
+                    }
+                    list.add(new Item(key, items));
                 }
-                list.add(new Item(key, items));
+            } else {
+                list = newObject;
+                Log.d("EH", "get from database");
+                Log.d("EH", newObject.toString());
             }
+
         } catch (IOException | JSONException ex) {
             ex.printStackTrace();
         }
-        Log.d("EH",list.toString());
+        //Log.d("EH", list.toString());
     }
+
     static void addOne(SubItem item, int index) {
         list.get(index).addSubItem(item);
+        saveAll();
     }
 
     public static void deleteOne(int index, String category) {
-        for(Item tmp : list){
-            if(tmp.getItemTitle().equals(category))
+        for (Item tmp : list) {
+            if (tmp.getItemTitle().equals(category))
                 tmp.getSubItemList().remove(index);
         }
     }
 
     static boolean addCategory(Item category) {
-        for(Item tmp : list){
-            if(tmp.getItemTitle().equals(category.getItemTitle()))
+        for (Item tmp : list) {
+            if (tmp.getItemTitle().equals(category.getItemTitle()))
                 return false;
         }
         list.add(category);
         return true;
 
     }
-    public static void editCategory(int index, String name){
+
+    public static void editCategory(int index, String name) {
         list.get(index).setItemTitle(name);
     }
 
-    public static void editOne(String category, int index, SubItem subItem){
-        for(Item tmp : list){
-            if(tmp.getItemTitle().equals(category))
-                tmp.getSubItemList().add(index,subItem);
+    public static void editOne(String category, int index, SubItem subItem) {
+        for (Item tmp : list) {
+            if (tmp.getItemTitle().equals(category))
+                tmp.getSubItemList().add(index, subItem);
         }
     }
 
 
     static void deleteCategory(String category) {
-        for(int i=0;i<list.toArray().length;i++){
-            if(list.get(i).getItemTitle().equals(category)){
+        for (int i = 0; i < list.toArray().length; i++) {
+            if (list.get(i).getItemTitle().equals(category)) {
                 list.remove(i);
                 return;
             }
@@ -110,8 +121,8 @@ public class ListLogic {
 
     static JSONObject getObject() throws JSONException {
         StringBuilder listText = new StringBuilder(list.toString());
-        listText.setCharAt(0,'{');
-        listText.setCharAt(listText.length()-1,'}');
+        listText.setCharAt(0, '{');
+        listText.setCharAt(listText.length() - 1, '}');
         return new JSONObject(listText.toString());
     }
 
@@ -119,15 +130,16 @@ public class ListLogic {
         return list;
     }
 
-    static void saveAll(Context context) {
-        Log.d("EH","saving");
+    static void saveAll() {
+        Log.d("EH", "saving");
         StringBuilder listText = new StringBuilder(list.toString());
-        listText.setCharAt(0,'{');
-        listText.setCharAt(listText.length()-1,'}');
-        Log.d("EH",listText.toString());
+        listText.setCharAt(0, '{');
+        listText.setCharAt(listText.length() - 1, '}');
+        Log.d("EH", listText.toString());
         SharedPreferences sharedPreferences = context.getSharedPreferences("EHerbarium", MODE_PRIVATE);
         SharedPreferences.Editor myEdit = sharedPreferences.edit();
         myEdit.putString("items", listText.toString());
+        myEdit.putLong("timestamp", new Date().getTime());
         myEdit.apply();
     }
 }

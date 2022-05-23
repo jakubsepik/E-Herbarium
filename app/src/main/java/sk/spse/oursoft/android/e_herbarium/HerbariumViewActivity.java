@@ -60,8 +60,13 @@ public class HerbariumViewActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.herbarium_view);
+        DatabaseTools database_tools = new DatabaseTools(this.getApplicationContext());
 
-        ListLogic.begin(null, getApplicationContext());
+        ArrayList<Item> items = new ArrayList<>();
+        database_tools.getUserItems(items);
+        ListLogic.begin(items, getApplicationContext());
+
+
 
         RecyclerView rvItem = findViewById(R.id.recyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(HerbariumViewActivity.this);
@@ -129,7 +134,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        ListLogic.saveAll(getApplicationContext());
+        ListLogic.saveAll();
         super.onPause();
     }
 
