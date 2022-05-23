@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
@@ -69,7 +70,7 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
                 if (subItem.getImageUri() == null){
                     image.setImageResource(subItem.getIcon());
                 }else{
-                    image.setImageURI(subItem.getImageUri());
+                    image.setImageURI(Uri.parse(subItem.getImageUri()));
                 }
 
                 ImageButton dismissButton = (ImageButton) itemDialog.findViewById(R.id.dismissButton);

@@ -136,14 +136,28 @@ public class LandingScreenActivity extends Activity {
 
 
     public void testing_button(View view) {
-        SubItem sub2 = new SubItem("11", R.drawable.ic_delete_group_icon);
-        databaseTools.addEditSubItem(item, sub2);
+        SubItem sub0 = new SubItem("78","tree","this is the tree descprition", R.drawable.ic_delete_group_icon);
+        SubItem sub1 = new SubItem("45","tree", R.drawable.ic_delete_group_icon,"imageUri");
+        SubItem sub2 = new SubItem("45","tree", R.drawable.ic_delete_group_icon);
 
-        for (Item subitem : items) {
-            for (SubItem sub : subitem.getSubItemList()) {
-                System.out.println(sub + " a");
+
+        databaseTools.addEditSubItem(item, sub2);
+        databaseTools.getUserItems(new UserListCallback() {
+            @Override
+            public void onCallback(ArrayList<Item> value) {
+
+                //finally use the database items here
+                //od the stuff here
+                System.out.println(databaseTools.getItems());
+                for (Item subitem : databaseTools.getItems()) {
+                    for (SubItem sub : subitem.getSubItemList()) {
+                        System.out.println(sub + " a");
+                    }
+                }
+
             }
-        }
+        });
+
     }
 
 }

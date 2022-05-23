@@ -378,13 +378,18 @@ public class AddItemDialog extends Dialog {
 
                                 }
                                 //add the name of the Item
-//                                subItem.setHerbId(databaseTools.getSubItemID(item));
+                                String herbId = databaseTools.getSubItemID(item);
+                                subItem.setHerbId(herbId);
+
                                 addIconDialog.dismiss();
                                 AddItemDialog.this.dismiss();
                                 //databaseTools.addEditSubItem(item,subItem);
                                 ListLogic.addOne(subItem, index);
                                 subItemAdapter.addSubItem();
-//                                databaseTools.addItem(item,subItem);
+
+                                databaseTools.addEditSubItem(item,subItem);
+
+                                //databaseTools.addItemToDatabase(item,subItem);
 
                             }
                         }
@@ -410,7 +415,7 @@ public class AddItemDialog extends Dialog {
 
         insertImage.setImageURI(imageURI);
 
-        subItem.setImageUri(imageURI);
+        subItem.setImageUri(imageURI.toString());
 
 
     }

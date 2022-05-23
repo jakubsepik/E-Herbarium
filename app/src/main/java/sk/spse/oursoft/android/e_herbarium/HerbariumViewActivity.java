@@ -325,7 +325,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
                     .build();
 
 
-            SubItem subItem = new SubItem(herbId, herbName,icon,uri);
+            SubItem subItem = new SubItem(herbId, herbName,icon,uri.toString());
 
 
             subItemList.add(subItem);

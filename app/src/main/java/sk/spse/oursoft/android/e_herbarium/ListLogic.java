@@ -119,7 +119,7 @@ public class ListLogic {
         }
     }
 
-    static JSONObject getObject() throws JSONException {
+    public static JSONObject getObject() throws JSONException {
         StringBuilder listText = new StringBuilder(list.toString());
         listText.setCharAt(0, '{');
         listText.setCharAt(listText.length() - 1, '}');
