@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import sk.spse.oursoft.android.e_herbarium.EditItemDialog;
 import sk.spse.oursoft.android.e_herbarium.ListLogic;
 import sk.spse.oursoft.android.e_herbarium.R;
 
@@ -81,6 +82,16 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
                 });
 
                 Button editButton = (Button) itemDialog.findViewById(R.id.editButton);
+                editButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        EditItemDialog editItemDialog = new EditItemDialog(view.getContext(), android.R.style.Theme_Black_NoTitleBar_Fullscreen, subItem, subItemList);
+
+                        editItemDialog.show();
+
+                        itemDialog.dismiss();
+                    }
+                });
 
 
                 itemDialog.show();
