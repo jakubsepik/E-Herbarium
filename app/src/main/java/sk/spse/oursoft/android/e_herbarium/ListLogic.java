@@ -119,7 +119,7 @@ public class ListLogic {
         return list;
     }
 
-    static void saveAll(Context context) {
+    public static void saveAll(Context context) {
         Log.d("EH","saving");
         StringBuilder listText = new StringBuilder(list.toString());
         listText.setCharAt(0,'{');

@@ -63,6 +63,11 @@ public class HerbariumViewActivity extends AppCompatActivity {
 
         ListLogic.begin(null, getApplicationContext());
 
+
+        databaseTools = new DatabaseTools(getApplicationContext(),this);
+        databaseTools.initializeNetworkCallback();
+
+
         RecyclerView rvItem = findViewById(R.id.recyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(HerbariumViewActivity.this);
         List<Item> itemList = ListLogic.getList();
