@@ -25,12 +25,12 @@ import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
 
 public class ListLogic {
-    static JSONObject object=null;
     static List<Item> list=new ArrayList<>();
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     static void begin(JSONObject newObject, Context context) {
+        JSONObject object=null;
         try {
             if (newObject == null) {
 
@@ -105,12 +105,14 @@ public class ListLogic {
                 list.remove(i);
                 return;
             }
-
         }
     }
 
-    static JSONObject getObject() {
-        return object;
+    static JSONObject getObject() throws JSONException {
+        StringBuilder listText = new StringBuilder(list.toString());
+        listText.setCharAt(0,'{');
+        listText.setCharAt(listText.length()-1,'}');
+        return new JSONObject(listText.toString());
     }
 
     static List<Item> getList() {
