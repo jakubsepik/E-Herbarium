@@ -28,7 +28,7 @@ public class DatabaseTools {
     private User user;
 
 
-    public DatabaseTools(Context context) {
+    public DatabaseTools(Context context,Application application) {
         this.context = context;
         database = FirebaseDatabase.getInstance("https://e-herbar-default-rtdb.europe-west1.firebasedatabase.app");
     }

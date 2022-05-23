@@ -15,14 +15,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
-<<<<<<< Updated upstream
-=======
+
 import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
 import sk.spse.oursoft.android.e_herbarium.misc.UserListCallback;
->>>>>>> Stashed changes
 
 import java.io.File;
 import java.util.ArrayList;
@@ -122,8 +122,7 @@ public class LandingScreenActivity extends Activity {
 
 
     public void test_connection(View view) {
-<<<<<<< Updated upstream
-=======
+
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference reference = storage.getReference();
 
@@ -131,7 +130,7 @@ public class LandingScreenActivity extends Activity {
         items = databaseTools.getItems();
         System.out.println(items);
 
->>>>>>> Stashed changes
+
         /**/
 //        databaseTools.addEditSubItem(item,sub);
 //        databaseTools.getUserItems(items);
