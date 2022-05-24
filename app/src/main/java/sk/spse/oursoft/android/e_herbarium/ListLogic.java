@@ -77,11 +77,12 @@ public class ListLogic {
     }
 
     static void addOne(SubItem item, int index) {
+        saveAll();
         list.get(index).addSubItem(item);
-        saveAll(context);
     }
 
     public static void deleteOne(int index, String category) {
+        saveAll();
         for (Item tmp : list) {
             if (tmp.getItemTitle().equals(category))
                 tmp.getSubItemList().remove(index);
@@ -89,6 +90,7 @@ public class ListLogic {
     }
 
     static boolean addCategory(Item category) {
+        saveAll();
         for (Item tmp : list) {
             if (tmp.getItemTitle().equals(category.getItemTitle()))
                 return false;
@@ -99,10 +101,12 @@ public class ListLogic {
     }
 
     public static void editCategory(int index, String name) {
+        saveAll();
         list.get(index).setItemTitle(name);
     }
 
     public static void editOne(String category, int index, SubItem subItem) {
+        saveAll();
         for (Item tmp : list) {
             if (tmp.getItemTitle().equals(category))
                 tmp.getSubItemList().add(index, subItem);
@@ -111,6 +115,7 @@ public class ListLogic {
 
 
     static void deleteCategory(String category) {
+        saveAll();
         for (int i = 0; i < list.toArray().length; i++) {
             if (list.get(i).getItemTitle().equals(category)) {
                 list.remove(i);
@@ -130,7 +135,7 @@ public class ListLogic {
         return list;
     }
 
-    public static void saveAll(Context context) {
+    public static void saveAll() {
         Log.d("EH", "saving");
         StringBuilder listText = new StringBuilder(list.toString());
         listText.setCharAt(0, '{');
@@ -139,7 +144,12 @@ public class ListLogic {
         SharedPreferences sharedPreferences = context.getSharedPreferences("EHerbarium", MODE_PRIVATE);
         SharedPreferences.Editor myEdit = sharedPreferences.edit();
         myEdit.putString("items", listText.toString());
-        myEdit.putLong("timestamp", new Date().getTime());
+        long timestamp = new Date().getTime();
+        myEdit.putLong("timestamp", timestamp);
         myEdit.apply();
     }
+     public static long getTimestamp(){
+         SharedPreferences sharedPreferences = context.getSharedPreferences("EHerbarium", MODE_PRIVATE);
+         return sharedPreferences.getLong("timestamp",0);
+     }
 }
