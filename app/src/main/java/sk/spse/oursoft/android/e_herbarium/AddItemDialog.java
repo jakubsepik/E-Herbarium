@@ -383,13 +383,11 @@ public class AddItemDialog extends Dialog {
 
                                 addIconDialog.dismiss();
                                 AddItemDialog.this.dismiss();
-                                //databaseTools.addEditSubItem(item,subItem);
+
                                 ListLogic.addOne(subItem, index);
                                 subItemAdapter.addSubItem();
 
                                 databaseTools.addEditSubItem(item,subItem);
-
-                                //databaseTools.addItemToDatabase(item,subItem);
 
                             }
                         }

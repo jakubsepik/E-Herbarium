@@ -63,16 +63,12 @@ public class HerbariumViewActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         databaseTools = new DatabaseTools(getApplicationContext(),this);
 
-        databaseTools.initializeNetworkCallback();
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.herbarium_view);
         DatabaseTools databaseTools = new DatabaseTools(getApplicationContext(),this);
 
         ArrayList<Item> items = new ArrayList<>();
         ListLogic.begin(items, getApplicationContext());
-
-        databaseTools.initializeNetworkCallback();
 
 
         RecyclerView rvItem = findViewById(R.id.recyclerView);

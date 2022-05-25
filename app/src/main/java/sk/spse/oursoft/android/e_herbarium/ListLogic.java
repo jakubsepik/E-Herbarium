@@ -136,10 +136,14 @@ public class ListLogic {
         listText.setCharAt(0, '{');
         listText.setCharAt(listText.length() - 1, '}');
         Log.d("EH", listText.toString());
+
         SharedPreferences sharedPreferences = context.getSharedPreferences("EHerbarium", MODE_PRIVATE);
         SharedPreferences.Editor myEdit = sharedPreferences.edit();
+
         myEdit.putString("items", listText.toString());
         myEdit.putLong("timestamp", new Date().getTime());
         myEdit.apply();
     }
+
+
 }

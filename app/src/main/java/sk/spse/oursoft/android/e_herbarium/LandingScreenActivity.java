@@ -81,6 +81,8 @@ public class LandingScreenActivity extends Activity {
         });
 
         databaseTools = new DatabaseTools(getApplicationContext(),this);
+        databaseTools.initializeNetworkCallback();
+
         //runs this method coz else it is one cycle behind
         items = new ArrayList<>();
 
@@ -91,6 +93,11 @@ public class LandingScreenActivity extends Activity {
                 //finally use the database items here
                 //od the stuff here 
                 System.out.println(databaseTools.getItems());
+
+            }
+
+            @Override
+            public void onTimeCallback(int time) {
 
             }
         });
@@ -154,6 +161,11 @@ public class LandingScreenActivity extends Activity {
                         System.out.println(sub + " a");
                     }
                 }
+
+            }
+
+            @Override
+            public void onTimeCallback(int time) {
 
             }
         });

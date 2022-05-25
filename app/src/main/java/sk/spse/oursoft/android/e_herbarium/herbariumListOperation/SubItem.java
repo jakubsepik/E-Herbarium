@@ -57,6 +57,13 @@ public class SubItem {
         this.icon = icon;
         this.imageUri = imageUri;
     }
+    public SubItem(String herbId,String herbName,String herbDescription,int icon,String imageUri){
+        this.herbId = herbId;
+        this.herbDescription = herbDescription;
+        this.herbName = herbName;
+        this.icon = icon;
+        this.imageUri = imageUri;
+    }
 
 
     public int getIcon() {
