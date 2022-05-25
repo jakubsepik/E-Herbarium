@@ -57,6 +57,8 @@ public class HerbariumViewActivity extends AppCompatActivity {
     public String currentPhotoPath;
     public DatabaseTools databaseTools;
 
+    private final String[] invalidCharacters = {".", "@", "$", "%", "&", "/", "<", ">", "?", "|", "{", "}", "[", "]"};
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -110,7 +112,13 @@ public class HerbariumViewActivity extends AppCompatActivity {
 
                                     } else if (groupExists(nameInput.getText().toString(), itemList)) {
                                         Toast.makeText(view.getContext(), "The group's name has to be unique!", Toast.LENGTH_SHORT).show();
-                                    } else {
+
+
+                                    }else if (stringContainsInvalidCharacters(nameInput.getText().toString())){
+
+                                        Toast.makeText(view.getContext(), "Characters " + Arrays.toString(invalidCharacters) + " aren't allowed!", Toast.LENGTH_SHORT).show();
+
+                                    }else {
                                         List<SubItem> subItemList = new ArrayList<SubItem>();
                                         Item item = new Item(nameInput.getText().toString(), subItemList);
 
@@ -336,5 +344,14 @@ public class HerbariumViewActivity extends AppCompatActivity {
         return false;
     }
 
+    protected boolean stringContainsInvalidCharacters(String string){
+        for (String character : invalidCharacters){
+            if (string.contains(character)){
+                return true;
+            }
+        }
+
+        return false;
+    }
 
 }

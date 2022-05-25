@@ -43,6 +43,8 @@ public class AddItemDialog extends Dialog {
 
     private ImageView insertImage;
 
+    private final String[] invalidCharacters = {".", "@", "$", "%", "&", "/", "<", ">", "?", "|", "{", "}", "[", "]"};
+
     private final int[] iconList = {R.drawable.listocek_symbolik, R.drawable.kricek_symbolik, R.drawable.klasocek_symbolik, R.drawable.stromcek_symbolik};
 
     private boolean leavesPicked = false;
@@ -147,6 +149,10 @@ public class AddItemDialog extends Dialog {
                 }else if (subItemAdapter.findItemPosition(herbName, subItemAdapter.getSubItemList()) != -1){
 
                     Toast.makeText(context, "Please input a unique herb name", Toast.LENGTH_SHORT).show();
+
+                }else if(stringContainsInvalidCharacters(herbName)){
+
+                    Toast.makeText(context, "Characters " + Arrays.toString(invalidCharacters) + " aren't allowed!", Toast.LENGTH_SHORT).show();
 
                 }else{
 
@@ -416,6 +422,16 @@ public class AddItemDialog extends Dialog {
         subItem.setImageUri(imageURI.toString());
 
 
+    }
+
+    protected boolean stringContainsInvalidCharacters(String string){
+        for (String character : invalidCharacters){
+            if (string.contains(character)){
+                return true;
+            }
+        }
+
+        return false;
     }
 
 
