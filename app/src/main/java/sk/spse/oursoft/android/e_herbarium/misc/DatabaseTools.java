@@ -91,11 +91,14 @@ public class DatabaseTools {
                         Log.i("DATABASE_TIME", String.valueOf(Database_time));
 
                         if(Database_time > Json_time){
-                           //write setting json from database
+                            Toast.makeText(context,"Loading values from Database",Toast.LENGTH_SHORT).show();
+
+                            //write setting json from database
                         }
                         else{
                             //database = json
                             ArrayList<Item> JsonItems = new ArrayList<>();
+                            Toast.makeText(context,"Loading values from Json",Toast.LENGTH_SHORT).show();
 
                             try {
                                 JSONObject json_database = ListLogic.getObject();

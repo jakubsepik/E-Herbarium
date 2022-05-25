@@ -67,14 +67,12 @@ public class HerbariumViewActivity extends AppCompatActivity {
         setContentView(R.layout.herbarium_view);
         DatabaseTools databaseTools = new DatabaseTools(getApplicationContext(),this);
 
-        ArrayList<Item> items = new ArrayList<>();
-        ListLogic.begin(items, getApplicationContext());
-
-
         RecyclerView rvItem = findViewById(R.id.recyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(HerbariumViewActivity.this);
         List<Item> itemList = ListLogic.getList();
         ItemAdapter itemAdapter = new ItemAdapter(itemList);
+
+
         rvItem.setAdapter(itemAdapter);
         rvItem.setLayoutManager(layoutManager);
 
