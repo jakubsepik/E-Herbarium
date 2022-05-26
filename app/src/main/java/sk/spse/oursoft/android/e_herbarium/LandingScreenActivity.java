@@ -89,7 +89,7 @@ public class LandingScreenActivity extends Activity {
 
         //runs this method coz else it is one cycle behind
         items = new ArrayList<>();
-        ListLogic.begin(items, getApplicationContext());
+        //ListLogic.begin(items, getApplicationContext());
 
         databaseTools.getUserItems(new UserListCallback() {
             @Override
