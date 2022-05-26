@@ -32,10 +32,18 @@ import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.UUID;
 
+import sk.spse.oursoft.android.e_herbarium.ListLogic;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
 import sk.spse.oursoft.android.e_herbarium.database_objects.User;
@@ -61,35 +69,111 @@ public class DatabaseTools {
         database = FirebaseDatabase.getInstance("https://e-herbar-default-rtdb.europe-west1.firebasedatabase.app");
 
 
-
     }
+
     ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {
         @Override
         public void onAvailable(Network network) {
             Toast.makeText(context, "Connected", Toast.LENGTH_SHORT).show();
+
+            long Json_time = (long) System.currentTimeMillis();
+
+            user = getCurrentUser();
+
+            if (user != null) {
+                DatabaseReference time_ref = database.getReference().child("LAST_CHANGE");
+
+                time_ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        long Database_time = (long) dataSnapshot.getValue();
+                        Log.i("DATABASE_TIME", String.valueOf(Database_time));
+
+                        if(Database_time > Json_time){
+                            Toast.makeText(context,"Loading values from Database",Toast.LENGTH_SHORT).show();
+
+                            //write setting json from database
+                        }
+                        else{
+                            //database = json
+                            ArrayList<Item> JsonItems = new ArrayList<>();
+                            Toast.makeText(context,"Loading values from Json",Toast.LENGTH_SHORT).show();
+
+                            try {
+                                JSONObject json_database = ListLogic.getObject();
+                                Log.e("DATABASE", String.valueOf(json_database));
+
+                                for (Iterator<String> it = json_database.keys(); it.hasNext(); ) {
+                                    String key = it.next();
+
+                                    List<SubItem> subItems = new ArrayList<>();
+                                    JSONArray values = (JSONArray) json_database.get(key);
+
+                                    for (int i = 0; i < values.length(); i++) {
+                                        JSONObject item = values.getJSONObject(i);
+                                        SubItem subItem = new SubItem(item.getString("id"),
+                                                item.getString("name"),
+                                                item.getString("description"),
+                                                item.getInt("icon"),
+                                                item.getString("image"));
+                                        subItems.add(subItem);
+                                    }
+                                    JsonItems.add(new Item(key,subItems));
+                                }
+                                for(Item item : JsonItems){
+                                    addEditItem(item);
+                                }
+                            } catch (JSONException e) {
+                                Toast.makeText(context,"Failed to load database from Internal storage",Toast.LENGTH_SHORT);
+                                e.printStackTrace();
+                            }
+
+
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            } else {
+                Toast.makeText(context, "User not signed in", Toast.LENGTH_SHORT).show();
+                Log.i("add/edit subitem", "user not signed in");
+            }
+
+
+            try {
+                Log.i("NETWORK ON", ListLogic.getObject().toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
         }
 
         @Override
         public void onLost(Network network) {
-            //put value that is set to false when network connection gets lost
+            Toast.makeText(context, "Lost network connection", Toast.LENGTH_SHORT).show();
         }
     };
+
     public void initializeNetworkCallback() {
 
-    ConnectivityManager connectivityManager =
-            (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-    if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.N){
-        connectivityManager.registerDefaultNetworkCallback(networkCallback);
-    } else
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            connectivityManager.registerDefaultNetworkCallback(networkCallback);
+        } else {
+            NetworkRequest request = new NetworkRequest.Builder()
+                    .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET).build();
+            connectivityManager.registerNetworkCallback(request, networkCallback);
+        }
 
-    {
-        NetworkRequest request = new NetworkRequest.Builder()
-                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET).build();
-        connectivityManager.registerNetworkCallback(request, networkCallback);
     }
-
-}
 
 
     //tests the internet connectin status
@@ -105,44 +189,115 @@ public class DatabaseTools {
         return status;
     }
 
+    public void addEditItem(Item item){
+        int networkStatus = isConnected();
+        if (networkStatus == NETWORK_STATUS_NOT_CONNECTED) {
+            Toast.makeText(context, "No internet Connection", Toast.LENGTH_SHORT).show();
+            Log.i("get subitems", "user not connected to internet");
+        } else {
+
+            user = getCurrentUser();
+            if (user != null) {
+
+                myRef = database.getReference().child("users").child(user.getEmail().split("\\.")[0]).child("herbarium").child(item.getItemTitle());
+
+                try {
+                    myRef.setValue(null);
+                    for (SubItem subItem : item.getSubItemList()) {
+                        myRef.child(subItem.getHerbId()).setValue(subItem);
+                    }
+                    database.getReference().child("LAST_CHANGE").setValue(System.currentTimeMillis());
+
+
+                }
+                    catch(Exception e){
+                        Log.e("DATABASE","Error writing data from JSON to database");
+                    }
+
+
+                Log.i("add/edit subitem", "success");
+
+
+            } else {
+                Toast.makeText(context, "User not signed in", Toast.LENGTH_SHORT).show();
+                Log.i("add/edit subitem", "user not signed in");
+            }
+        }
+    }
+
     //Adds an item to a group if the group doesn't exist creates the group and adds it there
     public void addEditSubItem(Item item, SubItem subItem) {
 
-        user = getCurrentUser();
-
-        if (user != null) {
-            myRef = database.getReference().child("users").child(user.getEmail().split("@")[0]);
-            myRef.child(item.getItemTitle()).child(subItem.getHerbId()).setValue(subItem);
+        int networkStatus = isConnected();
+        if (networkStatus == NETWORK_STATUS_NOT_CONNECTED) {
+            Toast.makeText(context, "No internet Connection", Toast.LENGTH_SHORT).show();
+            Log.i("get subitems", "user not connected to internet");
         } else {
-            Toast.makeText(context, "User not signed in", Toast.LENGTH_SHORT).show();
-            Log.i("add/edit subitem", "user not signed in");
+
+
+            user = getCurrentUser();
+            if (user != null) {
+
+                myRef = database.getReference().child("users").child(user.getEmail().split("\\.")[0]).child("herbarium").child(item.getItemTitle()).child(subItem.getHerbId());
+                myRef.setValue(subItem);
+
+                Log.i("add/edit subitem", "success");
+
+                database.getReference().child("LAST_CHANGE").setValue(System.currentTimeMillis());
+
+
+            } else {
+                Toast.makeText(context, "User not signed in", Toast.LENGTH_SHORT).show();
+                Log.i("add/edit subitem", "user not signed in");
+            }
         }
     }
 
     //deletes a sub item
     public void deleteSub(Item item, SubItem subItem) {
 
-        user = getCurrentUser();
-
-        if (user != null) {
-            myRef = database.getReference().child("users").child(user.getEmail().split("@")[0]).child(item.getItemTitle());
-            myRef.child(subItem.getHerbId()).removeValue();
+        int networkStatus = isConnected();
+        if (networkStatus == NETWORK_STATUS_NOT_CONNECTED) {
+            Toast.makeText(context, "No internet Connection", Toast.LENGTH_SHORT).show();
+            Log.i("get subitems", "user not connected to internet");
         } else {
-            Toast.makeText(context, "User not signed in", Toast.LENGTH_SHORT).show();
-            Log.i("delete subItem", "user not signed in");
+
+            user = getCurrentUser();
+
+            if (user != null) {
+                myRef = database.getReference().child("users").child(user.getEmail().split("\\.")[0]).child("herbarium").child(item.getItemTitle());
+                myRef.child(subItem.getHerbId()).removeValue();
+
+                database.getReference().child("LAST_CHANGE").setValue(System.currentTimeMillis());
+
+            } else {
+                Toast.makeText(context, "User not signed in", Toast.LENGTH_SHORT).show();
+                Log.i("delete subItem", "user not signed in");
+            }
         }
     }
 
     //deletes an item
     public void deleteItem(Item item, SubItem subItem) {
 
-        user = getCurrentUser();
-        if (user != null) {
-            myRef = database.getReference().child("users").child(user.getEmail().split("@")[0]);
-            myRef.child(item.getItemTitle()).removeValue();
+        int networkStatus = isConnected();
+        if (networkStatus == NETWORK_STATUS_NOT_CONNECTED) {
+            Toast.makeText(context, "No internet Connection", Toast.LENGTH_SHORT).show();
+            Log.i("get subitems", "user not connected to internet");
         } else {
-            Toast.makeText(context, "User not signed in", Toast.LENGTH_SHORT).show();
-            Log.i("delete item", "user not signed in");
+
+            user = getCurrentUser();
+
+            if (user != null) {
+
+                myRef = database.getReference().child("users").child(user.getEmail().split("\\.")[0]).child("herbarium");
+                myRef.child(item.getItemTitle()).removeValue();
+
+                database.getReference().child("LAST_CHANGE").setValue(System.currentTimeMillis());
+            } else {
+                Toast.makeText(context, "User not signed in", Toast.LENGTH_SHORT).show();
+                Log.i("delete item", "user not signed in");
+            }
         }
     }
 
@@ -177,14 +332,21 @@ public class DatabaseTools {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 //clear the groups so updated data is written
+
                                 items = new ArrayList<>();
                                 for (DataSnapshot itemDataSnapshot : dataSnapshot.getChildren()) {
-                                    Item item = new Item(itemDataSnapshot.getKey());
-                                    for (DataSnapshot subItemDataSnapshot : itemDataSnapshot.getChildren()) {
-                                        SubItem subItem = subItemDataSnapshot.getValue(SubItem.class);
-                                        item.addSubItem(subItem);
+                                    try {
+                                        Item item = new Item(itemDataSnapshot.getKey());
+                                        for (DataSnapshot subItemDataSnapshot : itemDataSnapshot.getChildren()) {
+                                            SubItem subItem = subItemDataSnapshot.getValue(SubItem.class);
+                                            item.addSubItem(subItem);
+                                        }
+                                        items.add(item);
+                                    }catch (com.google.firebase.database.DatabaseException e){
+                                        Log.e("DATABASE","Values in database are formatted wrongly" + Arrays.toString(e.getStackTrace()));
+                                    }catch (Exception e){
+                                        Log.e("DATABASE","Error when loading value with key" + Arrays.toString(e.getStackTrace()));
                                     }
-                                    items.add(item);
                                 }
                                 myCallback.onCallback(items);
 
@@ -209,13 +371,32 @@ public class DatabaseTools {
 
     }
 
-    public ArrayList<Item> getItems(){
+    public ArrayList<Item> getItems() {
         return items;
     }
 
-    public void addItem(Item item){
-        items.add(item);
+    public void addItemToDatabase(Item item, SubItem subItem) {
+        int networkStatus = isConnected();
+
+        if (networkStatus == NETWORK_STATUS_NOT_CONNECTED) {
+            Toast.makeText(context, "No internet Connection", Toast.LENGTH_SHORT).show();
+            Log.i("get subitems", "user not connected to internet");
+        } else {
+            user = getCurrentUser();
+
+            if (user != null) {
+                myRef = database.getReference().child("users").child(user.getEmail().split("\\.")[0]).child("herbarium").child(item.getItemTitle());
+                myRef.setValue(subItem);
+
+                Toast.makeText(context, "YEEEEEEEEEEEEEEe", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(context, "User not signed in", Toast.LENGTH_SHORT).show();
+                Log.e("save Database", "user not signed in ");
+            }
+
+        }
     }
+
     public FirebaseDatabase getDatabase() {
         return database;
     }
@@ -227,7 +408,7 @@ public class DatabaseTools {
         user = getCurrentUser();
         //if user not signed in returns null
         if (user != null) {
-            myRef = database.getReference().child("users").child(user.getEmail().split("@")[0]).child(item.getItemTitle());
+            myRef = database.getReference().child("users").child(user.getEmail().split("\\.")[0]).child("herbarium").child(item.getItemTitle());
             return myRef.push().getKey();
         } else {
             Toast.makeText(context, "User not signed in", Toast.LENGTH_SHORT).show();
@@ -246,7 +427,7 @@ public class DatabaseTools {
     public void saveImage(Uri imageUri) {
 
         user = getCurrentUser();
-        String userName = user.getEmail().split("@")[0];
+        String userName = user.getEmail().split("\\.")[0];
 
         if (user != null) {
 

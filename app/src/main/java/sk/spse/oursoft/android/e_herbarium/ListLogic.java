@@ -30,18 +30,20 @@ public class ListLogic {
     static List<Item> list = new ArrayList<>();
     @SuppressLint("StaticFieldLeak")
     static Context context = null;
+    static String user="";
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    static void begin(ArrayList<Item> newObject, Context context) {
+    static void begin(ArrayList<Item> newObject, Context context,String user) {
         list = new ArrayList<>();
         JSONObject object = null;
+        ListLogic.user=user;
         ListLogic.context = context;
         try {
             if (newObject == null || newObject.size() == 0) {
                 SharedPreferences sharedPreferences = context.getSharedPreferences("EHerbarium", MODE_PRIVATE);
-                if (sharedPreferences.contains("items")) {
+                if (sharedPreferences.contains(user)) {
                     Log.d("EH", "Begin sharedpreferences");
-                    object = new JSONObject(sharedPreferences.getString("items", "{}"));
+                    object = new JSONObject(sharedPreferences.getString(user, "{}"));
                     Log.d("EH", object.toString());
                 } else {
                     Log.d("EH", "Begin startingtemplate");
@@ -79,6 +81,7 @@ public class ListLogic {
     static void addOne(SubItem item, int index) {
         saveAll();
         list.get(index).addSubItem(item);
+        saveAll();
     }
 
     public static void deleteOne(int index, String category) {
@@ -124,7 +127,7 @@ public class ListLogic {
         }
     }
 
-    static JSONObject getObject() throws JSONException {
+    public static JSONObject getObject() throws JSONException {
         StringBuilder listText = new StringBuilder(list.toString());
         listText.setCharAt(0, '{');
         listText.setCharAt(listText.length() - 1, '}');
@@ -143,7 +146,7 @@ public class ListLogic {
         Log.d("EH", listText.toString());
         SharedPreferences sharedPreferences = context.getSharedPreferences("EHerbarium", MODE_PRIVATE);
         SharedPreferences.Editor myEdit = sharedPreferences.edit();
-        myEdit.putString("items", listText.toString());
+        myEdit.putString(user, listText.toString());
         long timestamp = new Date().getTime();
         myEdit.putLong("timestamp", timestamp);
         myEdit.apply();

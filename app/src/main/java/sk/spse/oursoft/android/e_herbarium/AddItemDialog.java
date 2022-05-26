@@ -43,6 +43,8 @@ public class AddItemDialog extends Dialog {
 
     private ImageView insertImage;
 
+    private final String[] invalidCharacters = {".", "@", "$", "%", "&", "/", "<", ">", "?", "|", "{", "}", "[", "]"};
+
     private final int[] iconList = {R.drawable.listocek_symbolik, R.drawable.kricek_symbolik, R.drawable.klasocek_symbolik, R.drawable.stromcek_symbolik};
 
     private boolean leavesPicked = false;
@@ -147,6 +149,10 @@ public class AddItemDialog extends Dialog {
                 }else if (subItemAdapter.findItemPosition(herbName, subItemAdapter.getSubItemList()) != -1){
 
                     Toast.makeText(context, "Please input a unique herb name", Toast.LENGTH_SHORT).show();
+
+                }else if(stringContainsInvalidCharacters(herbName)){
+
+                    Toast.makeText(context, "Characters " + Arrays.toString(invalidCharacters) + " aren't allowed!", Toast.LENGTH_SHORT).show();
 
                 }else{
 
@@ -378,13 +384,16 @@ public class AddItemDialog extends Dialog {
 
                                 }
                                 //add the name of the Item
-//                                subItem.setHerbId(databaseTools.getSubItemID(item));
+                                String herbId = databaseTools.getSubItemID(item);
+                                subItem.setHerbId(herbId);
+
                                 addIconDialog.dismiss();
                                 AddItemDialog.this.dismiss();
-                                //databaseTools.addEditSubItem(item,subItem);
+
                                 ListLogic.addOne(subItem, index);
                                 subItemAdapter.addSubItem();
-//                                databaseTools.addItem(item,subItem);
+
+                                databaseTools.addEditSubItem(item,subItem);
 
                             }
                         }
@@ -410,9 +419,19 @@ public class AddItemDialog extends Dialog {
 
         insertImage.setImageURI(imageURI);
 
-        subItem.setImageUri(imageURI);
+        subItem.setImageUri(imageURI.toString());
 
 
+    }
+
+    protected boolean stringContainsInvalidCharacters(String string){
+        for (String character : invalidCharacters){
+            if (string.contains(character)){
+                return true;
+            }
+        }
+
+        return false;
     }
 
 

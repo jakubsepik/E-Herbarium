@@ -58,28 +58,18 @@ public class HerbariumViewActivity extends AppCompatActivity {
     public String currentPhotoPath;
     public DatabaseTools databaseTools;
 
+    private final String[] invalidCharacters = {".", "@", "$", "%", "&", "/", "<", ">", "?", "|", "{", "}", "[", "]"};
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         databaseTools = new DatabaseTools(getApplicationContext(),this);
 
-        databaseTools.initializeNetworkCallback();
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.herbarium_view);
         DatabaseTools databaseTools = new DatabaseTools(getApplicationContext(),this);
 
-        databaseTools.getUserItems(new UserListCallback() {
-            @Override
-            public void onCallback(ArrayList<Item> value) {
-
-                //finally use the database items here
-                //od the stuff here
-                ListLogic.begin(databaseTools.getItems(), getApplicationContext());
-
-            }
-        });
 
 
         databaseTools.initializeNetworkCallback();
@@ -87,12 +77,33 @@ public class HerbariumViewActivity extends AppCompatActivity {
 
         RecyclerView rvItem = findViewById(R.id.recyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(HerbariumViewActivity.this);
-        List<Item> itemList = ListLogic.getList();
-        ItemAdapter itemAdapter = new ItemAdapter(itemList);
-        rvItem.setAdapter(itemAdapter);
-        rvItem.setLayoutManager(layoutManager);
 
+        final List<Item>[] itemList = new List[]{ListLogic.getList()};
+        final ItemAdapter[] itemAdapter = {new ItemAdapter(itemList[0])};
         ImageButton hamburgerMenu = (ImageButton) findViewById(R.id.hamburgerMenu);
+
+        databaseTools.getUserItems(new UserListCallback() {
+            @Override
+            public void onCallback(ArrayList<Item> value) {
+                //finally use the database items here
+                //od the stuff here
+                String user =databaseTools.getCurrentUser().getEmail().split("\\.")[0];
+                //Log.d("EH",user);
+                ListLogic.begin(databaseTools.getItems(), getApplicationContext(),user);
+                int tmp = ListLogic.getList().size()-1;
+                itemList[0] = ListLogic.getList();
+                itemAdapter[0] = new ItemAdapter(itemList[0]);
+                rvItem.setAdapter(itemAdapter[0]);
+                rvItem.setLayoutManager(layoutManager);
+                itemAdapter[0].notifyItemInserted(ListLogic.getList().size()-1);
+            }
+
+            @Override
+            public void onTimeCallback(int time) {
+
+            }
+
+        });
 
         hamburgerMenu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,14 +135,20 @@ public class HerbariumViewActivity extends AppCompatActivity {
                                     if (nameInput.getText().toString().equals("") || nameInput.getText().toString().length() == 0) {
                                         Toast.makeText(view.getContext(), "You have to enter a name!", Toast.LENGTH_SHORT).show();
 
-                                    } else if (groupExists(nameInput.getText().toString(), itemList)) {
+                                    } else if (groupExists(nameInput.getText().toString(), itemList[0])) {
                                         Toast.makeText(view.getContext(), "The group's name has to be unique!", Toast.LENGTH_SHORT).show();
-                                    } else {
+
+
+                                    }else if (stringContainsInvalidCharacters(nameInput.getText().toString())){
+
+                                        Toast.makeText(view.getContext(), "Characters " + Arrays.toString(invalidCharacters) + " aren't allowed!", Toast.LENGTH_SHORT).show();
+
+                                    }else {
                                         List<SubItem> subItemList = new ArrayList<SubItem>();
                                         Item item = new Item(nameInput.getText().toString(), subItemList);
 
                                         ListLogic.addCategory(item);
-                                        itemAdapter.notifyItemInserted(ListLogic.getList().size()-1);
+                                        itemAdapter[0].notifyItemInserted(ListLogic.getList().size()-1);
 
                                         addGroupDialog.dismiss();
                                     }
@@ -310,6 +327,39 @@ public class HerbariumViewActivity extends AppCompatActivity {
 
     String[] herbNames = {"Mint", "Echinacea", "Thyme"};
 
+
+    protected List<Item> buildItemList() {
+        List<Item> itemList = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            Item item = new Item("Item " + i, buildSubItemList(i));
+            itemList.add(item);
+        }
+        return itemList;
+    }
+
+    private List<SubItem> buildSubItemList(int group) {
+        List<SubItem> subItemList = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            String herbName = herbNames[rd.nextInt(herbNames.length)];
+            int icon = icons[rd.nextInt(icons.length)];
+            String herbId = "Group " + Integer.toString(group) + " Position " + Integer.toString(i);
+
+            Uri uri = (new Uri.Builder())
+                    .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+                    .authority(this.getResources().getResourcePackageName(R.drawable.tree_placeholder))
+                    .appendPath(this.getResources().getResourceTypeName(R.drawable.tree_placeholder))
+                    .appendPath(this.getResources().getResourceEntryName(R.drawable.tree_placeholder))
+                    .build();
+
+
+            SubItem subItem = new SubItem(herbId, herbName,icon,uri.toString());
+
+
+            subItemList.add(subItem);
+        }
+        return subItemList;
+    }
+
     private boolean groupExists(String name, List<Item> itemList) {
         for (Item item : itemList) {
             if (item.getItemTitle().equals(name)) {
@@ -319,5 +369,14 @@ public class HerbariumViewActivity extends AppCompatActivity {
         return false;
     }
 
+    protected boolean stringContainsInvalidCharacters(String string){
+        for (String character : invalidCharacters){
+            if (string.contains(character)){
+                return true;
+            }
+        }
+
+        return false;
+    }
 
 }

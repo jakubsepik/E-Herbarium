@@ -4,12 +4,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.annotation.RequiresApi;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -49,6 +52,7 @@ public class LandingScreenActivity extends Activity {
     private final int CAMERA_REQUEST = 1888;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,8 +85,11 @@ public class LandingScreenActivity extends Activity {
         });
 
         databaseTools = new DatabaseTools(getApplicationContext(),this);
+        databaseTools.initializeNetworkCallback();
+
         //runs this method coz else it is one cycle behind
         items = new ArrayList<>();
+        //ListLogic.begin(items, getApplicationContext());
 
         databaseTools.getUserItems(new UserListCallback() {
             @Override
@@ -91,6 +98,11 @@ public class LandingScreenActivity extends Activity {
                 //finally use the database items here
                 //od the stuff here 
                 System.out.println(databaseTools.getItems());
+
+            }
+
+            @Override
+            public void onTimeCallback(int time) {
 
             }
         });
@@ -136,14 +148,33 @@ public class LandingScreenActivity extends Activity {
 
 
     public void testing_button(View view) {
-        SubItem sub2 = new SubItem("11", R.drawable.ic_delete_group_icon);
-        databaseTools.addEditSubItem(item, sub2);
+        SubItem sub0 = new SubItem("78","tree","this is the tree descprition", R.drawable.ic_delete_group_icon);
+        SubItem sub1 = new SubItem("45","tree", R.drawable.ic_delete_group_icon,"imageUri");
+        SubItem sub2 = new SubItem("45","tree", R.drawable.ic_delete_group_icon);
 
-        for (Item subitem : items) {
-            for (SubItem sub : subitem.getSubItemList()) {
-                System.out.println(sub + " a");
+
+        databaseTools.addEditSubItem(item, sub2);
+        databaseTools.getUserItems(new UserListCallback() {
+            @Override
+            public void onCallback(ArrayList<Item> value) {
+
+                //finally use the database items here
+                //od the stuff here
+                System.out.println(databaseTools.getItems());
+                for (Item subitem : databaseTools.getItems()) {
+                    for (SubItem sub : subitem.getSubItemList()) {
+                        System.out.println(sub + " a");
+                    }
+                }
+
             }
-        }
+
+            @Override
+            public void onTimeCallback(int time) {
+
+            }
+        });
+
     }
 
 }
