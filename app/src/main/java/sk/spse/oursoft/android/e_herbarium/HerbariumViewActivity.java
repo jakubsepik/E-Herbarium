@@ -42,6 +42,7 @@ import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.ItemAdapter;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
 import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
+import sk.spse.oursoft.android.e_herbarium.misc.UserListCallback;
 
 import android.graphics.Matrix;
 
@@ -69,16 +70,41 @@ public class HerbariumViewActivity extends AppCompatActivity {
         setContentView(R.layout.herbarium_view);
         DatabaseTools databaseTools = new DatabaseTools(getApplicationContext(),this);
 
+
+
+
+        databaseTools.initializeNetworkCallback();
+
+
         RecyclerView rvItem = findViewById(R.id.recyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(HerbariumViewActivity.this);
-        List<Item> itemList = ListLogic.getList();
-        ItemAdapter itemAdapter = new ItemAdapter(itemList);
 
-
-        rvItem.setAdapter(itemAdapter);
-        rvItem.setLayoutManager(layoutManager);
-
+        final List<Item>[] itemList = new List[]{ListLogic.getList()};
+        final ItemAdapter[] itemAdapter = {new ItemAdapter(itemList[0])};
         ImageButton hamburgerMenu = (ImageButton) findViewById(R.id.hamburgerMenu);
+
+        databaseTools.getUserItems(new UserListCallback() {
+            @Override
+            public void onCallback(ArrayList<Item> value) {
+                //finally use the database items here
+                //od the stuff here
+                String user =databaseTools.getCurrentUser().getEmail().split("\\.")[0];
+                //Log.d("EH",user);
+                ListLogic.begin(databaseTools.getItems(), getApplicationContext(),user);
+                int tmp = ListLogic.getList().size()-1;
+                itemList[0] = ListLogic.getList();
+                itemAdapter[0] = new ItemAdapter(itemList[0]);
+                rvItem.setAdapter(itemAdapter[0]);
+                rvItem.setLayoutManager(layoutManager);
+                itemAdapter[0].notifyItemInserted(ListLogic.getList().size()-1);
+            }
+
+            @Override
+            public void onTimeCallback(int time) {
+
+            }
+
+        });
 
         hamburgerMenu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,7 +136,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
                                     if (nameInput.getText().toString().equals("") || nameInput.getText().toString().length() == 0) {
                                         Toast.makeText(view.getContext(), "You have to enter a name!", Toast.LENGTH_SHORT).show();
 
-                                    } else if (groupExists(nameInput.getText().toString(), itemList)) {
+                                    } else if (groupExists(nameInput.getText().toString(), itemList[0])) {
                                         Toast.makeText(view.getContext(), "The group's name has to be unique!", Toast.LENGTH_SHORT).show();
 
 
@@ -123,7 +149,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
                                         Item item = new Item(nameInput.getText().toString(), subItemList);
 
                                         ListLogic.addCategory(item);
-                                        itemAdapter.notifyItemInserted(ListLogic.getList().size()-1);
+                                        itemAdapter[0].notifyItemInserted(ListLogic.getList().size()-1);
 
                                         addGroupDialog.dismiss();
                                     }
@@ -143,7 +169,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        ListLogic.saveAll(getApplicationContext());
+        ListLogic.saveAll();
         super.onPause();
     }
 
