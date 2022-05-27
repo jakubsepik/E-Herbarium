@@ -89,7 +89,8 @@ public class HerbariumViewActivity extends AppCompatActivity {
                 //od the stuff here
                 String user =databaseTools.getCurrentUser().getEmail().split("\\.")[0];
                 //Log.d("EH",user);
-                ListLogic.begin(databaseTools.getItems(), getApplicationContext(),user);
+                long timestamp =DatabaseTools.timestamp;
+                ListLogic.begin(databaseTools.getItems(), getApplicationContext(),user,timestamp);
                 int tmp = ListLogic.getList().size()-1;
                 itemList[0] = ListLogic.getList();
                 itemAdapter[0] = new ItemAdapter(itemList[0]);

@@ -33,18 +33,17 @@ public class ListLogic {
     static String user="";
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    static void begin(ArrayList<Item> newObject, Context context,String user) {
+    static void begin(ArrayList<Item> newObject, Context context,String user, long timestamp) {
         list = new ArrayList<>();
-        JSONObject object = null;
+        JSONObject object;
         ListLogic.user=user;
         ListLogic.context = context;
         try {
-            if (newObject == null || newObject.size() == 0) {
+            if (newObject == null || newObject.size() == 0 || timestamp<getTimestamp()) {
                 SharedPreferences sharedPreferences = context.getSharedPreferences("EHerbarium", MODE_PRIVATE);
                 if (sharedPreferences.contains(user)) {
                     Log.d("EH", "Begin sharedpreferences");
                     object = new JSONObject(sharedPreferences.getString(user, "{}"));
-                    Log.d("EH", object.toString());
                 } else {
                     Log.d("EH", "Begin startingtemplate");
                     InputStream is = context.getAssets().open("startingTemplate.json");
@@ -54,6 +53,7 @@ public class ListLogic {
                     is.close();
                     object = new JSONObject(new String(buffer, StandardCharsets.UTF_8));
                 }
+                Log.d("EH", object.toString());
                 Iterator<String> temp = object.keys();
                 while (temp.hasNext()) {
                     String key = temp.next();
@@ -79,7 +79,6 @@ public class ListLogic {
     }
 
     static void addOne(SubItem item, int index) {
-        saveAll();
         list.get(index).addSubItem(item);
         saveAll();
     }
@@ -93,14 +92,13 @@ public class ListLogic {
     }
 
     static boolean addCategory(Item category) {
-        saveAll();
         for (Item tmp : list) {
             if (tmp.getItemTitle().equals(category.getItemTitle()))
                 return false;
         }
         list.add(category);
+        saveAll();
         return true;
-
     }
 
     public static void editCategory(int index, String name) {
@@ -153,6 +151,7 @@ public class ListLogic {
     }
      public static long getTimestamp(){
          SharedPreferences sharedPreferences = context.getSharedPreferences("EHerbarium", MODE_PRIVATE);
-         return sharedPreferences.getLong("timestamp",0);
+         long timestamp = sharedPreferences.getLong("timestamp",0);
+         return timestamp;
      }
 }

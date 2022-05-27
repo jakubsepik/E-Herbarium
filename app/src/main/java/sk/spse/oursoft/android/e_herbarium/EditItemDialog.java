@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -41,7 +42,7 @@ public class EditItemDialog extends Dialog {
         EditText editDescriptionInput = (EditText) findViewById(R.id.editDescriptionInput);
         Button editItemButton = (Button) findViewById(R.id.editItemButton);
 
-        editImage.setImageURI(subItem.getImageUri());
+        editImage.setImageURI(Uri.parse(subItem.getImageUri()));
 
         editNameInput.setText(subItem.getHerbName());
         editDescriptionInput.setText(subItem.getHerbDescription());
