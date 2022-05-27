@@ -35,7 +35,6 @@ public class Item {
     public String toString() {
         StringBuilder output= new StringBuilder();
         for(int i=subItemList.size()-1;i>=0;i--){
-            Log.d("EH", String.valueOf(i));
             if(i==subItemList.size()-1)
                 output.insert(0, subItemList.get(i).toString());
             else
