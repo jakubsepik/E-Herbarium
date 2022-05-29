@@ -11,13 +11,6 @@ public class SubItem {
     private int icon;
     private String imageUri;
 
-    public String getImageUri() {
-        return imageUri;
-    }
-
-    public void setImageUri(String imageUri) {
-        this.imageUri = imageUri;
-    }
 
     public SubItem(String herbId, int icon) {
         this.herbId = herbId;
@@ -96,5 +89,11 @@ public class SubItem {
 
     public void setHerbDescription(String herbDescription) {
         this.herbDescription = herbDescription;
+    }
+    public String getImageUri() {
+        return imageUri;
+    }
+    public void setImageUri(String imageUri) {
+        this.imageUri = imageUri;
     }
 }

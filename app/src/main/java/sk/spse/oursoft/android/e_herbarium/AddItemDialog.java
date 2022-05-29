@@ -94,6 +94,7 @@ public class AddItemDialog extends Dialog {
 
                         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         try {
+                            takePictureIntent.putExtra("itemName",item.getItemTitle());
                             ((Activity) context).startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
 
                         } catch (ActivityNotFoundException e) {
@@ -112,6 +113,7 @@ public class AddItemDialog extends Dialog {
                     public void onClick(View view) {
                         Intent galleryChoose = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         try {
+                            galleryChoose.putExtra("itemName",item.getItemTitle());
                             ((Activity) context).startActivityForResult(galleryChoose, RESULT_LOAD_IMAGE);
 
                         } catch (Exception e) {
@@ -168,10 +170,13 @@ public class AddItemDialog extends Dialog {
                                 .appendPath(context.getResources().getResourceEntryName(R.drawable.tree_placeholder))
                                 .build();
 
+                        subItem.setImageUri(uri.toString());
+
                         Toast.makeText(context, String.valueOf(uri), Toast.LENGTH_SHORT).show();
 
                         try {
                             setImageURI(uri);
+                            subItem.setImageUri(uri.toString());
 
                         } catch (Exception e) {
                             Log.e("set Image", "tried to set default image " + Arrays.toString(e.getStackTrace()));
@@ -394,6 +399,7 @@ public class AddItemDialog extends Dialog {
                                 subItemAdapter.addSubItem();
 
                                 databaseTools.addEditSubItem(item,subItem);
+                                databaseTools.saveImage(imageURI,item.getItemTitle());
 
                             }
                         }

@@ -64,11 +64,11 @@ public class HerbariumViewActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        databaseTools = new DatabaseTools(getApplicationContext(),this);
+        databaseTools = new DatabaseTools(getApplicationContext(), this);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.herbarium_view);
-        DatabaseTools databaseTools = new DatabaseTools(getApplicationContext(),this);
+        DatabaseTools databaseTools = new DatabaseTools(getApplicationContext(), this);
 
 
 
@@ -82,6 +82,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
         final List<Item>[] itemList = new List[]{ListLogic.getList()};
         final ItemAdapter[] itemAdapter = {new ItemAdapter(itemList[0])};
         ImageButton hamburgerMenu = (ImageButton) findViewById(R.id.hamburgerMenu);
+
 
         databaseTools.getUserItems(new UserListCallback() {
             @Override
@@ -140,15 +141,16 @@ public class HerbariumViewActivity extends AppCompatActivity {
                                         Toast.makeText(view.getContext(), "The group's name has to be unique!", Toast.LENGTH_SHORT).show();
 
 
-                                    }else if (stringContainsInvalidCharacters(nameInput.getText().toString())){
+                                    } else if (stringContainsInvalidCharacters(nameInput.getText().toString())) {
 
                                         Toast.makeText(view.getContext(), "Characters " + Arrays.toString(invalidCharacters) + " aren't allowed!", Toast.LENGTH_SHORT).show();
 
-                                    }else {
+                                    } else {
                                         List<SubItem> subItemList = new ArrayList<SubItem>();
                                         Item item = new Item(nameInput.getText().toString(), subItemList);
 
                                         ListLogic.addCategory(item);
+
                                         itemAdapter[0].notifyItemInserted(ListLogic.getList().size()-1);
 
                                         addGroupDialog.dismiss();
@@ -187,13 +189,15 @@ public class HerbariumViewActivity extends AppCompatActivity {
                 try {
                     Bundle extras = data.getExtras();
                     Bitmap imageBitmap = (Bitmap) extras.get("data");
+                    String ItemName = (String) extras.get("ItemName");
                     File imageFile = storeImage(imageBitmap, REQUEST_IMAGE_CAPTURE);
 
                     if (imageFile != null) {
                         Uri imageUri = Uri.fromFile(imageFile);
                         ((AddItemDialog) dialogReference).setImageURI(imageUri);
 
-                        databaseTools.saveImage(imageUri);
+//                        databaseTools.saveImage(imageUri,ItemName);
+
                         Toast.makeText(this, "success", Toast.LENGTH_SHORT).show();
 
                     } else {
@@ -216,10 +220,10 @@ public class HerbariumViewActivity extends AppCompatActivity {
                 Toast.makeText(this, "No Image Selected", Toast.LENGTH_SHORT).show();
             } else {
                 try {
+                    Bundle extras = data.getExtras();
+                    String ItemName = (String) extras.get("ItemName");
                     Uri imageURI = data.getData();
                     Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageURI);
-
-                    ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 
                     File imageFile = storeImage(imageBitmap, RESULT_LOAD_IMAGE);
@@ -227,7 +231,8 @@ public class HerbariumViewActivity extends AppCompatActivity {
                         Uri imageUri = Uri.fromFile(imageFile);
                         ((AddItemDialog) dialogReference).setImageURI(imageUri);
 
-                        databaseTools.saveImage(imageUri);
+                        //saves the image and the image ref in the firebase storage
+//                        databaseTools.saveImage(imageUri,ItemName);
 
                         Toast.makeText(this, "success", Toast.LENGTH_SHORT).show();
 
@@ -260,6 +265,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
             return null;
         }
         try {
+
             image = getResizedBitmap(image, 650, 800);
 
             if (image == null) {
@@ -267,12 +273,23 @@ public class HerbariumViewActivity extends AppCompatActivity {
                 return null;
             }
             if (requestCode == REQUEST_IMAGE_CAPTURE) {
+
                 FileOutputStream fos = new FileOutputStream(pictureFile);
+                long startTime = System.nanoTime();
+
                 image.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                Log.i("Time to compress", String.valueOf((System.nanoTime() - startTime)));
                 fos.close();
+
+
             } else if (requestCode == RESULT_LOAD_IMAGE) {
+
                 FileOutputStream fos = new FileOutputStream(pictureFile);
+                long startTime = System.nanoTime();
+
                 image.compress(Bitmap.CompressFormat.JPEG, 80, fos);
+
+                Log.i("Time to compress", String.valueOf((System.nanoTime() - startTime)));
                 fos.close();
 
             }
@@ -309,7 +326,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
 
         //creates temp file
         String timeStamp = new SimpleDateFormat("yyyy-MM-dd'T'HH-mm-ss.SSS").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_.jpg";
+        String imageFileName = "JPEG_" + timeStamp + ".png";
         File storageDir = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         File mediaFile;
@@ -353,7 +370,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
                     .build();
 
 
-            SubItem subItem = new SubItem(herbId, herbName,icon,uri.toString());
+            SubItem subItem = new SubItem(herbId, herbName, icon, uri.toString());
 
 
             subItemList.add(subItem);
@@ -370,9 +387,9 @@ public class HerbariumViewActivity extends AppCompatActivity {
         return false;
     }
 
-    protected boolean stringContainsInvalidCharacters(String string){
-        for (String character : invalidCharacters){
-            if (string.contains(character)){
+    protected boolean stringContainsInvalidCharacters(String string) {
+        for (String character : invalidCharacters) {
+            if (string.contains(character)) {
                 return true;
             }
         }
@@ -380,4 +397,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
         return false;
     }
 
+    public void testActivituButton(View view) {
+        databaseTools.synchronizeInternalStorageToDatabase();
+    }
 }

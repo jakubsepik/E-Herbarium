@@ -58,10 +58,13 @@ public class ListLogic {
                 while (temp.hasNext()) {
                     String key = temp.next();
                     JSONArray value = (JSONArray) object.get(key);
+
                     List<SubItem> items = new ArrayList<>();
                     for (int i = 0; i < value.length(); i++) {
                         JSONObject item = value.getJSONObject(i);
-                        SubItem subItem = new SubItem(item.getString("id"), item.getString("name"), item.getString("description"), item.getInt("icon"));
+
+                        SubItem subItem = new SubItem(item.getString("id"), item.getString("name"), item.getString("description"), item.getInt("icon"),item.getString("image"));
+
                         items.add(subItem);
                     }
                     list.add(new Item(key, items));
@@ -128,7 +131,7 @@ public class ListLogic {
         return new JSONObject(listText.toString());
     }
 
-    static List<Item> getList() {
+    public static List<Item> getList() {
         return list;
     }
 

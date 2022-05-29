@@ -87,9 +87,12 @@ public class LandingScreenActivity extends Activity {
         databaseTools = new DatabaseTools(getApplicationContext(),this);
         databaseTools.initializeNetworkCallback();
 
+
         //runs this method coz else it is one cycle behind
         items = new ArrayList<>();
         //ListLogic.begin(items, getApplicationContext());
+
+//        databaseTools.synchronizeDatabaseImages();
 
         databaseTools.getUserItems(new UserListCallback() {
             @Override
