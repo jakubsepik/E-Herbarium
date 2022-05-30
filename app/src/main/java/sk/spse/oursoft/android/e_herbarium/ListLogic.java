@@ -157,7 +157,7 @@ public class ListLogic {
         myEdit.apply();
     }
 
-    public static void exportHerbarium() throws JSONException {
+    public static void exportHerbarium(String currentUserName) throws JSONException {
 
         JSONObject jsonObject = getObject();
         try {
@@ -167,7 +167,16 @@ public class ListLogic {
 
             File TempLocalFile = new File(storageDir, timeStamp + "_export.json");
             FileWriter writer = new FileWriter(TempLocalFile);
-            writer.append(String.valueOf(jsonObject));
+
+
+
+            String tempObject = jsonObject.toString();
+            tempObject = tempObject.substring(1, tempObject.length() - 1);
+
+            writer.append("{");
+            writer.append("\"").append(currentUserName).append("\":[{}],");
+            writer.append(tempObject);
+            writer.append("}");
             writer.flush();
             writer.close();
         } catch (IOException e) {
@@ -175,9 +184,9 @@ public class ListLogic {
         }
     }
 
-    public static void exportGroup(Item item) throws JSONException {
+    public static void exportGroup(Item item, String currentUserName) throws JSONException {
         JSONObject json_database = getObject();
-        
+
         //make a little window for this shit so it asks you for the name
         for (Iterator<String> it = json_database.keys(); it.hasNext(); ) {
 
@@ -192,7 +201,10 @@ public class ListLogic {
                     FileWriter writer = new FileWriter(TempLocalFile);
                     JSONArray values = (JSONArray) json_database.get(key);
 
-                    writer.append(String.valueOf(values));
+                    writer.append("{");
+                    writer.append("\"").append(currentUserName).append("\":[{}],");
+                    writer.append("\"" + key).append("\":").append(String.valueOf(values));
+                    writer.append("}");
                     writer.flush();
                     writer.close();
                 } catch (IOException e) {

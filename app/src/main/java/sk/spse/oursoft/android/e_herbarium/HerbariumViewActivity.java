@@ -46,6 +46,8 @@ import sk.spse.oursoft.android.e_herbarium.misc.UserListCallback;
 
 import android.graphics.Matrix;
 
+import com.google.firebase.auth.FirebaseUser;
+
 import org.json.JSONException;
 
 
@@ -399,6 +401,9 @@ public class HerbariumViewActivity extends AppCompatActivity {
     public void testActivituButton(View view) throws JSONException {
 //        databaseTools.synchronizeInternalStorageToDatabase();
         Item tempItem = new Item("1",null);
-        ListLogic.exportGroup(tempItem);
+        FirebaseUser user = databaseTools.getCurrentUser();
+        String userName = user.getEmail().split("\\.")[0];
+//        ListLogic.exportGroup(tempItem,userName);
+        ListLogic.exportHerbarium(userName);
     }
 }
