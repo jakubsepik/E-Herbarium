@@ -6,7 +6,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
@@ -15,9 +17,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -30,13 +38,13 @@ public class ListLogic {
     static List<Item> list = new ArrayList<>();
     @SuppressLint("StaticFieldLeak")
     static Context context = null;
-    static String user="";
+    static String user = "";
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    static void begin(ArrayList<Item> newObject, Context context,String user) {
+    static void begin(ArrayList<Item> newObject, Context context, String user) {
         list = new ArrayList<>();
         JSONObject object = null;
-        ListLogic.user=user;
+        ListLogic.user = user;
         ListLogic.context = context;
         try {
             if (newObject.size() == 0) {
@@ -63,7 +71,7 @@ public class ListLogic {
                     for (int i = 0; i < value.length(); i++) {
                         JSONObject item = value.getJSONObject(i);
 
-                        SubItem subItem = new SubItem(item.getString("id"), item.getString("name"), item.getString("description"), item.getInt("icon"),item.getString("image"));
+                        SubItem subItem = new SubItem(item.getString("id"), item.getString("name"), item.getString("description"), item.getInt("icon"), item.getString("image"));
 
                         items.add(subItem);
                     }
@@ -147,6 +155,56 @@ public class ListLogic {
         long timestamp = new Date().getTime();
         myEdit.putLong("timestamp", timestamp);
         myEdit.apply();
+    }
+
+    public static void exportHerbarium() throws JSONException {
+
+        JSONObject jsonObject = getObject();
+        try {
+
+            File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+            String timeStamp = new SimpleDateFormat("ddHHmmssSSS").format(new Date());
+
+            File TempLocalFile = new File(storageDir, timeStamp + "_export.json");
+            FileWriter writer = new FileWriter(TempLocalFile);
+            writer.append(String.valueOf(jsonObject));
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
+    }
+
+    public static void exportGroup(Item item) throws JSONException {
+        JSONObject json_database = getObject();
+        
+        //make a little window for this shit so it asks you for the name
+        for (Iterator<String> it = json_database.keys(); it.hasNext(); ) {
+
+            String key = it.next();
+
+            if (key.equals(item.getItemTitle())) {
+                try {
+                    File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+
+                    String timeStamp = new SimpleDateFormat("ddHHmmssSSS").format(new Date());
+                    File TempLocalFile = new File(storageDir, item.getItemTitle() + timeStamp + "_export.json");
+                    FileWriter writer = new FileWriter(TempLocalFile);
+                    JSONArray values = (JSONArray) json_database.get(key);
+
+                    writer.append(String.valueOf(values));
+                    writer.flush();
+                    writer.close();
+                } catch (IOException e) {
+                    Log.e("Exception", "File write failed: " + e.toString());
+                }
+            }
+            JSONArray values = (JSONArray) json_database.get(key);
+
+
+        }
+
+
     }
 
 

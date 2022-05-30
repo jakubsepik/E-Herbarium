@@ -46,6 +46,8 @@ import sk.spse.oursoft.android.e_herbarium.misc.UserListCallback;
 
 import android.graphics.Matrix;
 
+import org.json.JSONException;
+
 
 public class HerbariumViewActivity extends AppCompatActivity {
     ListView listView;
@@ -87,6 +89,8 @@ public class HerbariumViewActivity extends AppCompatActivity {
         databaseTools.getUserItems(new UserListCallback() {
             @Override
             public void onCallback(ArrayList<Item> value) {
+
+                System.out.println("THIS WAS RUN !!!");
                 //finally use the database items here
                 //od the stuff here
                 String user =databaseTools.getCurrentUser().getEmail().split("\\.")[0];
@@ -98,11 +102,6 @@ public class HerbariumViewActivity extends AppCompatActivity {
                 rvItem.setAdapter(itemAdapter[0]);
                 rvItem.setLayoutManager(layoutManager);
                 itemAdapter[0].notifyItemInserted(ListLogic.getList().size()-1);
-            }
-
-            @Override
-            public void onTimeCallback(int time) {
-
             }
 
         });
@@ -397,7 +396,9 @@ public class HerbariumViewActivity extends AppCompatActivity {
         return false;
     }
 
-    public void testActivituButton(View view) {
-        databaseTools.synchronizeInternalStorageToDatabase();
+    public void testActivituButton(View view) throws JSONException {
+//        databaseTools.synchronizeInternalStorageToDatabase();
+        Item tempItem = new Item("1",null);
+        ListLogic.exportGroup(tempItem);
     }
 }

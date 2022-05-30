@@ -104,10 +104,6 @@ public class LandingScreenActivity extends Activity {
 
             }
 
-            @Override
-            public void onTimeCallback(int time) {
-
-            }
         });
 
     }
@@ -172,10 +168,7 @@ public class LandingScreenActivity extends Activity {
 
             }
 
-            @Override
-            public void onTimeCallback(int time) {
 
-            }
         });
 
     }

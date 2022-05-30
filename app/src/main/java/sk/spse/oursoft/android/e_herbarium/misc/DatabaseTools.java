@@ -32,6 +32,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageException;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
@@ -329,7 +330,10 @@ public class DatabaseTools {
 
     //returns an arraylist of plants
     public void getUserItems(final UserListCallback myCallback) {
-
+        int networkStatus = isConnected();
+        if (networkStatus == NETWORK_STATUS_NOT_CONNECTED) {
+            myCallback.onCallback(items);
+        } else {
             user = getCurrentUser();
             if (user != null) {
                 //change to fit new objects by changing regex
@@ -366,14 +370,11 @@ public class DatabaseTools {
 
                         });
             } else {
+                myCallback.onCallback(items);
                 Toast.makeText(context, "User not signed in", Toast.LENGTH_SHORT).show();
                 Log.i("get subitems", "user not signed in");
             }
-        if (items != null) {
-            Log.i("Values", String.valueOf(items));
-            Log.i("Success", "The data was successfully gotten from the db");
         }
-
     }
 
     public ArrayList<Item> getItems() {
@@ -521,12 +522,7 @@ public class DatabaseTools {
         if (user != null) {
 
             try {
-                storage = FirebaseStorage.getInstance();
-
-                File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-
                 ArrayList<Item> database_items = (ArrayList<Item>) ListLogic.getList();
-
                 //this is going to be some shit code
                 for (Item item : database_items) {
                     synchronizeImagesFromItem(item);
@@ -541,47 +537,37 @@ public class DatabaseTools {
 
     }
 
-
     private void synchronizeImagesFromItem(Item item) {
-
         try {
-
             for (int i = item.getSubItemList().size() - 1; i >= 0; i--) {
                 try {
                     SubItem subItem = item.getSubItemList().get(i);
                     tryToUploadImage(subItem, item);
-
+                    deleteUnusedImages(item);
                 } catch (StorageException e) {
                     System.out.println("STPRAGE EXCEPTION");
                 } catch (Exception e) {
                     System.out.println("STPRAGE EXCEPTION" + Arrays.toString(e.getStackTrace()));
                 }
             }
-
         } catch (Exception e) {
             System.out.println("111 " + Arrays.toString(e.getStackTrace()));
         }
-
-
     }
 
-    public void tryToUploadImage(SubItem subItem, Item item) throws StorageException {
+    private void tryToUploadImage(SubItem subItem, Item item) throws StorageException {
 
         user = getCurrentUser();
         String userName = user.getEmail().split("\\.")[0];
 
-        storage = FirebaseStorage.getInstance();
-
         ArrayList<Item> database_items = (ArrayList<Item>) ListLogic.getList();
-
         String ItemName = item.getItemTitle();
-
-
         String[] imageUri = subItem.getImageUri().split("/");
         String imageName = imageUri[imageUri.length - 1];
-        String pathFind = "fireImages/" + userName + "/" + ItemName + "/imageRef/" + imageName;
-        StorageReference storageRef = storage.getReference(pathFind);
 
+        String pathFind = "fireImages/" + userName + "/" + ItemName + "/imageRef";
+        storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference(pathFind);
         File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File TempLocalFile = new File(storageDir + "/" + imageName);
 
@@ -590,7 +576,7 @@ public class DatabaseTools {
                 storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        System.out.println("THe image is here " + uri);
+                        System.out.println("The image is here " + uri);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -603,7 +589,6 @@ public class DatabaseTools {
                         } catch (Exception e) {
                             Log.e("NOOOO", "nooo");
                         }
-
                     }
                 });
 
@@ -612,11 +597,83 @@ public class DatabaseTools {
             }
         } else {
             subItem.setImageUri(defaultURI.toString());
-            //delete that image from firebase
-            //delete the URI from the item
             Log.i("IMAGE EXISTENCE", "Image doesn't exist at file" + TempLocalFile);
         }
     }
+
+    private void deleteImageFromStorage(Item item,String ImageName){
+        user = getCurrentUser();
+        String userName = user.getEmail().split("\\.")[0];
+        String ItemName = item.getItemTitle();
+        String pathFind = "fireImages/" + userName + "/" + ItemName + "/" + ImageName ;
+
+        storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference(pathFind);
+        storageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.i("Image Deleting Firebase","Successfully deleted unused image from firebase");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.e("Image Deleting Firebase","Unsuccessfull in deleting unused image from firebase");
+            }
+        });
+
+    }
+
+    private void deleteUnusedImages(Item item){
+
+        user = getCurrentUser();
+        String userName = user.getEmail().split("\\.")[0];
+        String ItemName = item.getItemTitle();
+
+        String pathFind = "fireImages/" + userName + "/" + ItemName + "/imageRef";
+        storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference(pathFind);
+
+        storageRef.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
+                @Override
+                public void onSuccess(ListResult result) {
+                    //scuffed code here upgrade it later
+
+                    List<String> files = new ArrayList<>();
+                    ArrayList<Item> database_items = (ArrayList<Item>) ListLogic.getList();
+                    Item currentItem = null;
+                    for(Item JsonItem : database_items){
+                        if(item == JsonItem){
+                            currentItem = item;
+                            break;
+                        }
+                    }
+                    if(currentItem == null){
+                        Log.e("Error with Items","Item given not found in items");
+                    }
+                    for (StorageReference fileRef : result.getItems()) {
+                        Log.i("Informatino", String.valueOf((fileRef)));
+                        String[] storageImageUriArr =  fileRef.toString().split("/");;
+                        String storageImageUri = storageImageUriArr[storageImageUriArr.length-1];
+
+                        Boolean flag = false;
+                        for (SubItem subItem : currentItem.getSubItemList()){
+                            if(storageImageUri.equals(subItem.getImageUri())){
+                                flag = true;
+                            }
+                        }
+                        if(!flag){
+                            deleteImageFromStorage(item,storageImageUri);
+                        }
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(Exception exception) {
+                    // Handle any errors
+                }
+            });
+        }
+
 }
 
 
