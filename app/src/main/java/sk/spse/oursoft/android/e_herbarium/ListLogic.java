@@ -2,26 +2,43 @@ package sk.spse.oursoft.android.e_herbarium;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.provider.ContactsContract;
+import android.provider.MediaStore;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
+import com.google.firebase.auth.FirebaseUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -33,8 +50,10 @@ import java.util.List;
 
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
+import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
 
-public class ListLogic {
+public class ListLogic extends AppCompatActivity {
+    private static final int EXTERNAL_STORAGE_PERMISSION_CODE = 23;
     static List<Item> list = new ArrayList<>();
     @SuppressLint("StaticFieldLeak")
     static Context context = null;
@@ -165,10 +184,8 @@ public class ListLogic {
             File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
             String timeStamp = new SimpleDateFormat("ddHHmmssSSS").format(new Date());
 
-            File TempLocalFile = new File(storageDir, timeStamp + "_export.json");
+            File TempLocalFile = new File(storageDir, currentUserName + "_Herbarium_"+ timeStamp + "_export.txt");
             FileWriter writer = new FileWriter(TempLocalFile);
-
-
 
             String tempObject = jsonObject.toString();
             tempObject = tempObject.substring(1, tempObject.length() - 1);
@@ -191,13 +208,16 @@ public class ListLogic {
         for (Iterator<String> it = json_database.keys(); it.hasNext(); ) {
 
             String key = it.next();
-
             if (key.equals(item.getItemTitle())) {
                 try {
-                    File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
 
+                    // getExternalStoragePublicDirectory() represents root of external storage, we are using DOWNLOADS
+                    // We can use following directories: MUSIC, PODCASTS, ALARMS, RINGTONES, NOTIFICATIONS, PICTURES, MOVIES
+
+                    //File storageDir = MediaStore.Downloads;
+                    File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
                     String timeStamp = new SimpleDateFormat("ddHHmmssSSS").format(new Date());
-                    File TempLocalFile = new File(storageDir, item.getItemTitle() + timeStamp + "_export.json");
+                    File TempLocalFile = new File(storageDir, currentUserName + "_" + item.getItemTitle() + "_" + timeStamp + "_export.txt");
                     FileWriter writer = new FileWriter(TempLocalFile);
                     JSONArray values = (JSONArray) json_database.get(key);
 
@@ -212,12 +232,78 @@ public class ListLogic {
                 }
             }
             JSONArray values = (JSONArray) json_database.get(key);
-
-
         }
-
-
     }
+    public static void importHerbarium(Uri fileUri) throws IOException, JSONException {
 
+        JSONObject jsonObject = null;
+        BufferedReader br = new BufferedReader(new InputStreamReader(context.getContentResolver().openInputStream(fileUri)));
 
+        String database_string = "";
+        String line = null;
+        while ((line = br.readLine()) != null) {
+            database_string += line;
+        }
+        try {
+            jsonObject = new JSONObject(database_string);
+        } catch (JSONException err) {
+            Log.d("Error", err.toString());
+        }
+        br.close();
+
+        List<Item> itemList = new ArrayList<>();
+
+        for (Iterator<String> it = jsonObject.keys(); it.hasNext(); ) {
+            String key = it.next();
+
+            List<SubItem> subItems = new ArrayList<>();
+            JSONArray values = (JSONArray) jsonObject.get(key);
+
+            for (int i = 0; i < values.length(); i++) {
+                try {
+                    JSONObject item = values.getJSONObject(i);
+                    SubItem subItem = new SubItem(item.getString("id"),
+                            item.getString("name"),
+                            item.getString("description"),
+                            item.getInt("icon"),
+                            item.getString("image"));
+                    subItems.add(subItem);
+
+                    itemList.add(new Item(key, subItems));
+                } catch (Exception e) {
+                    Log.e("Import error", e.getMessage());
+                }
+            }
+        }
+        for(Item item: itemList){
+            for(SubItem subItem : item.getSubItemList()){
+                System.out.println(subItem);
+            }
+        }
+        for (Item item : itemList){
+            for(SubItem subItem : item.getSubItemList()){
+                int ItemPosition = findItemPosition(item.getItemTitle(),itemList);
+
+                if(ItemPosition == -1){
+                    Item tempItem = new Item(item.getItemTitle());
+                    tempItem.getSubItemList().add(subItem);
+                    list.add(tempItem);
+                }
+                addOne(subItem,findItemPosition(item.getItemTitle(),itemList));
+            }
+        }
+        System.out.println("List-Database" + list);
+        DatabaseTools databaseTools = new DatabaseTools(context,(Activity) context);
+        databaseTools.synchronizeInternalStorageToDatabase();
+        saveAll();
+    }
+        public static int findItemPosition(String itemTitle, List<Item> itemList){
+
+            for (int i = 0; i < itemList.size(); i++){
+                if (itemTitle.equals(itemList.get(i).getItemTitle())){
+                    return i;
+                }
+            }
+            return -1;
+        }
 }
