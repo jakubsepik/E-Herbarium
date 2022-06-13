@@ -38,6 +38,7 @@ public class ListLogic {
         JSONObject object;
         ListLogic.user=user;
         ListLogic.context = context;
+        Log.d("EH","database: "+timestamp+" \nlocal: "+getTimestamp());
         try {
             if (newObject == null || newObject.size() == 0 || timestamp<getTimestamp()) {
                 SharedPreferences sharedPreferences = context.getSharedPreferences("EHerbarium", MODE_PRIVATE);
@@ -61,7 +62,7 @@ public class ListLogic {
                     List<SubItem> items = new ArrayList<>();
                     for (int i = 0; i < value.length(); i++) {
                         JSONObject item = value.getJSONObject(i);
-                        SubItem subItem = new SubItem(item.getString("id"), item.getString("name"), item.getString("description"), item.getInt("icon"));
+                        SubItem subItem = new SubItem(item.getString("id"), item.getString("name"), item.getString("description"), item.getInt("icon"),item.getString("image"));
                         items.add(subItem);
                     }
                     list.add(new Item(key, items));
