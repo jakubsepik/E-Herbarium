@@ -61,7 +61,7 @@
             android:ems="10"
             android:hint="Item Name"
             android:inputType="textPersonName"
-            android:maxLength="14"
+            android:maxLength="20"
             android:textColor="#F9F9F9"
             android:textColorHint="#85EFEFEF"
             android:textSize="35sp" />
