@@ -60,18 +60,18 @@ public class ListLogic extends AppCompatActivity {
     static String user = "";
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    static void begin(ArrayList<Item> newObject, Context context, String user) {
+    static void begin(ArrayList<Item> newObject, Context context,String user, long timestamp) {
         list = new ArrayList<>();
-        JSONObject object = null;
-        ListLogic.user = user;
+        JSONObject object;
+        ListLogic.user=user;
         ListLogic.context = context;
+        Log.d("EH","database: "+timestamp+" \nlocal: "+getTimestamp());
         try {
-            if (newObject.size() == 0) {
+            if (newObject == null || newObject.size() == 0 || timestamp<getTimestamp()) {
                 SharedPreferences sharedPreferences = context.getSharedPreferences("EHerbarium", MODE_PRIVATE);
                 if (sharedPreferences.contains(user)) {
                     Log.d("EH", "Begin sharedpreferences");
                     object = new JSONObject(sharedPreferences.getString(user, "{}"));
-                    Log.d("EH", object.toString());
                 } else {
                     Log.d("EH", "Begin startingtemplate");
                     InputStream is = context.getAssets().open("startingTemplate.json");
@@ -81,6 +81,7 @@ public class ListLogic extends AppCompatActivity {
                     is.close();
                     object = new JSONObject(new String(buffer, StandardCharsets.UTF_8));
                 }
+                Log.d("EH", object.toString());
                 Iterator<String> temp = object.keys();
                 while (temp.hasNext()) {
                     String key = temp.next();
@@ -89,9 +90,7 @@ public class ListLogic extends AppCompatActivity {
                     List<SubItem> items = new ArrayList<>();
                     for (int i = 0; i < value.length(); i++) {
                         JSONObject item = value.getJSONObject(i);
-
-                        SubItem subItem = new SubItem(item.getString("id"), item.getString("name"), item.getString("description"), item.getInt("icon"), item.getString("image"));
-
+                        SubItem subItem = new SubItem(item.getString("id"), item.getString("name"), item.getString("description"), item.getInt("icon"),item.getString("image"));
                         items.add(subItem);
                     }
                     list.add(new Item(key, items));
@@ -114,6 +113,7 @@ public class ListLogic extends AppCompatActivity {
     }
 
     public static void deleteOne(int index, String category) {
+        saveAll();
         for (Item tmp : list) {
             if (tmp.getItemTitle().equals(category))
                 tmp.getSubItemList().remove(index);
@@ -126,15 +126,17 @@ public class ListLogic extends AppCompatActivity {
                 return false;
         }
         list.add(category);
+        saveAll();
         return true;
-
     }
 
     public static void editCategory(int index, String name) {
+        saveAll();
         list.get(index).setItemTitle(name);
     }
 
     public static void editOne(String category, int index, SubItem subItem) {
+        saveAll();
         for (Item tmp : list) {
             if (tmp.getItemTitle().equals(category))
                 tmp.getSubItemList().add(index, subItem);
@@ -143,6 +145,7 @@ public class ListLogic extends AppCompatActivity {
 
 
     static void deleteCategory(String category) {
+        saveAll();
         for (int i = 0; i < list.toArray().length; i++) {
             if (list.get(i).getItemTitle().equals(category)) {
                 list.remove(i);
@@ -306,4 +309,9 @@ public class ListLogic extends AppCompatActivity {
             }
             return -1;
         }
+     public static long getTimestamp(){
+         SharedPreferences sharedPreferences = context.getSharedPreferences("EHerbarium", MODE_PRIVATE);
+         long timestamp = sharedPreferences.getLong("timestamp",0);
+         return timestamp;
+     }
 }

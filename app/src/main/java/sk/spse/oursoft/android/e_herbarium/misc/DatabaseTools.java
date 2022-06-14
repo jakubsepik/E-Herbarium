@@ -60,6 +60,7 @@ import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
 import sk.spse.oursoft.android.e_herbarium.database_objects.User;
 
 public class DatabaseTools {
+    public static long timestamp=0;
     private FirebaseDatabase database;
     private Context context;
     private DatabaseReference myRef;
@@ -90,6 +91,7 @@ public class DatabaseTools {
 
     }
 
+
     ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {
         @Override
         public void onAvailable(Network network) {
@@ -107,6 +109,7 @@ public class DatabaseTools {
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
                         long Database_time = (long) dataSnapshot.getValue();
+                        timestamp=Database_time;
                         Log.i("DATABASE_TIME", String.valueOf(Database_time));
 
                         if (Database_time > Json_time) {
