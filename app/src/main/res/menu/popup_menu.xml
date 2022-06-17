@@ -3,4 +3,10 @@
     <item
         android:id="@+id/addGroup"
         android:title="Add Group" />
+    <item
+        android:id="@+id/menuImport"
+        android:title="Import" />
+    <item
+        android:id="@+id/menuExport"
+        android:title="Export" />
 </menu>
