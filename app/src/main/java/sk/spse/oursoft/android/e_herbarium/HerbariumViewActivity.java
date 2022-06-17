@@ -183,7 +183,14 @@ public class HerbariumViewActivity extends AppCompatActivity {
                             addGroupDialog.show();
                         }
 
+                        else if (menuItem.getTitle().equals("Import")){
 
+                        }
+
+                        else if(menuItem.getTitle().equals("Export")){
+
+                        }
+                        
                         return true;
                     }
                 });
