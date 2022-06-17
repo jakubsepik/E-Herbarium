@@ -1,7 +1,5 @@
 package sk.spse.oursoft.android.e_herbarium.herbariumListOperation;
 
-import android.net.Uri;
-
 import androidx.annotation.NonNull;
 
 public class SubItem {

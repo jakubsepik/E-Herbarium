@@ -84,9 +84,9 @@ public class LandingScreenActivity extends Activity {
             }
         });
 
-        databaseTools = new DatabaseTools(getApplicationContext(),this);
+        //I have to initalize the callback here or else every time i move to the herbarium view activity the callback gets called
+        databaseTools = new DatabaseTools(getApplicationContext());
         databaseTools.initializeNetworkCallback();
-
 
         //runs this method coz else it is one cycle behind
         items = new ArrayList<>();
@@ -96,11 +96,16 @@ public class LandingScreenActivity extends Activity {
 
         databaseTools.getUserItems(new UserListCallback() {
             @Override
-            public void onCallback(ArrayList<Item> value) {
+            public void onDataCallback(ArrayList<Item> value) {
 
                 //finally use the database items here
-                //od the stuff here 
+                //od the stuff here
                 System.out.println(databaseTools.getItems());
+
+            }
+
+            @Override
+            public void onImageCallback(Uri uri) {
 
             }
 
@@ -155,7 +160,7 @@ public class LandingScreenActivity extends Activity {
         databaseTools.addEditSubItem(item, sub2);
         databaseTools.getUserItems(new UserListCallback() {
             @Override
-            public void onCallback(ArrayList<Item> value) {
+            public void onDataCallback(ArrayList<Item> value) {
 
                 //finally use the database items here
                 //od the stuff here
@@ -165,6 +170,11 @@ public class LandingScreenActivity extends Activity {
                         System.out.println(sub + " a");
                     }
                 }
+
+            }
+
+            @Override
+            public void onImageCallback(Uri uri) {
 
             }
 

@@ -16,6 +16,7 @@ import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
+import android.webkit.URLUtil;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -48,9 +49,11 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import sk.spse.oursoft.android.e_herbarium.database_objects.User;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
 import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
+import sk.spse.oursoft.android.e_herbarium.misc.UserListCallback;
 
 public class ListLogic extends AppCompatActivity {
     private static final int EXTERNAL_STORAGE_PERMISSION_CODE = 23;
@@ -60,14 +63,14 @@ public class ListLogic extends AppCompatActivity {
     static String user = "";
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    static void begin(ArrayList<Item> newObject, Context context,String user, long timestamp) {
+    static void begin(ArrayList<Item> newObject, Context context, String user, long timestamp) {
         list = new ArrayList<>();
         JSONObject object;
-        ListLogic.user=user;
+        ListLogic.user = user;
         ListLogic.context = context;
-        Log.d("EH","database: "+timestamp+" \nlocal: "+getTimestamp());
+        Log.d("EH", "database: " + timestamp + " \nlocal: " + getTimestamp());
         try {
-            if (newObject == null || newObject.size() == 0 || timestamp<getTimestamp()) {
+            if (newObject == null || newObject.size() == 0 || timestamp < getTimestamp()) {
                 SharedPreferences sharedPreferences = context.getSharedPreferences("EHerbarium", MODE_PRIVATE);
                 if (sharedPreferences.contains(user)) {
                     Log.d("EH", "Begin sharedpreferences");
@@ -90,7 +93,7 @@ public class ListLogic extends AppCompatActivity {
                     List<SubItem> items = new ArrayList<>();
                     for (int i = 0; i < value.length(); i++) {
                         JSONObject item = value.getJSONObject(i);
-                        SubItem subItem = new SubItem(item.getString("id"), item.getString("name"), item.getString("description"), item.getInt("icon"),item.getString("image"));
+                        SubItem subItem = new SubItem(item.getString("id"), item.getString("name"), item.getString("description"), item.getInt("icon"), item.getString("image"));
                         items.add(subItem);
                     }
                     list.add(new Item(key, items));
@@ -143,7 +146,6 @@ public class ListLogic extends AppCompatActivity {
         }
     }
 
-
     static void deleteCategory(String category) {
         saveAll();
         for (int i = 0; i < list.toArray().length; i++) {
@@ -163,6 +165,11 @@ public class ListLogic extends AppCompatActivity {
 
     public static List<Item> getList() {
         return list;
+    }
+
+    public static void setList(List<Item> List) {
+        list = List;
+        saveAll();
     }
 
     public static void saveAll() {
@@ -187,7 +194,7 @@ public class ListLogic extends AppCompatActivity {
             File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
             String timeStamp = new SimpleDateFormat("ddHHmmssSSS").format(new Date());
 
-            File TempLocalFile = new File(storageDir, currentUserName + "_Herbarium_"+ timeStamp + "_export.txt");
+            File TempLocalFile = new File(storageDir, currentUserName + "_Herbarium_" + timeStamp + "_export.txt");
             FileWriter writer = new FileWriter(TempLocalFile);
 
             String tempObject = jsonObject.toString();
@@ -237,32 +244,39 @@ public class ListLogic extends AppCompatActivity {
             JSONArray values = (JSONArray) json_database.get(key);
         }
     }
-    public static void importHerbarium(Uri fileUri) throws IOException, JSONException {
+
+
+    public static void importHerbarium(byte[] fileContent) throws IOException, JSONException {
 
         JSONObject jsonObject = null;
-        BufferedReader br = new BufferedReader(new InputStreamReader(context.getContentResolver().openInputStream(fileUri)));
+        String fileData = new String(fileContent);
 
-        String database_string = "";
-        String line = null;
-        while ((line = br.readLine()) != null) {
-            database_string += line;
-        }
+        Log.i("Database", fileData);
+
+        DatabaseTools databaseTools = new DatabaseTools(context);
+
         try {
-            jsonObject = new JSONObject(database_string);
+            jsonObject = new JSONObject(fileData);
         } catch (JSONException err) {
-            Log.d("Error", err.toString());
+            Log.d("Error Json", err.toString());
         }
-        br.close();
 
-        List<Item> itemList = new ArrayList<>();
-
+        ArrayList<Item> itemList = new ArrayList<>();
+        String UserName = "";
+        Boolean gotName = false;
         for (Iterator<String> it = jsonObject.keys(); it.hasNext(); ) {
             String key = it.next();
 
+            if (!gotName) {
+                UserName = key;
+                System.out.println("USER NAME IS " + UserName);
+                gotName = true;
+                continue;
+            }
             List<SubItem> subItems = new ArrayList<>();
             JSONArray values = (JSONArray) jsonObject.get(key);
-
             for (int i = 0; i < values.length(); i++) {
+
                 try {
                     JSONObject item = values.getJSONObject(i);
                     SubItem subItem = new SubItem(item.getString("id"),
@@ -272,46 +286,87 @@ public class ListLogic extends AppCompatActivity {
                             item.getString("image"));
                     subItems.add(subItem);
 
-                    itemList.add(new Item(key, subItems));
                 } catch (Exception e) {
                     Log.e("Import error", e.getMessage());
                 }
+
             }
+
+            itemList.add(new Item(key, subItems));
+
         }
-        for(Item item: itemList){
-            for(SubItem subItem : item.getSubItemList()){
+        for (Item item : itemList) {
+            System.out.println("VALUE " + item.getItemTitle());
+            for (SubItem subItem : item.getSubItemList()) {
                 System.out.println(subItem);
             }
         }
-        for (Item item : itemList){
-            for(SubItem subItem : item.getSubItemList()){
-                int ItemPosition = findItemPosition(item.getItemTitle(),itemList);
-
-                if(ItemPosition == -1){
-                    Item tempItem = new Item(item.getItemTitle());
-                    tempItem.getSubItemList().add(subItem);
-                    list.add(tempItem);
-                }
-                addOne(subItem,findItemPosition(item.getItemTitle(),itemList));
+        for (Item item : itemList) {
+            if (ItemNotInList(item)) {
+                list.add(item);
             }
+            int ItemPosition = findItemPosition(item.getItemTitle(), list);
+
+            for (SubItem subItem : item.getSubItemList()) {
+
+                try {
+                    if (URLUtil.isValidUrl(subItem.getImageUri()) && !subItem.getImageUri().equals(databaseTools.getDefaultURI().toString())) {
+                        databaseTools.ImportImagesFromSubItem(UserName, item, subItem, new UserListCallback() {
+                            @Override
+                            public void onDataCallback(ArrayList<Item> value) {
+                            }
+
+                            @Override
+                            public void onImageCallback(Uri uri) {
+                                System.out.println("SAVED THE IMAGE AT THE URI " + uri);
+                                subItem.setImageUri(uri.toString());
+
+                                databaseTools.saveImage(uri, item.getItemTitle());
+                                databaseTools.addEditSubItem(item, subItem);
+                                addOne(subItem, ItemPosition);
+                                saveAll();
+                            }
+                        });
+
+                    } else {
+//                        subItem.setImageUri(databaseTools.getDefaultURI().toString());
+//                        databaseTools.addEditSubItem(item, subItem);
+//                        addOne(subItem, ItemPosition);
+//                        saveAll();
+
+                    }
+                } catch (Exception e) {
+                    //remove all those things I just added , pain xdxdxdxdxdxdxs
+                }
+            }
+
         }
         System.out.println("List-Database" + list);
-        DatabaseTools databaseTools = new DatabaseTools(context,(Activity) context);
-        databaseTools.synchronizeInternalStorageToDatabase();
-        saveAll();
     }
-        public static int findItemPosition(String itemTitle, List<Item> itemList){
 
-            for (int i = 0; i < itemList.size(); i++){
-                if (itemTitle.equals(itemList.get(i).getItemTitle())){
-                    return i;
-                }
+    public static int findItemPosition(String itemTitle, List<Item> itemList) {
+        for (int i = 0; i < itemList.size(); i++) {
+            if (itemTitle.equals(itemList.get(i).getItemTitle())) {
+                return i;
             }
-            return -1;
         }
-     public static long getTimestamp(){
-         SharedPreferences sharedPreferences = context.getSharedPreferences("EHerbarium", MODE_PRIVATE);
-         long timestamp = sharedPreferences.getLong("timestamp",0);
-         return timestamp;
-     }
+        return -1;
+    }
+
+    private static boolean ItemNotInList(Item ItemToFind) {
+        for (Item item : list) {
+            if (item.getItemTitle().equals(ItemToFind.getItemTitle())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static long getTimestamp() {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("EHerbarium", MODE_PRIVATE);
+        long timestamp = sharedPreferences.getLong("timestamp", 0);
+        return timestamp;
+
+
+    }
 }

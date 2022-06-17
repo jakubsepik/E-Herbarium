@@ -63,7 +63,7 @@ public class AddItemDialog extends Dialog {
 
         subItem = new SubItem();
 
-        DatabaseTools databaseTools = new DatabaseTools(this.getContext(),this.getOwnerActivity());
+        DatabaseTools databaseTools = new DatabaseTools(this.getContext());
 
         HerbariumViewActivity.setCurrentDialog(this);
 

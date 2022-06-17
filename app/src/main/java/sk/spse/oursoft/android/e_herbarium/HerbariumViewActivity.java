@@ -1,4 +1,4 @@
-lpackage sk.spse.oursoft.android.e_herbarium;
+package sk.spse.oursoft.android.e_herbarium;
 
 import android.Manifest;
 import android.app.Activity;
@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.FileUtils;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
@@ -34,9 +35,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -80,14 +84,9 @@ public class HerbariumViewActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        databaseTools = new DatabaseTools(getApplicationContext(), this);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.herbarium_view);
-        DatabaseTools databaseTools = new DatabaseTools(getApplicationContext(), this);
-
-        databaseTools.initializeNetworkCallback();
-
+        databaseTools = new DatabaseTools(getApplicationContext());
 
         RecyclerView rvItem = findViewById(R.id.recyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(HerbariumViewActivity.this);
@@ -99,14 +98,13 @@ public class HerbariumViewActivity extends AppCompatActivity {
 
         databaseTools.getUserItems(new UserListCallback() {
             @Override
-            public void onCallback(ArrayList<Item> value) {
-
-                System.out.println("THIS WAS RUN !!!");
-                //finally use the database items here
+            public void onDataCallback(ArrayList<Item> value) {
+                System.out.println("This callback was called");
+               //finally use the database items here
                 //od the stuff here
                 String user = databaseTools.getCurrentUser().getEmail().split("\\.")[0];
                 //Log.d("EH",user);
-                long timestamp =DatabaseTools.timestamp;
+                long timestamp = DatabaseTools.timestamp;
                 ListLogic.begin(databaseTools.getItems(), getApplicationContext(),user,timestamp);
                 int tmp = ListLogic.getList().size()-1;
                 itemList[0] = ListLogic.getList();
@@ -114,9 +112,23 @@ public class HerbariumViewActivity extends AppCompatActivity {
                 rvItem.setAdapter(itemAdapter[0]);
                 rvItem.setLayoutManager(layoutManager);
                 itemAdapter[0].notifyItemInserted(ListLogic.getList().size() - 1);
+
+                databaseTools.initializeNetworkCallback();
+            }
+
+            @Override
+            public void onImageCallback(Uri uri) {
+
             }
 
         });
+
+        //tento callback daj to Landing screen Activity
+        //nech sa to loadne pred tym ako zapnes toto
+        //nemalo by byt
+        //jake meno ?
+
+
 
         hamburgerMenu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,7 +142,6 @@ public class HerbariumViewActivity extends AppCompatActivity {
                         if (menuItem.getTitle().equals("Add Group")) {
                             Dialog addGroupDialog = new Dialog(view.getContext());
                             addGroupDialog.setContentView(R.layout.add_group_view);
-
                             ImageButton dismissButton = addGroupDialog.findViewById(R.id.dismissAddGroup);
                             dismissButton.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -161,7 +172,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
                                         Item item = new Item(nameInput.getText().toString(), subItemList);
 
                                         ListLogic.addCategory(item);
-
+                                        databaseTools.addItemToDatabase(item);
                                         itemAdapter[0].notifyItemInserted(ListLogic.getList().size() - 1);
 
                                         addGroupDialog.dismiss();
@@ -182,7 +193,13 @@ public class HerbariumViewActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        ListLogic.saveAll();
+        try {
+            ListLogic.saveAll();
+        }catch (java.lang.RuntimeException e){
+            Log.e("Pause error","error because there is no data in the herbarium");
+        }catch (Exception e){
+            Log.e("View Activity pause",e.getMessage());
+        }
         super.onPause();
     }
 
@@ -267,14 +284,16 @@ public class HerbariumViewActivity extends AppCompatActivity {
                     //synchronize the internal database with hte firebase one
                     //download the images from firebase that were gotten from the file
 
-                    Uri selectedfile = data.getData(); //The uri with the location of the file
-                    ListLogic.importHerbarium(selectedfile);
-                    Toast.makeText(this, "Loaded file successfully at " + selectedfile, Toast.LENGTH_SHORT).show();
+                    Uri content_describer = data.getData();
+
+                    byte[] byteData = getBytes(content_describer);
+                    ListLogic.importHerbarium(byteData);
+                    Toast.makeText(this, "Loaded file successfully at " + content_describer , Toast.LENGTH_SHORT).show();
 
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (Exception e) {
-                    Log.e("Error selecting file", e.getStackTrace().toString());
+                    Log.e("Error selecting file", e.getMessage());
                 }
 
             } else {
@@ -285,6 +304,25 @@ public class HerbariumViewActivity extends AppCompatActivity {
             Toast.makeText(this, "Error occurred", Toast.LENGTH_SHORT).show();
         }
     }
+    byte[] getBytes( Uri uri) {
+        InputStream inputStream = null;
+        try {
+            inputStream = this.getContentResolver().openInputStream(uri);
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            int bufferSize = 1024;
+            byte[] buffer = new byte[bufferSize];
+            int len = 0;
+            while ((len = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, len);
+            }
+            return outputStream.toByteArray();
+        } catch (Exception ex) {
+            Log.e("Error", ex.getMessage().toString());
+            Toast.makeText(this, "getBytes error:" + ex.getMessage(), Toast.LENGTH_LONG).show();
+            return null;
+        }
+    }
+
 
     //    Selecting image from the gallery
     private File storeImage(Bitmap image, int requestCode) {
@@ -429,13 +467,14 @@ public class HerbariumViewActivity extends AppCompatActivity {
         Item tempItem = new Item("1",null);
 
         FirebaseUser user = databaseTools.getCurrentUser();
-//        String userName = user.getEmail().split("\\.")[0];
+        String userName = user.getEmail().split("\\.")[0];
 //        ListLogic.exportGroup(tempItem,userName);
 //        ListLogic.exportHerbarium(userName);
 
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("*/*");
-        startActivityForResult(intent, REQUEST_IMPORT_FILE);
+        Intent chooseFile = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
+        chooseFile.setType("*/*");
+        startActivityForResult(chooseFile,REQUEST_IMPORT_FILE);
 
 
 //        databaseTools.synchronizeInternalStorageToDatabase();

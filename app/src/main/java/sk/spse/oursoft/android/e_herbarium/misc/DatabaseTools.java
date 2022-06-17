@@ -60,23 +60,23 @@ import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
 import sk.spse.oursoft.android.e_herbarium.database_objects.User;
 
 public class DatabaseTools {
+
     public static long timestamp=0;
     private FirebaseDatabase database;
     private Context context;
     private DatabaseReference myRef;
     private static final String TAG = "MyActivity";
-    private FirebaseUser user;
-    private Activity activity;
-    private ArrayList<Item> items;
-    private FirebaseStorage storage;
-
     private final int NETWORK_STATUS_NOT_CONNECTED = 0;
     private final int NETWORK_STATUS_CONNECTED = 1;
+    private FirebaseUser user;
 
-    private Uri defaultURI;
+//    private final Activity activity;
+    private ArrayList<Item> items;
+    private FirebaseStorage storage;
+    private final Uri defaultURI;
 
-    public DatabaseTools(Context context, Activity activity) {
-        this.activity = activity;
+    public DatabaseTools(Context context) {
+//        this.activity = activity;
         this.context = context;
         items = new ArrayList<>();
         database = FirebaseDatabase.getInstance("https://e-herbar-default-rtdb.europe-west1.firebasedatabase.app");
@@ -88,19 +88,19 @@ public class DatabaseTools {
                 .appendPath(context.getResources().getResourceEntryName(R.drawable.tree_placeholder))
                 .build();
 
-
     }
-
 
     ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {
         @Override
         public void onAvailable(Network network) {
             Toast.makeText(context, "Connected", Toast.LENGTH_SHORT).show();
 
-            long Json_time = (long) System.currentTimeMillis();
+
+            //TODO
+            //NEED TO FIX THE GET TIME STAMP THING COZ IT ISN"T RELALY WORKING
+            long Json_time = System.currentTimeMillis();
 
             user = getCurrentUser();
-
             if (user != null) {
                 DatabaseReference time_ref = database.getReference().child("LAST_CHANGE");
 
@@ -115,7 +115,19 @@ public class DatabaseTools {
                         if (Database_time > Json_time) {
                             Toast.makeText(context, "Loading values from Database", Toast.LENGTH_SHORT).show();
 
-                            //write setting json from database
+
+
+                            ListLogic.getTimestamp();
+                                    //hadze to error :(
+
+//                            getUserItems(new UserListCallback() {
+//                                @Override
+//                                public void onCallback(ArrayList<Item> value) {
+//                                    ListLogic.setList(getItems());
+//                                }
+//
+//                            });
+
                         } else {
                             //database = json
                             ArrayList<Item> JsonItems = new ArrayList<>();
@@ -155,14 +167,11 @@ public class DatabaseTools {
                                 Toast.makeText(context, "Failed to load database from Internal storage" + e.getStackTrace(), Toast.LENGTH_SHORT);
                                 e.printStackTrace();
                             }
-
-
                         }
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
                     }
                 });
             } else {
@@ -170,14 +179,11 @@ public class DatabaseTools {
                 Log.i("add/edit subitem", "user not signed in");
             }
 
-
             try {
                 Log.i("NETWORK ON", ListLogic.getObject().toString());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-
         }
 
         @Override
@@ -198,9 +204,17 @@ public class DatabaseTools {
                     .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET).build();
             connectivityManager.registerNetworkCallback(request, networkCallback);
         }
-
     }
 
+    public Uri getDefaultURI(){
+        return (new Uri.Builder())
+                .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+                .authority(context.getResources().getResourcePackageName(R.drawable.tree_placeholder))
+                .appendPath(context.getResources().getResourceTypeName(R.drawable.tree_placeholder))
+                .appendPath(context.getResources().getResourceEntryName(R.drawable.tree_placeholder))
+                .build();
+
+    }
 
     //tests the internet connectin status
     public int isConnected() {
@@ -335,7 +349,7 @@ public class DatabaseTools {
     public void getUserItems(final UserListCallback myCallback) {
         int networkStatus = isConnected();
         if (networkStatus == NETWORK_STATUS_NOT_CONNECTED) {
-            myCallback.onCallback(items);
+            myCallback.onDataCallback(items);
         } else {
             user = getCurrentUser();
             if (user != null) {
@@ -362,7 +376,7 @@ public class DatabaseTools {
                                         Log.e("DATABASE", "Error when loading value with key" + Arrays.toString(e.getStackTrace()));
                                     }
                                 }
-                                myCallback.onCallback(items);
+                                myCallback.onDataCallback(items);
 
                             }
 
@@ -373,7 +387,7 @@ public class DatabaseTools {
 
                         });
             } else {
-                myCallback.onCallback(items);
+                myCallback.onDataCallback(items);
                 Toast.makeText(context, "User not signed in", Toast.LENGTH_SHORT).show();
                 Log.i("get subitems", "user not signed in");
             }
@@ -384,7 +398,7 @@ public class DatabaseTools {
         return items;
     }
 
-    public void addItemToDatabase(Item item, SubItem subItem) {
+    public void addItemToDatabase(Item item) {
         int networkStatus = isConnected();
 
         if (networkStatus == NETWORK_STATUS_NOT_CONNECTED) {
@@ -394,8 +408,8 @@ public class DatabaseTools {
             user = getCurrentUser();
 
             if (user != null) {
-                myRef = database.getReference().child("users").child(user.getEmail().split("\\.")[0]).child("herbarium").child(item.getItemTitle());
-                myRef.setValue(subItem);
+                myRef = database.getReference().child("users").child(user.getEmail().split("\\.")[0]).child("herbarium");
+                myRef.child(item.getItemTitle()).setValue("Group without an Item");
 
                 Toast.makeText(context, "YEEEEEEEEEEEEEEe", Toast.LENGTH_SHORT).show();
             } else {
@@ -425,10 +439,7 @@ public class DatabaseTools {
 
             return null;
 
-
         }
-
-
     }
 
     public FirebaseUser getCurrentUser() {
@@ -480,7 +491,7 @@ public class DatabaseTools {
             try {
                 UploadTask uploadTask = storageRef.putFile(imageUri, metadata);
 
-                uploadTask.addOnCompleteListener(activity, new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                uploadTask.addOnCompleteListener( new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                         Log.i("MA", "Upload complete");
@@ -498,7 +509,7 @@ public class DatabaseTools {
                             }
                         }
                 );
-                getDownloadUriTask.addOnCompleteListener(activity, new OnCompleteListener<Uri>() {
+                getDownloadUriTask.addOnCompleteListener(new OnCompleteListener<Uri>() {
                     @Override
                     public void onComplete(@NonNull Task<Uri> task) {
                         if (task.isSuccessful()) {
@@ -548,7 +559,7 @@ public class DatabaseTools {
                     tryToUploadImage(subItem, item);
                     deleteUnusedImages(item);
                 } catch (StorageException e) {
-                    System.out.println("STPRAGE EXCEPTION");
+                    System.out.println("STORAGE EXCEPTION");
                 } catch (Exception e) {
                     System.out.println("STPRAGE EXCEPTION" + Arrays.toString(e.getStackTrace()));
                 }
@@ -604,29 +615,29 @@ public class DatabaseTools {
         }
     }
 
-    private void deleteImageFromStorage(Item item,String ImageName){
+    private void deleteImageFromStorage(Item item, String ImageName) {
         user = getCurrentUser();
         String userName = user.getEmail().split("\\.")[0];
         String ItemName = item.getItemTitle();
-        String pathFind = "fireImages/" + userName + "/" + ItemName + "/" + ImageName ;
+        String pathFind = "fireImages/" + userName + "/" + ItemName + "/" + ImageName;
 
         storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference(pathFind);
         storageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                Log.i("Image Deleting Firebase","Successfully deleted unused image from firebase");
+                Log.i("Image Deleting Firebase", "Successfully deleted unused image from firebase");
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                Log.e("Image Deleting Firebase","Unsuccessfull in deleting unused image from firebase");
+                Log.e("Image Deleting Firebase", "Unsuccessfull in deleting unused image from firebase");
             }
         });
 
     }
 
-    private void deleteUnusedImages(Item item){
+    private void deleteUnusedImages(Item item) {
 
         user = getCurrentUser();
         String userName = user.getEmail().split("\\.")[0];
@@ -637,46 +648,86 @@ public class DatabaseTools {
         StorageReference storageRef = storage.getReference(pathFind);
 
         storageRef.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
+            @Override
+            public void onSuccess(ListResult result) {
+                //scuffed code here upgrade it later
+
+                List<String> files = new ArrayList<>();
+                ArrayList<Item> database_items = (ArrayList<Item>) ListLogic.getList();
+                Item currentItem = null;
+                for (Item JsonItem : database_items) {
+                    if (item == JsonItem) {
+                        currentItem = item;
+                        break;
+                    }
+                }
+                if (currentItem == null) {
+                    Log.e("Error with Items", "Item given not found in items");
+                }
+                for (StorageReference fileRef : result.getItems()) {
+                    Log.i("Informatino", String.valueOf((fileRef)));
+                    String[] storageImageUriArr = fileRef.toString().split("/");
+                    String storageImageUri = storageImageUriArr[storageImageUriArr.length - 1];
+
+                    Boolean flag = false;
+                    for (SubItem subItem : currentItem.getSubItemList()) {
+                        if (storageImageUri.equals(subItem.getImageUri())) {
+                            flag = true;
+                        }
+                    }
+                    if (!flag) {
+                        deleteImageFromStorage(item, storageImageUri);
+                    }
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(Exception exception) {
+                // Handle any errors
+            }
+        });
+    }
+
+    public void ImportImagesFromSubItem(String userName, Item item, SubItem subItem,final UserListCallback ImageCallback) {
+
+        try {
+            String pathFind = "fireImages/" + userName + "/" + item.getItemTitle();
+
+            System.out.println("FILE PATH" + pathFind);
+            storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference(pathFind);
+
+            String[] ImageNameSplit = subItem.getImageUri().split("/");
+            String ImageName = ImageNameSplit[ImageNameSplit.length - 1];
+
+            System.out.println("IMAGE NAME " + ImageName);
+            StorageReference islandRef = storageRef.child(ImageName);
+
+            File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            File localFile = new File(storageDir + "/" + ImageName + ".png");
+
+
+            islandRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                 @Override
-                public void onSuccess(ListResult result) {
-                    //scuffed code here upgrade it later
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    Toast.makeText(context, "Saved Image", Toast.LENGTH_SHORT).show();
+                    ImageCallback.onImageCallback(Uri.fromFile(localFile));
 
-                    List<String> files = new ArrayList<>();
-                    ArrayList<Item> database_items = (ArrayList<Item>) ListLogic.getList();
-                    Item currentItem = null;
-                    for(Item JsonItem : database_items){
-                        if(item == JsonItem){
-                            currentItem = item;
-                            break;
-                        }
-                    }
-                    if(currentItem == null){
-                        Log.e("Error with Items","Item given not found in items");
-                    }
-                    for (StorageReference fileRef : result.getItems()) {
-                        Log.i("Informatino", String.valueOf((fileRef)));
-                        String[] storageImageUriArr =  fileRef.toString().split("/");;
-                        String storageImageUri = storageImageUriArr[storageImageUriArr.length-1];
-
-                        Boolean flag = false;
-                        for (SubItem subItem : currentItem.getSubItemList()){
-                            if(storageImageUri.equals(subItem.getImageUri())){
-                                flag = true;
-                            }
-                        }
-                        if(!flag){
-                            deleteImageFromStorage(item,storageImageUri);
-                        }
-                    }
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
-                public void onFailure(Exception exception) {
-                    // Handle any errors
+                public void onFailure(@NonNull Exception exception) {
+                    Toast.makeText(context, "Failed to Save Image", Toast.LENGTH_SHORT).show();
+                    ImageCallback.onImageCallback(getDefaultURI());
+
                 }
             });
+
+        }catch(Exception e){
+            Log.e("Importing image erro", e.getMessage());
         }
 
+    }
 }
 
 
