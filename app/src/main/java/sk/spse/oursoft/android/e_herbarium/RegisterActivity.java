@@ -16,10 +16,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
-import sk.spse.oursoft.android.e_herbarium.database_objects.User;
+import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
 
 //Activity for registering the user
 
@@ -30,6 +28,9 @@ public class RegisterActivity extends AppCompatActivity {
     private Button btnRegister;
     private TextView textLogin;
     private DatabaseTools databaseTools;
+
+    private final int NETWORK_STATUS_NOT_CONNECTED = 0;
+    private final int NETWORK_STATUS_CONNECTED = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,15 +76,18 @@ public class RegisterActivity extends AppCompatActivity {
         String user = email.getText().toString().trim();
         String pass = password.getText().toString().trim();
 
+        int networkStatus = databaseTools.isConnected();
 
-        if (databaseTools.isConnected()) {
+        if (networkStatus == NETWORK_STATUS_NOT_CONNECTED) {
+            Toast.makeText(RegisterActivity.this, "Internet connection error", Toast.LENGTH_SHORT).show();
+        } else {
             if (user.isEmpty()) {
                 email.setError("Email can not be empty");
             }
             if (pass.isEmpty()) {
                 password.setError("Password can not be empty");
             } else {
-                    mAuth.createUserWithEmailAndPassword(user, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                mAuth.createUserWithEmailAndPassword(user, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
@@ -106,8 +110,7 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                 });
             }
-        } else {
-            Toast.makeText(RegisterActivity.this, "Internet connection error", Toast.LENGTH_SHORT).show();
+        
         }
     }
 }

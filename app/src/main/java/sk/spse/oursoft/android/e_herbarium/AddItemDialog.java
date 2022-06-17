@@ -21,20 +21,18 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import herbariumListOperation.Item;
+import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
 
 import androidx.annotation.NonNull;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.Arrays;
 
 
-import herbariumListOperation.SubItem;
-import herbariumListOperation.SubItemAdapter;
+import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
+import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItemAdapter;
+import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
 
 public class AddItemDialog extends Dialog {
 
@@ -44,6 +42,8 @@ public class AddItemDialog extends Dialog {
     private SubItem subItem;
 
     private ImageView insertImage;
+
+    private final String[] invalidCharacters = {".", "@", "$", "%", "&", "/", "<", ">", "?", "|", "{", "}", "[", "]"};
 
     private final int[] iconList = {R.drawable.listocek_symbolik, R.drawable.kricek_symbolik, R.drawable.klasocek_symbolik, R.drawable.stromcek_symbolik};
 
@@ -94,6 +94,7 @@ public class AddItemDialog extends Dialog {
 
                         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         try {
+                            takePictureIntent.putExtra("itemName",item.getItemTitle());
                             ((Activity) context).startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
 
                         } catch (ActivityNotFoundException e) {
@@ -112,6 +113,7 @@ public class AddItemDialog extends Dialog {
                     public void onClick(View view) {
                         Intent galleryChoose = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         try {
+                            galleryChoose.putExtra("itemName",item.getItemTitle());
                             ((Activity) context).startActivityForResult(galleryChoose, RESULT_LOAD_IMAGE);
 
                         } catch (Exception e) {
@@ -150,6 +152,10 @@ public class AddItemDialog extends Dialog {
 
                     Toast.makeText(context, "Please input a unique herb name", Toast.LENGTH_SHORT).show();
 
+                }else if(stringContainsInvalidCharacters(herbName)){
+
+                    Toast.makeText(context, "Characters " + Arrays.toString(invalidCharacters) + " aren't allowed!", Toast.LENGTH_SHORT).show();
+
                 }else{
 
                     subItem.setHerbName(herbName);
@@ -164,10 +170,13 @@ public class AddItemDialog extends Dialog {
                                 .appendPath(context.getResources().getResourceEntryName(R.drawable.tree_placeholder))
                                 .build();
 
+                        subItem.setImageUri(uri.toString());
+
                         Toast.makeText(context, String.valueOf(uri), Toast.LENGTH_SHORT).show();
 
                         try {
                             setImageURI(uri);
+                            subItem.setImageUri(uri.toString());
 
                         } catch (Exception e) {
                             Log.e("set Image", "tried to set default image " + Arrays.toString(e.getStackTrace()));
@@ -380,13 +389,17 @@ public class AddItemDialog extends Dialog {
 
                                 }
                                 //add the name of the Item
-//                                subItem.setHerbId(databaseTools.getSubItemID(item));
+                                String herbId = databaseTools.getSubItemID(item);
+                                subItem.setHerbId(herbId);
+
                                 addIconDialog.dismiss();
                                 AddItemDialog.this.dismiss();
-                                //databaseTools.addEditSubItem(item,subItem);
+
                                 ListLogic.addOne(subItem, index);
                                 subItemAdapter.addSubItem();
-//                                databaseTools.addItem(item,subItem);
+
+                                databaseTools.addEditSubItem(item,subItem);
+                                databaseTools.saveImage(imageURI,item.getItemTitle());
 
                             }
                         }
@@ -412,9 +425,19 @@ public class AddItemDialog extends Dialog {
 
         insertImage.setImageURI(imageURI);
 
-        subItem.setImageUri(imageURI);
+        subItem.setImageUri(imageURI.toString());
 
 
+    }
+
+    protected boolean stringContainsInvalidCharacters(String string){
+        for (String character : invalidCharacters){
+            if (string.contains(character)){
+                return true;
+            }
+        }
+
+        return false;
     }
 
 

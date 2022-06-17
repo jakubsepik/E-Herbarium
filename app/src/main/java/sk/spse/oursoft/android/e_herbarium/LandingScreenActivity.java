@@ -1,40 +1,36 @@
 package sk.spse.oursoft.android.e_herbarium;
 
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.core.content.FileProvider;
+import androidx.annotation.RequiresApi;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import herbariumListOperation.Item;
-import herbariumListOperation.SubItem;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
+import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
+import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
+
+import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
+import sk.spse.oursoft.android.e_herbarium.misc.UserListCallback;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 
 public class LandingScreenActivity extends Activity {
@@ -56,6 +52,7 @@ public class LandingScreenActivity extends Activity {
     private final int CAMERA_REQUEST = 1888;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,13 +84,35 @@ public class LandingScreenActivity extends Activity {
             }
         });
 
+        //I have to initalize the callback here or else every time i move to the herbarium view activity the callback gets called
         databaseTools = new DatabaseTools(getApplicationContext());
+        databaseTools.initializeNetworkCallback();
+
         //runs this method coz else it is one cycle behind
         items = new ArrayList<>();
+        //ListLogic.begin(items, getApplicationContext());
 
+//        databaseTools.synchronizeDatabaseImages();
 
+        databaseTools.getUserItems(new UserListCallback() {
+            @Override
+            public void onDataCallback(ArrayList<Item> value) {
+
+                //finally use the database items here
+                //od the stuff here
+                System.out.println(databaseTools.getItems());
+
+            }
+
+            @Override
+            public void onImageCallback(Uri uri) {
+
+            }
+
+        });
 
     }
+
 
     private void go_login() {
         startActivity(new Intent(LandingScreenActivity.this, LoginActivity.class));
@@ -121,6 +140,8 @@ public class LandingScreenActivity extends Activity {
 
 
     public void test_connection(View view) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference reference = storage.getReference();
         /**/
 //        databaseTools.addEditSubItem(item,sub);
 //        databaseTools.getUserItems(items);
@@ -131,14 +152,35 @@ public class LandingScreenActivity extends Activity {
 
 
     public void testing_button(View view) {
-        SubItem sub2 = new SubItem("11", R.drawable.ic_delete_group_icon);
-        databaseTools.addEditSubItem(item, sub2);
+        SubItem sub0 = new SubItem("78","tree","this is the tree descprition", R.drawable.ic_delete_group_icon);
+        SubItem sub1 = new SubItem("45","tree", R.drawable.ic_delete_group_icon,"imageUri");
+        SubItem sub2 = new SubItem("45","tree", R.drawable.ic_delete_group_icon);
 
-        for (Item subitem : items) {
-            for (SubItem sub : subitem.getSubItemList()) {
-                System.out.println(sub + " a");
+
+        databaseTools.addEditSubItem(item, sub2);
+        databaseTools.getUserItems(new UserListCallback() {
+            @Override
+            public void onDataCallback(ArrayList<Item> value) {
+
+                //finally use the database items here
+                //od the stuff here
+                System.out.println(databaseTools.getItems());
+                for (Item subitem : databaseTools.getItems()) {
+                    for (SubItem sub : subitem.getSubItemList()) {
+                        System.out.println(sub + " a");
+                    }
+                }
+
             }
-        }
+
+            @Override
+            public void onImageCallback(Uri uri) {
+
+            }
+
+
+        });
+
     }
 
 }

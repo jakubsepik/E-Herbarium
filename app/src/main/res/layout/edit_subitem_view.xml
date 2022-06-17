@@ -24,7 +24,7 @@
             android:paddingBottom="0dp">
 
             <ImageView
-                android:id="@+id/insertImage"
+                android:id="@+id/editImage"
                 android:layout_width="226dp"
                 android:layout_height="226dp"
                 android:layout_gravity="center"
@@ -38,7 +38,7 @@
                 app:srcCompat="@drawable/tree_placeholder" />
 
             <ImageButton
-                android:id="@+id/dismissButton"
+                android:id="@+id/editDismissButton"
                 android:layout_width="34dp"
                 android:layout_height="31dp"
                 android:layout_marginStart="22dp"
@@ -52,7 +52,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <EditText
-            android:id="@+id/itemNameInput"
+            android:id="@+id/editNameInput"
             android:layout_width="335dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="35dp"
@@ -61,7 +61,7 @@
             android:ems="10"
             android:hint="Item Name"
             android:inputType="textPersonName"
-            android:maxLength="20"
+            android:maxLength="14"
             android:textColor="#F9F9F9"
             android:textColorHint="#85EFEFEF"
             android:textSize="35sp" />
@@ -76,9 +76,9 @@
             android:backgroundTint="#E1E1E1" />
 
         <EditText
-            android:id="@+id/itemDescriptionInput"
+            android:id="@+id/editDescriptionInput"
             android:layout_width="340dp"
-            android:layout_height="220dp"
+            android:layout_height="250dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="24dp"
             android:background="@drawable/description_bg"
@@ -99,10 +99,9 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <Button
-            android:id="@+id/addItemButton"
+            android:id="@+id/editItemButton"
             android:layout_width="181dp"
             android:layout_height="55dp"
-            android:layout_below="@+id/login_password"
             android:layout_centerInParent="true"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="30dp"
@@ -110,7 +109,7 @@
             android:fontFamily="@font/segoe_semibold"
             android:gravity="center_horizontal|center_vertical"
             android:paddingTop="1dp"
-            android:text="Add Item"
+            android:text="Edit Item"
             android:textAllCaps="false"
             android:textColor="#EBEBEB"
             android:textColorHint="#EBEBEB"

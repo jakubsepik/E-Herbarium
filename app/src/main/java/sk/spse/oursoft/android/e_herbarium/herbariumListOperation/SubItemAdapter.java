@@ -1,4 +1,4 @@
-package herbariumListOperation;
+package sk.spse.oursoft.android.e_herbarium.herbariumListOperation;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -23,10 +22,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.net.URI;
 import java.util.List;
 
-import sk.spse.oursoft.android.e_herbarium.AddItemDialog;
+import sk.spse.oursoft.android.e_herbarium.EditItemDialog;
 import sk.spse.oursoft.android.e_herbarium.ListLogic;
 import sk.spse.oursoft.android.e_herbarium.R;
 
@@ -73,7 +71,7 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
                 if (subItem.getImageUri() == null){
                     image.setImageResource(subItem.getIcon());
                 }else{
-                    image.setImageURI(subItem.getImageUri());
+                    image.setImageURI(Uri.parse(subItem.getImageUri()));
                 }
 
                 ImageButton dismissButton = (ImageButton) itemDialog.findViewById(R.id.dismissButton);
@@ -85,6 +83,16 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
                 });
 
                 Button editButton = (Button) itemDialog.findViewById(R.id.editButton);
+                editButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        EditItemDialog editItemDialog = new EditItemDialog(view.getContext(), android.R.style.Theme_Black_NoTitleBar_Fullscreen, subItem, subItemList);
+
+                        editItemDialog.show();
+
+                        itemDialog.dismiss();
+                    }
+                });
 
 
                 itemDialog.show();

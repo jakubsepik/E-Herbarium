@@ -1,6 +1,4 @@
-package herbariumListOperation;
-
-import android.net.Uri;
+package sk.spse.oursoft.android.e_herbarium.herbariumListOperation;
 
 import androidx.annotation.NonNull;
 
@@ -9,15 +7,8 @@ public class SubItem {
     private String herbName;
     private String herbDescription;
     private int icon;
-    private Uri imageUri;
+    private String imageUri;
 
-    public Uri getImageUri() {
-        return imageUri;
-    }
-
-    public void setImageUri(Uri imageUri) {
-        this.imageUri = imageUri;
-    }
 
     public SubItem(String herbId, int icon) {
         this.herbId = herbId;
@@ -50,13 +41,21 @@ public class SubItem {
         this.herbName = herbName;
         this.icon = icon;
     }
-    public SubItem(String herbId,String herbName,int icon,Uri imageUri){
+    public SubItem(String herbId,String herbName,int icon,String imageUri){
         this.herbId = herbId;
         this.herbDescription = "";
         this.herbName = herbName;
         this.icon = icon;
         this.imageUri = imageUri;
     }
+    public SubItem(String herbId,String herbName,String herbDescription,int icon,String imageUri){
+        this.herbId = herbId;
+        this.herbDescription = herbDescription;
+        this.herbName = herbName;
+        this.icon = icon;
+        this.imageUri = imageUri;
+    }
+
 
     public int getIcon() {
         return icon;
@@ -88,5 +87,11 @@ public class SubItem {
 
     public void setHerbDescription(String herbDescription) {
         this.herbDescription = herbDescription;
+    }
+    public String getImageUri() {
+        return imageUri;
+    }
+    public void setImageUri(String imageUri) {
+        this.imageUri = imageUri;
     }
 }
