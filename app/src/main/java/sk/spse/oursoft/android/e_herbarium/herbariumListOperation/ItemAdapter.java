@@ -105,6 +105,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
         ConstraintLayout addSubitem = bottomSheetDialog.findViewById(R.id.addSubitem);
         ConstraintLayout editGroup = bottomSheetDialog.findViewById(R.id.editGroup);
+        ConstraintLayout importLayout = bottomSheetDialog.findViewById(R.id.importLayout);
         ConstraintLayout deleteGroup = bottomSheetDialog.findViewById(R.id.deleteGroup);
 
 
@@ -169,6 +170,15 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                 });
 
                 editGroupDialog.show();
+
+                bottomSheetDialog.dismiss();
+            }
+        });
+
+        Objects.requireNonNull(importLayout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
 
                 bottomSheetDialog.dismiss();
             }
