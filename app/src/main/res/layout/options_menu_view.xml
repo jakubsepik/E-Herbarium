@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/optionsMenu"
     android:layout_width="match_parent"
-    android:layout_height="152dp"
+    android:layout_height="wrap_content"
     android:layout_gravity="center_horizontal"
     android:background="#1E334B"
     android:orientation="vertical">
@@ -73,6 +73,41 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
+        android:layout_width="370dp"
+        android:layout_height="1dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/options_menu_divider" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/importLayout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <ImageView
+            android:layout_width="27dp"
+            android:layout_height="26dp"
+            android:layout_marginStart="26dp"
+            android:layout_marginBottom="11dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_import_icon" />
+
+        <TextView
+            android:id="@+id/importText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="69dp"
+            android:layout_marginTop="12dp"
+            android:fontFamily="@font/segoe_regular"
+            android:text="Import"
+            android:textColor="#EBEBEB"
+            android:textSize="25sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/view"
         android:layout_width="370dp"
         android:layout_height="1dp"
         android:layout_gravity="center_horizontal"
