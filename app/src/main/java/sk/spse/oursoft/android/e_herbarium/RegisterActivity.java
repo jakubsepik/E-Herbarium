@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
 
@@ -93,7 +94,9 @@ public class RegisterActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
 
                             //writes the user registry in the database
-                            databaseTools.registerUser(user, pass);
+                            FirebaseUser firebaseUser= databaseTools.getCurrentUser();
+
+                            databaseTools.registerUser(firebaseUser);
 
                             //sends an intenst to the login so the fields are filled
                             Toast.makeText(RegisterActivity.this, "User registered successfully", Toast.LENGTH_SHORT).show();

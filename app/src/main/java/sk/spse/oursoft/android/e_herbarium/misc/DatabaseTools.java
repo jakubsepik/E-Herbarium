@@ -88,8 +88,9 @@ public class DatabaseTools {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        long Database_time = (long) dataSnapshot.getValue();
-                        timestamp = Database_time;
+                        long Database_time =  (long) dataSnapshot.getValue();
+
+
                         Log.i("DATABASE_TIME", String.valueOf(Database_time));
 
                         if (Database_time > Json_time) {
@@ -99,13 +100,18 @@ public class DatabaseTools {
                             ListLogic.getTimestamp();
                             //hadze to error :(
 
-//                            getUserItems(new UserListCallback() {
-//                                @Override
-//                                public void onCallback(ArrayList<Item> value) {
-//                                    ListLogic.setList(getItems());
-//                                }
-//
-//                            });
+                            getUserItems(new UserListCallback() {
+                                @Override
+                                public void onDataCallback(ArrayList<Item> value) {
+                                    ListLogic.setList(getItems());
+                                }
+
+                                @Override
+                                public void onImageCallback(Uri uri) {
+
+                                }
+
+                            });
 
                         } else {
                             //database = json
@@ -329,12 +335,11 @@ public class DatabaseTools {
 
 
     //adds the user registry to the database
-    public void registerUser(String email, String password) {
+    public void registerUser(FirebaseUser user) {
         myRef = database.getReference("users");
         //removed letters that can't be added to a database it is a useless line, but I don't want to delete it
-        email = email.replaceAll("/[$,#\\[\\]]/gm", "");
-        Log.e("database", email);
-        myRef.child(email.split("\\.")[0]).setValue(new User(email.split("\\.")[0], "herbarium", password));
+
+        myRef.child(user.getUid()).setValue(new User(user.getEmail(), "herbarium"));
 
     }
 

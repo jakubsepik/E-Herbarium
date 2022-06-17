@@ -192,11 +192,31 @@ public class HerbariumViewActivity extends AppCompatActivity {
                             }
 
                             else if (menuItem.getTitle().equals("Import")){
+                                FirebaseUser user = databaseTools.getCurrentUser();
+                                if(user != null){
+                                    String userName = user.getUid();
+                                    Intent chooseFile = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                                    chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
+                                    chooseFile.setType("*//*");
+                                    startActivityForResult(chooseFile, REQUEST_IMPORT_FILE);
 
+                                }else{
+                                    Toast.makeText(getApplicationContext(), "Not signed In", Toast.LENGTH_SHORT).show();
+                                }
                             }
 
                             else if(menuItem.getTitle().equals("Export")){
-
+                                FirebaseUser user = databaseTools.getCurrentUser();
+                                if(user != null){
+                                    try {
+                                        String userName = user.getUid();
+                                        ListLogic.exportHerbarium(userName);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }else{
+                                    Toast.makeText(getApplicationContext(), "Not signed In", Toast.LENGTH_SHORT).show();
+                                }
                             }
 
                             return true;
@@ -485,19 +505,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
         return permissionCheck == PackageManager.PERMISSION_GRANTED;
     }
 
-    /*
-    *
-    * FirebaseUser user = databaseTools.getCurrentUser();
 
-        if(user != null) {
-            String userName = user.getUid();
-
-            Intent chooseFile = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
-            chooseFile.setType("*//*");
-    startActivityForResult(chooseFile, REQUEST_IMPORT_FILE);
-}
-*/
     @RequiresApi(api = Build.VERSION_CODES.R)
     public void testActivituButton(View view) throws JSONException {
 

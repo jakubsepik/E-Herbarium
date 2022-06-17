@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.auth.FirebaseUser;
+
+import org.json.JSONException;
 
 import java.util.List;
 import java.util.Objects;
@@ -28,6 +32,7 @@ import java.util.Objects;
 import sk.spse.oursoft.android.e_herbarium.AddItemDialog;
 import sk.spse.oursoft.android.e_herbarium.ListLogic;
 import sk.spse.oursoft.android.e_herbarium.R;
+import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder> {
 
@@ -178,6 +183,22 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         Objects.requireNonNull(importLayout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                    DatabaseTools databaseTools = new DatabaseTools(context);
+
+                    FirebaseUser user = databaseTools.getCurrentUser();
+                    if (user != null) {
+                        try {
+                            String UserName = user.getUid();
+
+                            ListLogic.exportGroup(item, UserName);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }else {
+                        Toast.makeText(context, "Not signed In", Toast.LENGTH_SHORT).show();
+                    }
+
 
 
                 bottomSheetDialog.dismiss();
