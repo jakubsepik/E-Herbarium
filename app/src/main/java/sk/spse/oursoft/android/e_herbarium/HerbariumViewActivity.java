@@ -102,18 +102,23 @@ public class HerbariumViewActivity extends AppCompatActivity {
                 System.out.println("This callback was called");
                //finally use the database items here
                 //od the stuff here
-                String user = databaseTools.getCurrentUser().getEmail().split("\\.")[0];
-                //Log.d("EH",user);
-                long timestamp = DatabaseTools.timestamp;
-                ListLogic.begin(databaseTools.getItems(), getApplicationContext(),user,timestamp);
-                int tmp = ListLogic.getList().size()-1;
-                itemList[0] = ListLogic.getList();
-                itemAdapter[0] = new ItemAdapter(itemList[0]);
-                rvItem.setAdapter(itemAdapter[0]);
-                rvItem.setLayoutManager(layoutManager);
-                itemAdapter[0].notifyItemInserted(ListLogic.getList().size() - 1);
+                FirebaseUser user = databaseTools.getCurrentUser();
+                if(user != null) {
+                    String userName = user.getUid();
+                    //Log.d("EH",user);
+                    long timestamp = DatabaseTools.timestamp;
+                    ListLogic.begin(databaseTools.getItems(), getApplicationContext(), userName, timestamp);
+                    int tmp = ListLogic.getList().size() - 1;
+                    itemList[0] = ListLogic.getList();
+                    itemAdapter[0] = new ItemAdapter(itemList[0]);
+                    rvItem.setAdapter(itemAdapter[0]);
+                    rvItem.setLayoutManager(layoutManager);
+                    itemAdapter[0].notifyItemInserted(ListLogic.getList().size() - 1);
 
-                databaseTools.initializeNetworkCallback();
+                    databaseTools.initializeNetworkCallback();
+                }else{
+                    Toast.makeText(getApplicationContext(),"user not signed in",Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -133,71 +138,81 @@ public class HerbariumViewActivity extends AppCompatActivity {
         hamburgerMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PopupMenu popupMenu = new PopupMenu(HerbariumViewActivity.this, hamburgerMenu);
-                popupMenu.getMenuInflater().inflate(R.menu.popup_menu, popupMenu.getMenu());
 
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem menuItem) {
-                        if (menuItem.getTitle().equals("Add Group")) {
-                            Dialog addGroupDialog = new Dialog(view.getContext());
-                            addGroupDialog.setContentView(R.layout.add_group_view);
-                            ImageButton dismissButton = addGroupDialog.findViewById(R.id.dismissAddGroup);
-                            dismissButton.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    addGroupDialog.dismiss();
-                                }
-                            });
+                FirebaseUser user = databaseTools.getCurrentUser();
+                if(user == null) {
+                    PopupMenu popupMenu = new PopupMenu(HerbariumViewActivity.this, hamburgerMenu);
+                    popupMenu.getMenuInflater().inflate(R.menu.popup_menu, popupMenu.getMenu());
 
-                            EditText nameInput = addGroupDialog.findViewById(R.id.groupName);
-
-                            Button addGroupButton = addGroupDialog.findViewById(R.id.addGroupButton);
-                            addGroupButton.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    if (nameInput.getText().toString().equals("") || nameInput.getText().toString().length() == 0) {
-                                        Toast.makeText(view.getContext(), "You have to enter a name!", Toast.LENGTH_SHORT).show();
-
-                                    } else if (groupExists(nameInput.getText().toString(), itemList[0])) {
-                                        Toast.makeText(view.getContext(), "The group's name has to be unique!", Toast.LENGTH_SHORT).show();
-
-
-                                    } else if (stringContainsInvalidCharacters(nameInput.getText().toString())) {
-
-                                        Toast.makeText(view.getContext(), "Characters " + Arrays.toString(invalidCharacters) + " aren't allowed!", Toast.LENGTH_SHORT).show();
-
-                                    } else {
-                                        List<SubItem> subItemList = new ArrayList<SubItem>();
-                                        Item item = new Item(nameInput.getText().toString(), subItemList);
-
-                                        ListLogic.addCategory(item);
-                                        databaseTools.addItemToDatabase(item);
-                                        itemAdapter[0].notifyItemInserted(ListLogic.getList().size() - 1);
-
+                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem menuItem) {
+                            if (menuItem.getTitle().equals("Add Group")) {
+                                Dialog addGroupDialog = new Dialog(view.getContext());
+                                addGroupDialog.setContentView(R.layout.add_group_view);
+                                ImageButton dismissButton = addGroupDialog.findViewById(R.id.dismissAddGroup);
+                                dismissButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
                                         addGroupDialog.dismiss();
                                     }
-                                }
-                            });
+                                });
 
-                            addGroupDialog.show();
+                                EditText nameInput = addGroupDialog.findViewById(R.id.groupName);
+
+                                Button addGroupButton = addGroupDialog.findViewById(R.id.addGroupButton);
+                                addGroupButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        if (nameInput.getText().toString().equals("") || nameInput.getText().toString().length() == 0) {
+                                            Toast.makeText(view.getContext(), "You have to enter a name!", Toast.LENGTH_SHORT).show();
+
+                                        } else if (groupExists(nameInput.getText().toString(), itemList[0])) {
+                                            Toast.makeText(view.getContext(), "The group's name has to be unique!", Toast.LENGTH_SHORT).show();
+
+
+                                        } else if (stringContainsInvalidCharacters(nameInput.getText().toString())) {
+
+                                            Toast.makeText(view.getContext(), "Characters " + Arrays.toString(invalidCharacters) + " aren't allowed!", Toast.LENGTH_SHORT).show();
+
+                                        } else {
+                                            List<SubItem> subItemList = new ArrayList<SubItem>();
+                                            Item item = new Item(nameInput.getText().toString(), subItemList);
+
+                                            ListLogic.addCategory(item);
+                                            databaseTools.addItemToDatabase(item);
+                                            itemAdapter[0].notifyItemInserted(ListLogic.getList().size() - 1);
+
+                                            addGroupDialog.dismiss();
+                                        }
+                                    }
+                                });
+
+                                addGroupDialog.show();
+                            }
+
+                            else if (menuItem.getTitle().equals("Import")){
+
+                            }
+
+                            else if(menuItem.getTitle().equals("Export")){
+
+                            }
+
+                            return true;
                         }
 
-                        else if (menuItem.getTitle().equals("Import")){
+                    });
 
-                        }
+                    popupMenu.show();
 
-                        else if(menuItem.getTitle().equals("Export")){
+                }else {
+                    Toast.makeText(getApplicationContext(), "user not signed in", Toast.LENGTH_SHORT).show();
+                }
 
-                        }
-                        
-                        return true;
-                    }
-                });
-
-                popupMenu.show();
             }
         });
+
     }
 
     @Override
@@ -470,22 +485,27 @@ public class HerbariumViewActivity extends AppCompatActivity {
         return permissionCheck == PackageManager.PERMISSION_GRANTED;
     }
 
+    /*
+    *
+    * FirebaseUser user = databaseTools.getCurrentUser();
+
+        if(user != null) {
+            String userName = user.getUid();
+
+            Intent chooseFile = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
+            chooseFile.setType("*//*");
+    startActivityForResult(chooseFile, REQUEST_IMPORT_FILE);
+}
+*/
     @RequiresApi(api = Build.VERSION_CODES.R)
     public void testActivituButton(View view) throws JSONException {
 
         Item tempItem = new Item("1",null);
 
-        FirebaseUser user = databaseTools.getCurrentUser();
-        String userName = user.getEmail().split("\\.")[0];
-//        ListLogic.exportGroup(tempItem,userName);
+
+        //        ListLogic.exportGroup(tempItem,userName);
 //        ListLogic.exportHerbarium(userName);
-
-        Intent chooseFile = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
-        chooseFile.setType("*/*");
-        startActivityForResult(chooseFile,REQUEST_IMPORT_FILE);
-
-
 //        databaseTools.synchronizeInternalStorageToDatabase();
 //        Item tempItem = new Item("1",null);
 //            // MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE is an
