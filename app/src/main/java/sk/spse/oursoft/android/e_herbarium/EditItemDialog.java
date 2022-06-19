@@ -49,7 +49,7 @@ public class EditItemDialog extends Dialog {
         ImageButton editDismissButton = (ImageButton) findViewById(R.id.editDismissButton);
         EditText editNameInput = (EditText) findViewById(R.id.editNameInput);
         EditText editDescriptionInput = (EditText) findViewById(R.id.editDescriptionInput);
-        Button editItemButton = (Button) findViewById(R.id.xdlmao);
+        Button editItemButton = (Button) findViewById(R.id.editSubItemButton);
 
         editImage.setImageURI(Uri.parse(subItem.getImageUri()));
 
