@@ -243,7 +243,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
                         }
                         ((AddItemDialog) dialogReference).setImageURI(imageUri);
 
-//                        databaseTools.saveImage(imageUri,ItemName);
+                        databaseTools.saveImage(imageUri,ItemName);
 
                         Toast.makeText(this, "success", Toast.LENGTH_SHORT).show();
 
@@ -284,7 +284,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
                         ((AddItemDialog) dialogReference).setImageURI(imageUri);
 
                         //saves the image and the image ref in the firebase storage
-//                        databaseTools.saveImage(imageUri,ItemName);
+                        databaseTools.saveImage(imageUri,ItemName);
 
                         Toast.makeText(this, "success", Toast.LENGTH_SHORT).show();
 

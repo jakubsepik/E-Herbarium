@@ -155,13 +155,15 @@ public class EditItemDialog extends Dialog {
                     editedSubItem.setHerbDescription(editDescriptionInput.getText().toString());
                     editedSubItem.setIcon(subItem.getIcon());
                     editedSubItem.setHerbId(subItem.getHerbId());
-                    if(subItem.getImageUri() != null){
-                        if(imageURI != null){
-                            editedSubItem.setImageUri(imageURI.toString());
-                        }
+
+                    System.out.println("THE SUB ITEM URI " + subItem.getImageUri());
+
+                    if(imageURI == null){
+                        editedSubItem.setImageUri(subItem.getImageUri());
+                    }else{
+                        editedSubItem.setImageUri(imageURI.toString());
                     }
 
-                    DatabaseTools databaseTools = new DatabaseTools(context);
 
                     FirebaseUser user = databaseTools.getCurrentUser();
                     if (user != null) {
@@ -169,6 +171,7 @@ public class EditItemDialog extends Dialog {
                             String UserName = user.getUid();
 
                             databaseTools.addEditSubItem(item, editedSubItem);
+                            System.out.println("ITEM POSITION " + subItemPosition);
                             ListLogic.editOne(item.getItemTitle(), subItemPosition, editedSubItem);
                             subItemAdapter.notifyItemChanged(subItemPosition);
 

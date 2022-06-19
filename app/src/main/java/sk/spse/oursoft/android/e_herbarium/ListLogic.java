@@ -140,11 +140,14 @@ public class ListLogic extends AppCompatActivity {
         list.get(index).setItemTitle(name);
     }
 
-    public static void editOne(String category, int index, SubItem subItem) {
-        saveAll();
-        for (Item tmp : list) {
-            if (tmp.getItemTitle().equals(category))
-                tmp.getSubItemList().add(index, subItem);
+    public static void editOne( String itemTitle,int index, SubItem subItem) {
+        for(Item item : list){
+            if(item.getItemTitle().equals(itemTitle)){
+                List<SubItem> subItems = item.getSubItemList();
+                subItems.set(index,subItem);
+                item.setSubItemList(subItems);
+                return;
+            }
         }
     }
 
