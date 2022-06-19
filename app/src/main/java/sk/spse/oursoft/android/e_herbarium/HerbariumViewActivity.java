@@ -91,42 +91,13 @@ public class HerbariumViewActivity extends AppCompatActivity {
         RecyclerView rvItem = findViewById(R.id.recyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(HerbariumViewActivity.this);
 
-        final List<Item>[] itemList = new List[]{ListLogic.getList()};
-        final ItemAdapter[] itemAdapter = {new ItemAdapter(itemList[0])};
+        List<Item> itemList = ListLogic.getList();
+        ItemAdapter itemAdapter = new ItemAdapter(itemList);
+        rvItem.setAdapter(itemAdapter);
+        rvItem.setLayoutManager(layoutManager);
+        itemAdapter.notifyItemInserted(ListLogic.getList().size()-1);
         ImageButton hamburgerMenu = (ImageButton) findViewById(R.id.hamburgerMenu);
 
-
-        databaseTools.getUserItems(new UserListCallback() {
-            @Override
-            public void onDataCallback(ArrayList<Item> value) {
-                System.out.println("This callback was called");
-               //finally use the database items here
-                //od the stuff here
-                FirebaseUser user = databaseTools.getCurrentUser();
-                if(user != null) {
-                    String userName = user.getUid();
-                    //Log.d("EH",user);
-                    long timestamp = DatabaseTools.timestamp;
-                    ListLogic.begin(databaseTools.getItems(), getApplicationContext(), userName, timestamp);
-                    int tmp = ListLogic.getList().size() - 1;
-                    itemList[0] = ListLogic.getList();
-                    itemAdapter[0] = new ItemAdapter(itemList[0]);
-                    rvItem.setAdapter(itemAdapter[0]);
-                    rvItem.setLayoutManager(layoutManager);
-                    itemAdapter[0].notifyItemInserted(ListLogic.getList().size() - 1);
-
-                    databaseTools.initializeNetworkCallback();
-                }else{
-                    Toast.makeText(getApplicationContext(),"user not signed in",Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onImageCallback(Uri uri) {
-
-            }
-
-        });
 
         //tento callback daj to Landing screen Activity
         //nech sa to loadne pred tym ako zapnes toto
@@ -167,8 +138,8 @@ public class HerbariumViewActivity extends AppCompatActivity {
                                         if (nameInput.getText().toString().equals("") || nameInput.getText().toString().length() == 0) {
                                             Toast.makeText(view.getContext(), "You have to enter a name!", Toast.LENGTH_SHORT).show();
 
-                                        } else if (groupExists(nameInput.getText().toString(), itemList[0])) {
-                                            Toast.makeText(view.getContext(), "The group's name has to be unique!", Toast.LENGTH_SHORT).show();
+                                    } else if (groupExists(nameInput.getText().toString(), itemList)) {
+                                        Toast.makeText(view.getContext(), "The group's name has to be unique!", Toast.LENGTH_SHORT).show();
 
 
                                         } else if (stringContainsInvalidCharacters(nameInput.getText().toString())) {
@@ -179,9 +150,8 @@ public class HerbariumViewActivity extends AppCompatActivity {
                                             List<SubItem> subItemList = new ArrayList<SubItem>();
                                             Item item = new Item(nameInput.getText().toString(), subItemList);
 
-                                            ListLogic.addCategory(item);
-                                            databaseTools.addItemToDatabase(item);
-                                            itemAdapter[0].notifyItemInserted(ListLogic.getList().size() - 1);
+                                        ListLogic.addCategory(item);
+                                        itemAdapter.notifyItemInserted(ListLogic.getList().size()-1);
 
                                             addGroupDialog.dismiss();
                                         }
