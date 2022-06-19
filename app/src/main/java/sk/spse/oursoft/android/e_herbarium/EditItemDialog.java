@@ -4,8 +4,14 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.media.Image;
 import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -17,13 +23,20 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseUser;
 
 import org.json.JSONException;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
@@ -35,7 +48,8 @@ public class EditItemDialog extends Dialog {
 
     private final int REQUEST_IMAGE_CAPTURE = 1;
     private final int RESULT_LOAD_IMAGE = 2;
-
+    public Uri imageURI;
+    public ImageView editImage;
     private final String[] invalidCharacters = {".", "@", "$", "%", "&", "/", "<", ">", "?", "|", "{", "}", "[", "]"};
 
     public EditItemDialog(@NonNull Context context, int theme_Black_NoTitleBar_Fullscreen, SubItem subItem, List<SubItem> subItemList, SubItemAdapter subItemAdapter, Item item) {
@@ -45,12 +59,12 @@ public class EditItemDialog extends Dialog {
 
         this.setContentView(R.layout.edit_subitem_view);
 
-        ImageView editImage = (ImageView) findViewById(R.id.editImage);
+        editImage = (ImageView) findViewById(R.id.editImage);
         ImageButton editDismissButton = (ImageButton) findViewById(R.id.editDismissButton);
         EditText editNameInput = (EditText) findViewById(R.id.editNameInput);
         EditText editDescriptionInput = (EditText) findViewById(R.id.editDescriptionInput);
         Button editItemButton = (Button) findViewById(R.id.xdlmao);
-
+        imageURI = null;
         editImage.setImageURI(Uri.parse(subItem.getImageUri()));
 
         editNameInput.setText(subItem.getHerbName());
@@ -81,7 +95,8 @@ public class EditItemDialog extends Dialog {
 
                         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         try {
-                            ((Activity) context).startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                            Activity activity =  (Activity) ((ContextWrapper) context).getBaseContext();;
+                            activity.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
 
                         } catch (ActivityNotFoundException e) {
                             Toast.makeText(context, "error opening camera", Toast.LENGTH_SHORT).show();
@@ -99,11 +114,12 @@ public class EditItemDialog extends Dialog {
                     public void onClick(View view) {
                         Intent galleryChoose = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         try {
-                            ((Activity) context).startActivityForResult(galleryChoose, RESULT_LOAD_IMAGE);
+                            Activity activity =  (Activity) ((ContextWrapper) context).getBaseContext();;
+                            activity.startActivityForResult(galleryChoose, RESULT_LOAD_IMAGE);
 
                         } catch (Exception e) {
                             Toast.makeText(context, "error opening gallery", Toast.LENGTH_SHORT).show();
-                            Log.e("Gallery", "error occured while opening the gallery" + e.getStackTrace());
+                            Log.e("Gallery", "error occured while opening the gallery" + e.getMessage());
                         }
 
                         bottomSheetDialog.dismiss();
@@ -135,6 +151,11 @@ public class EditItemDialog extends Dialog {
                     editedSubItem.setHerbDescription(editDescriptionInput.getText().toString());
                     editedSubItem.setIcon(subItem.getIcon());
                     editedSubItem.setHerbId(subItem.getHerbId());
+                    if(subItem.getImageUri() != null){
+                        if(imageURI != null){
+                            editedSubItem.setImageUri(imageURI.toString());
+                        }
+                    }
 
                     DatabaseTools databaseTools = new DatabaseTools(context);
 
@@ -183,4 +204,14 @@ public class EditItemDialog extends Dialog {
         }
         return -1;
     }
+    public void setImageURI(Uri pictureURI) {
+
+        this.imageURI = pictureURI;
+        Toast.makeText(this.getContext(), imageURI.toString(), Toast.LENGTH_SHORT).show();
+        Log.e("IMAGEURI",pictureURI.toString());
+        editImage.setImageURI(imageURI);
+
+
+    }
+
 }
