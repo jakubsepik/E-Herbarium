@@ -99,7 +99,7 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <Button
-            android:id="@+id/editItemButton"
+            android:id="@+id/xdlmao"
             android:layout_width="181dp"
             android:layout_height="55dp"
             android:layout_centerInParent="true"
