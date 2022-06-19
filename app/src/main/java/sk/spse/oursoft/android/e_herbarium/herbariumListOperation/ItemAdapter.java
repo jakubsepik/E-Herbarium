@@ -70,7 +70,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         layoutManager.setInitialPrefetchItemCount(item.getSubItemList().size());
 
         // Create sub item view adapter
-        SubItemAdapter subItemAdapter = new SubItemAdapter(item.getSubItemList(), item.getItemTitle());
+        SubItemAdapter subItemAdapter = new SubItemAdapter(item.getSubItemList(), item.getItemTitle(), item);
 
         itemViewHolder.rvSubItem.setLayoutManager(layoutManager);
         itemViewHolder.rvSubItem.setAdapter(subItemAdapter);

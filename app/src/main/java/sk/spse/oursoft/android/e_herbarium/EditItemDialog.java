@@ -19,17 +19,26 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.auth.FirebaseUser;
 
+import org.json.JSONException;
+
+import java.util.Arrays;
 import java.util.List;
 
+import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
+import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItemAdapter;
+import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
 
 public class EditItemDialog extends Dialog {
 
     private final int REQUEST_IMAGE_CAPTURE = 1;
     private final int RESULT_LOAD_IMAGE = 2;
 
-    public EditItemDialog(@NonNull Context context, int theme_Black_NoTitleBar_Fullscreen, SubItem subItem, List<SubItem> subItemList) {
+    private final String[] invalidCharacters = {".", "@", "$", "%", "&", "/", "<", ">", "?", "|", "{", "}", "[", "]"};
+
+    public EditItemDialog(@NonNull Context context, int theme_Black_NoTitleBar_Fullscreen, SubItem subItem, List<SubItem> subItemList, SubItemAdapter subItemAdapter, Item item) {
         super(context, theme_Black_NoTitleBar_Fullscreen);
 
         HerbariumViewActivity.setCurrentDialog(this);
@@ -100,12 +109,60 @@ public class EditItemDialog extends Dialog {
                         bottomSheetDialog.dismiss();
                     }
                 });
+                
+                editItemButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        if(editNameInput.getText().toString().equals("") || editNameInput.getText().toString().length() == 0){
+                            Toast.makeText(view.getContext(), "You have to enter a name!", Toast.LENGTH_SHORT).show();
+
+                        }else if (stringContainsInvalidCharacters(editNameInput.getText().toString())){
+                            Toast.makeText(context, "Characters " + Arrays.toString(invalidCharacters) + " aren't allowed!", Toast.LENGTH_SHORT).show();
+
+                        }else {
+
+
+                            SubItem editedSubItem = new SubItem();
+
+                            editedSubItem.setHerbName(editNameInput.getText().toString());
+                            editedSubItem.setHerbDescription(editDescriptionInput.getText().toString());
+                            editedSubItem.setIcon(subItem.getIcon());
+                            editedSubItem.setHerbId(subItem.getHerbId());
+
+                            DatabaseTools databaseTools = new DatabaseTools(context);
+
+                            FirebaseUser user = databaseTools.getCurrentUser();
+                            if (user != null) {
+                                try {
+                                    String UserName = user.getUid();
+
+                                    databaseTools.addEditSubItem(item, editedSubItem);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }else {
+                                Toast.makeText(context, "Not signed In", Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                    }
+                });
 
                 bottomSheetDialog.show();
-
-//
+                
             }
         });
 
+    }
+
+    protected boolean stringContainsInvalidCharacters(String string){
+        for (String character : invalidCharacters){
+            if (string.contains(character)){
+                return true;
+            }
+        }
+
+        return false;
     }
 }

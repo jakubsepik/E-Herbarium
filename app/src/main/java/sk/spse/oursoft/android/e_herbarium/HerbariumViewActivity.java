@@ -469,35 +469,6 @@ public class HerbariumViewActivity extends AppCompatActivity {
         return false;
     }
 
-    private boolean isPermissionGranted(String permission) {
-
-        int permissionCheck = ActivityCompat.checkSelfPermission(this, permission);
-        return permissionCheck == PackageManager.PERMISSION_GRANTED;
-    }
-
-
-    @RequiresApi(api = Build.VERSION_CODES.R)
-    public void testActivituButton(View view) throws JSONException {
-
-        Item tempItem = new Item("1",null);
-
-
-        //        ListLogic.exportGroup(tempItem,userName);
-//        ListLogic.exportHerbarium(userName);
-//        databaseTools.synchronizeInternalStorageToDatabase();
-//        Item tempItem = new Item("1",null);
-//            // MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE is an
-//            // app-defined int constant that should be quite unique
-//
-//        FirebaseUser user = databaseTools.getCurrentUser();
-//        String userName = user.getEmail().split("\\.")[0];
-//        ListLogic.exportGroup(tempItem,userName);
-//        ListLogic.exportHerbarium(userName);
-
-
-// If you don't have access, launch a new activity to show the user the system's dialog
-// to allow access to the external storage
-
-        }
-
 }
+
+

@@ -35,23 +35,21 @@ import java.util.ArrayList;
 
 
 public class LandingScreenActivity extends Activity {
+    private static final String TAG = "MyActivity";
+    private final int REQUEST_IMAGE_CAPTURE = 1;
+    private final int RESULT_LOAD_IMAGE = 2;
+    private final int CAMERA_REQUEST = 1888;
+    public File photoFile;
+    String currentPhotoPath;
     private Button open;
     private Button login;
     private TextView messageText;
     private FirebaseDatabase database;
     private DatabaseReference myRef;
-    private static final String TAG = "MyActivity";
     private FirebaseAuth mAuth;
     private DatabaseTools databaseTools;
     private ArrayList<Item> items;
-
-    String currentPhotoPath;
-    public File photoFile;
-    private final int REQUEST_IMAGE_CAPTURE = 1;
-    private final int RESULT_LOAD_IMAGE = 2;
     private Uri uri;
-    private final int CAMERA_REQUEST = 1888;
-
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -59,16 +57,16 @@ public class LandingScreenActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.landing_screen);
 
-        messageText = (TextView) findViewById(R.id.message_text);
+        messageText = findViewById(R.id.login_status_text);
 
         //This is just to make a part of the text bold
         //No, there is literally no other way, I'm surprised as well
-        String message = "You <b>Are</b> Signed In";
+        String message = "You <b>Are Not</b> Signed In";
         messageText.setText(Html.fromHtml(message));
 
-        login = (Button) findViewById(R.id.login_button);
+        login = findViewById(R.id.login_button);
         mAuth = FirebaseAuth.getInstance();
-        TextView login_status_text = (TextView) findViewById(R.id.login_status_text);
+        TextView login_status_text = findViewById(R.id.login_status_text);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             login_status_text.setText(user.getEmail().split("@")[0]);
@@ -76,7 +74,7 @@ public class LandingScreenActivity extends Activity {
             login_status_text.setText("no user signed in");
         }
 
-        login = (Button) findViewById(R.id.login_button);
+        login = findViewById(R.id.login_button);
         addListenerOnButton();
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,7 +100,7 @@ public class LandingScreenActivity extends Activity {
                 //finally use the database items here
                 //od the stuff here
                 FirebaseUser user = databaseTools.getCurrentUser();
-                if(user != null) {
+                if (user != null) {
                     String userName = user.getUid();
                     //Log.d("EH",user);
                     long timestamp = DatabaseTools.timestamp;
@@ -113,7 +111,7 @@ public class LandingScreenActivity extends Activity {
 
             @Override
             public void onImageCallback(Uri uri) {
-                int a =0;
+                int a = 0;
             }
         });
     }
@@ -126,7 +124,7 @@ public class LandingScreenActivity extends Activity {
     public void addListenerOnButton() {
         final Context context = this;
 
-        open = (Button) findViewById(R.id.open);
+        open = findViewById(R.id.open);
 
         open.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,57 +133,6 @@ public class LandingScreenActivity extends Activity {
                 startActivity(intent);
             }
         });
-    }
-
-
-    //these are testing methods that I will move to my own branch
-
-    public Item item = new Item("pines");
-    public SubItem sub = new SubItem("11", R.drawable.listocek_symbolik);
-
-
-    public void test_connection(View view) {
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference reference = storage.getReference();
-        /**/
-//        databaseTools.addEditSubItem(item,sub);
-//        databaseTools.getUserItems(items);
-//        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-//        startActivityForResult(cameraIntent, CAMERA_REQUEST);
-
-    }
-
-
-    public void testing_button(View view) {
-        SubItem sub0 = new SubItem("78","tree","this is the tree descprition", R.drawable.ic_delete_group_icon);
-        SubItem sub1 = new SubItem("45","tree", R.drawable.ic_delete_group_icon,"imageUri");
-        SubItem sub2 = new SubItem("45","tree", R.drawable.ic_delete_group_icon);
-
-
-        databaseTools.addEditSubItem(item, sub2);
-        databaseTools.getUserItems(new UserListCallback() {
-            @Override
-            public void onDataCallback(ArrayList<Item> value) {
-
-                //finally use the database items here
-                //od the stuff here
-                System.out.println(databaseTools.getItems());
-                for (Item subitem : databaseTools.getItems()) {
-                    for (SubItem sub : subitem.getSubItemList()) {
-                        System.out.println(sub + " a");
-                    }
-                }
-
-            }
-
-            @Override
-            public void onImageCallback(Uri uri) {
-
-            }
-
-
-        });
-
     }
 
 }
