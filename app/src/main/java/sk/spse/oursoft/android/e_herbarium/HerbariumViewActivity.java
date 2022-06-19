@@ -92,6 +92,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
         RecyclerView rvItem = findViewById(R.id.recyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(HerbariumViewActivity.this);
 
+
         List<Item> itemList = ListLogic.getList();
         itemAdapter = new ItemAdapter(itemList);
         rvItem.setAdapter(itemAdapter);
@@ -99,6 +100,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
         itemAdapter.notifyItemInserted(ListLogic.getList().size()-1);
         ImageButton hamburgerMenu = (ImageButton) findViewById(R.id.hamburgerMenu);
 
+//        databaseTools.initializeNetworkCallback();
 
         //tento callback daj to Landing screen Activity
         //nech sa to loadne pred tym ako zapnes toto

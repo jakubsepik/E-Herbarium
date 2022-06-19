@@ -78,11 +78,12 @@ public class DatabaseTools {
 
             //TODO
             //NEED TO FIX THE GET TIME STAMP THING COZ IT ISN"T RELALY WORKING
-            long Json_time = System.currentTimeMillis();
+            long Json_time = ListLogic.getTimestamp();
+
 
             user = getCurrentUser();
             if (user != null) {
-                DatabaseReference time_ref = database.getReference().child("LAST_CHANGE");
+                DatabaseReference time_ref = database.getReference("users").child(user.getUid()).child("LAST_CHANGE");
 
                 time_ref.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -96,14 +97,12 @@ public class DatabaseTools {
                         if (Database_time > Json_time) {
                             Toast.makeText(context, "Loading values from Database", Toast.LENGTH_SHORT).show();
 
-
-                            ListLogic.getTimestamp();
                             //hadze to error :(
 
                             getUserItems(new UserListCallback() {
                                 @Override
                                 public void onDataCallback(ArrayList<Item> value) {
-                                    ListLogic.setList(getItems());
+                                    ListLogic.setList(value);
                                 }
 
                                 @Override
@@ -144,7 +143,11 @@ public class DatabaseTools {
                                 for (Item item : JsonItems) {
 
                                     System.out.println(item.getItemTitle());
-                                    addEditItem(item);
+                                    if(item.getSubItemList().size() == 0){
+                                        addItemToDatabase(item);
+                                    }else {
+                                        addEditItem(item);
+                                    }
 
                                 }
 
@@ -246,7 +249,8 @@ public class DatabaseTools {
                     System.out.println(subItem + " ============");
                     myRef.child(subItem.getHerbId()).setValue(subItem);
                 }
-                database.getReference().child("LAST_CHANGE").setValue(System.currentTimeMillis());
+
+                database.getReference("users").child(user.getUid()).child("LAST_CHANGE").setValue(System.currentTimeMillis());
 
             } catch (Exception e) {
                 Log.e("DATABASE", "Error writing data from JSON to database");
@@ -276,7 +280,7 @@ public class DatabaseTools {
 
             Log.i("add/edit subitem", "success");
 
-            myRef.child(user.getUid()).child("LAST_CHANGE").setValue(System.currentTimeMillis());
+            database.getReference("users").child(user.getUid()).child("LAST_CHANGE").setValue(System.currentTimeMillis());
 
 
         } else {
@@ -297,7 +301,7 @@ public class DatabaseTools {
             myRef = database.getReference().child("users").child(userName).child("herbarium").child(item.getItemTitle());
             myRef.child(subItem.getHerbId()).removeValue();
 
-            myRef.child(user.getUid()).child("LAST_CHANGE").setValue(System.currentTimeMillis());
+            database.getReference("users").child(user.getUid()).child("LAST_CHANGE").setValue(System.currentTimeMillis());
 
 
         } else {
@@ -321,7 +325,7 @@ public class DatabaseTools {
             myRef = database.getReference().child("users").child(userName).child("herbarium");
             myRef.child(item.getItemTitle()).removeValue();
 
-            myRef.child(user.getUid()).child("LAST_CHANGE").setValue(System.currentTimeMillis());
+            database.getReference("users").child(user.getUid()).child("LAST_CHANGE").setValue(System.currentTimeMillis());
 
         } else {
             Toast.makeText(context, "User not signed in", Toast.LENGTH_SHORT).show();
@@ -412,7 +416,8 @@ public class DatabaseTools {
             myRef = database.getReference().child("users").child(userName).child("herbarium");
             myRef.child(item.getItemTitle()).setValue("Group without an Item");
 
-            Toast.makeText(context, "YEEEEEEEEEEEEEEe", Toast.LENGTH_SHORT).show();
+            database.getReference("users").child(user.getUid()).child("LAST_CHANGE").setValue(System.currentTimeMillis());
+            Toast.makeText(context, "Successfully added group to database", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(context, "User not signed in", Toast.LENGTH_SHORT).show();
             Log.e("save Database", "user not signed in ");
@@ -676,6 +681,7 @@ public class DatabaseTools {
                     }
                     for (StorageReference fileRef : result.getItems()) {
                         Log.i("Informatino", String.valueOf((fileRef)));
+
                         String[] storageImageUriArr = fileRef.toString().split("/");
                         String storageImageUri = storageImageUriArr[storageImageUriArr.length - 1];
 

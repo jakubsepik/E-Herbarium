@@ -151,7 +151,7 @@ public class ListLogic extends AppCompatActivity {
         }
     }
 
-    static void deleteCategory(String category) {
+    public static void deleteCategory(String category) {
         saveAll();
         for (int i = 0; i < list.toArray().length; i++) {
             if (list.get(i).getItemTitle().equals(category)) {
@@ -345,24 +345,26 @@ public class ListLogic extends AppCompatActivity {
                         subItem.setImageUri(databaseTools.getDefaultURI().toString());
                         databaseTools.addEditSubItem(item, subItem);
                         addOne(subItem, ItemPosition);
-                        itemAdapter.notifyItemChanged(findSubItemPosition(subItem.getHerbName(),item.getSubItemList()));
-
                         saveAll();
 
                     }
+                    itemAdapter.notifyItemChanged(findSubItemPosition(subItem.getHerbName(),item.getSubItemList()));
                 } catch (Exception e) {
                     //remove all those things I just added , pain xdxdxdxdxdxdxs
                 }
             }
 
         }
+        itemAdapter.notify();
         System.out.println("List-Database" + list);
     }
 
     public static int findItemPosition(String itemTitle, List<Item> itemList) {
         for (int i = 0; i < itemList.size(); i++) {
             if (itemTitle.equals(itemList.get(i).getItemTitle())) {
+
                 return i;
+
             }
         }
         return -1;
