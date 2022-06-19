@@ -111,7 +111,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 FirebaseUser user = databaseTools.getCurrentUser();
-                if(user == null) {
+                if(user != null) {
                     PopupMenu popupMenu = new PopupMenu(HerbariumViewActivity.this, hamburgerMenu);
                     popupMenu.getMenuInflater().inflate(R.menu.popup_menu, popupMenu.getMenu());
 
@@ -167,7 +167,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
                                     String userName = user.getUid();
                                     Intent chooseFile = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                                     chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
-                                    chooseFile.setType("*//*");
+                                    chooseFile.setType("*/*");
                                     startActivityForResult(chooseFile, REQUEST_IMPORT_FILE);
 
                                 }else{

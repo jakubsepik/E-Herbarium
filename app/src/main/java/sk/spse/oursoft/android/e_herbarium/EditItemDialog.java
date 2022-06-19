@@ -122,6 +122,7 @@ public class EditItemDialog extends Dialog {
 
                         }else {
 
+                            int subItemPosition = findSubItemPosition(subItem.getHerbName(), subItemList);
 
                             SubItem editedSubItem = new SubItem();
 
@@ -138,6 +139,10 @@ public class EditItemDialog extends Dialog {
                                     String UserName = user.getUid();
 
                                     databaseTools.addEditSubItem(item, editedSubItem);
+                                    subItemAdapter.notifyItemChanged(subItemPosition);
+
+                                    EditItemDialog.this.dismiss();
+
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -164,5 +169,15 @@ public class EditItemDialog extends Dialog {
         }
 
         return false;
+    }
+
+    public int findSubItemPosition(String subItemTitle, List<SubItem> subItemList){
+
+        for (int i = 0; i < subItemList.size(); i++){
+            if (subItemTitle.equals(subItemList.get(i).getHerbName())){
+                return i;
+            }
+        }
+        return -1;
     }
 }
