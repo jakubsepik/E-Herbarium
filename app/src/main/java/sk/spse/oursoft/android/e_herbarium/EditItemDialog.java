@@ -127,6 +127,8 @@ public class EditItemDialog extends Dialog {
 
                 }else {
 
+                    DatabaseTools databaseTools = new DatabaseTools(context);
+
                     int subItemPosition = findSubItemPosition(subItem.getHerbName(), subItemList);
 
                     SubItem editedSubItem = new SubItem();
@@ -135,8 +137,11 @@ public class EditItemDialog extends Dialog {
                     editedSubItem.setHerbDescription(editDescriptionInput.getText().toString());
                     editedSubItem.setIcon(subItem.getIcon());
                     editedSubItem.setHerbId(subItem.getHerbId());
-
-                    DatabaseTools databaseTools = new DatabaseTools(context);
+                    if (subItem.getImageUri() == null){
+                        editedSubItem.setImageUri(databaseTools.getDefaultURI().toString());
+                    }else{
+                        editedSubItem.setImageUri(subItem.getImageUri());
+                    }
 
                     FirebaseUser user = databaseTools.getCurrentUser();
                     if (user != null) {
