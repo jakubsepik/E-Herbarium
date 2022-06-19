@@ -26,6 +26,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import org.json.JSONException;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -38,6 +39,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
     private RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
     private List<Item> itemList;
+    private final String[] invalidCharacters = {".", "@", "$", "%", "&", "/", "<", ">", "?", "|", "{", "}", "[", "]"};
 
     public static final int PICK_IMAGE = 1;
 
@@ -156,20 +158,23 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
                         }else if (groupExists(nameInput.getText().toString())){
                             Toast.makeText(view.getContext(), "The group's name has to be unique!", Toast.LENGTH_SHORT).show();
+
+                        }else if (stringContainsInvalidCharacters(nameInput.getText().toString())){
+                            Toast.makeText(context, "Characters " + Arrays.toString(invalidCharacters) + " aren't allowed!", Toast.LENGTH_SHORT).show();
+
                         }else{
+                                String newName = nameInput.getText().toString();
 
-                            String newName = nameInput.getText().toString();
+                                int index = findItemPosition(item.getItemTitle(), itemList);
 
-                            int index = findItemPosition(item.getItemTitle(), itemList);
+                                if (index == -1) {
+                                    Toast.makeText(view.getContext(), "This group doesn't exist", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    ListLogic.editCategory(index, newName);
+                                    ItemAdapter.this.notifyItemChanged(index);
+                                }
 
-                            if (index == -1){
-                                Toast.makeText(view.getContext(), "This group doesn't exist", Toast.LENGTH_SHORT).show();
-                            }else{
-                                ListLogic.editCategory(index, newName);
-                                ItemAdapter.this.notifyItemChanged(index);
-                            }
-
-                            editGroupDialog.dismiss();
+                                editGroupDialog.dismiss();
                         }
                     }
                 });
@@ -309,6 +314,16 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
             }
         }
        return false;
+    }
+
+    protected boolean stringContainsInvalidCharacters(String string){
+        for (String character : invalidCharacters){
+            if (string.contains(character)){
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }
