@@ -170,7 +170,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                                 if (index == -1) {
                                     Toast.makeText(view.getContext(), "This group doesn't exist", Toast.LENGTH_SHORT).show();
                                 } else {
+                                    DatabaseTools databaseTools = new DatabaseTools(context);
+
+
                                     ListLogic.editCategory(index, newName);
+                                    databaseTools.addItemToDatabase(new Item(newName));
                                     ItemAdapter.this.notifyItemChanged(index);
                                 }
 
@@ -267,6 +271,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
                                 removeItem(pos);
                                 databaseTools.deleteItem(ListLogic.getList().get(pos));
+                                ItemAdapter.this.notifyItemChanged(pos);
 
                             }
                         });

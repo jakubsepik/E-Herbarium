@@ -24,13 +24,11 @@ import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
 //activity to login the user
 
 public class LoginActivity extends AppCompatActivity {
+    private final int NETWORK_STATUS_NOT_CONNECTED = 0;
+    private final int NETWORK_STATUS_CONNECTED = 1;
     private FirebaseAuth mAuth;
     private EditText email, password;
     private DatabaseTools databaseTools;
-
-
-    private final int NETWORK_STATUS_NOT_CONNECTED = 0;
-    private final int NETWORK_STATUS_CONNECTED = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,17 +76,19 @@ public class LoginActivity extends AppCompatActivity {
 
         //pop up window for reset password
         //uses the reset_password xml
-        TextView resetPassword = (TextView) findViewById(R.id.reset_password);
+        TextView resetPassword = findViewById(R.id.reset_password);
         Dialog passwordResetDialog = new Dialog(this);
 
         resetPassword.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 passwordResetDialog.setContentView(R.layout.reset_password);
 
-                EditText resetArea = (EditText) passwordResetDialog.findViewById(R.id.resetArea);
-                Button resetPasswordButton = (Button) passwordResetDialog.findViewById(R.id.resetPasswordButton);
-                ImageView exit_reset = (ImageView) passwordResetDialog.findViewById(R.id.reset_exit);
+
+                EditText resetArea = passwordResetDialog.findViewById(R.id.resetArea);
+                Button resetPasswordButton = passwordResetDialog.findViewById(R.id.resetPasswordButton);
+                ImageView exit_reset = passwordResetDialog.findViewById(R.id.reset_exit);
 
                 exit_reset.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -101,8 +101,6 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
 
-                        Toast.makeText(getApplicationContext(), databaseTools.isConnected(), Toast.LENGTH_SHORT).show();
-
                         int networkStatus = databaseTools.isConnected();
 
                         if (resetArea.getText().toString().isEmpty()) {
@@ -112,30 +110,33 @@ public class LoginActivity extends AppCompatActivity {
                             resetArea.setError(null);
                         } else {
 
-                            mAuth.sendPasswordResetEmail(resetArea.getText().toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            mAuth.sendPasswordResetEmail(resetArea.getText().toString().trim()).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
-                                public void onSuccess(Void unused) {
-                                    Toast.makeText(getApplicationContext(), "Password reset email send successfully", Toast.LENGTH_SHORT).show();
-                                    passwordResetDialog.dismiss();
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(getApplicationContext(), "Error sending reset password mail", Toast.LENGTH_SHORT).show();
-                                    resetArea.setError("problem with email");
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(getApplicationContext(), "Password reset email send successfully", Toast.LENGTH_SHORT).show();
+                                        passwordResetDialog.dismiss();
+
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "Failed to send reset email!", Toast.LENGTH_SHORT).show();
+                                        resetArea.setError("problem with email");
+
+                                    }
                                 }
                             });
                         }
                     }
                 });
                 passwordResetDialog.show();
+
             }
+
         });
     }
 
 
     //the login method
-    private void login() {
+    public void login() {
 
         //gets values from the email and password fields
         String user = email.getText().toString().trim();

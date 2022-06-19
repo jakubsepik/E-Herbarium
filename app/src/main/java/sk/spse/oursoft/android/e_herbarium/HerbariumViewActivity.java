@@ -70,6 +70,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
     private final String[] invalidCharacters = {".", "@", "$", "%", "&", "/", "<", ">", "?", "|", "{", "}", "[", "]"};
     public String TAG = "HerbariumViewActivity";
 
+    public ItemAdapter itemAdapter;
     public String currentPhotoPath;
     public DatabaseTools databaseTools;
     ListView listView;
@@ -92,7 +93,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(HerbariumViewActivity.this);
 
         List<Item> itemList = ListLogic.getList();
-        ItemAdapter itemAdapter = new ItemAdapter(itemList);
+        itemAdapter = new ItemAdapter(itemList);
         rvItem.setAdapter(itemAdapter);
         rvItem.setLayoutManager(layoutManager);
         itemAdapter.notifyItemInserted(ListLogic.getList().size()-1);
@@ -111,7 +112,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 FirebaseUser user = databaseTools.getCurrentUser();
-                if(user == null) {
+                if(user != null) {
                     PopupMenu popupMenu = new PopupMenu(HerbariumViewActivity.this, hamburgerMenu);
                     popupMenu.getMenuInflater().inflate(R.menu.popup_menu, popupMenu.getMenu());
 
@@ -150,8 +151,9 @@ public class HerbariumViewActivity extends AppCompatActivity {
                                             List<SubItem> subItemList = new ArrayList<SubItem>();
                                             Item item = new Item(nameInput.getText().toString(), subItemList);
 
-                                        ListLogic.addCategory(item);
-                                        itemAdapter.notifyItemInserted(ListLogic.getList().size()-1);
+                                            databaseTools.addItemToDatabase(item);
+                                            ListLogic.addCategory(item);
+                                            itemAdapter.notifyItemInserted(ListLogic.getList().size()-1);
 
                                             addGroupDialog.dismiss();
                                         }
@@ -167,7 +169,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
                                     String userName = user.getUid();
                                     Intent chooseFile = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                                     chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
-                                    chooseFile.setType("*//*");
+                                    chooseFile.setType("*/*");
                                     startActivityForResult(chooseFile, REQUEST_IMPORT_FILE);
 
                                 }else{
@@ -301,7 +303,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
                     Uri content_describer = data.getData();
 
                     byte[] byteData = getBytes(content_describer);
-                    ListLogic.importHerbarium(byteData);
+                    ListLogic.importHerbarium(byteData,itemAdapter);
                     Toast.makeText(this, "Loaded file successfully at " + content_describer , Toast.LENGTH_SHORT).show();
 
                 } catch (IOException e) {
