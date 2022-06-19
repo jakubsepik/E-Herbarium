@@ -41,6 +41,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -305,22 +306,33 @@ public class HerbariumViewActivity extends AppCompatActivity {
         } else if (requestCode == REQUEST_IMPORT_FILE && resultCode == Activity.RESULT_OK) {
             if (data != null) {
 
-                try {
+
                     //upload the files to hte JSON
                     //synchronize the internal database with hte firebase one
                     //download the images from firebase that were gotten from the file
+                    if(data.getData() != null) {
 
-                    Uri content_describer = data.getData();
+                        Uri content_describer = data.getData();
 
-                    byte[] byteData = getBytes(content_describer);
-                    ListLogic.importHerbarium(byteData,itemAdapter);
-                    Toast.makeText(this, "Loaded file successfully at " + content_describer , Toast.LENGTH_SHORT).show();
+                        byte[] byteData = getBytes(content_describer);
+                        if(byteData != null) {
+                            System.out.println("THE DATA IS " + new String(byteData, StandardCharsets.UTF_8));
+                            try {
+                                ListLogic.importHerbarium(byteData, itemAdapter);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
 
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    Log.e("Error selecting file", e.getMessage());
-                }
+                        }else{
+                            Toast.makeText(this, "couldn't load the file from the given location move the file", Toast.LENGTH_SHORT).show();
+
+                        }
+                    }else{
+                        Toast.makeText(this, "Couldn't load file from given locatino" , Toast.LENGTH_SHORT).show();
+                    }
+
 
             } else {
                 Toast.makeText(this, "Didn't file successfully ", Toast.LENGTH_SHORT).show();

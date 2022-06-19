@@ -76,11 +76,6 @@ public class DatabaseTools {
             Toast.makeText(context, "Connected", Toast.LENGTH_SHORT).show();
 
 
-            //TODO
-            //NEED TO FIX THE GET TIME STAMP THING COZ IT ISN"T RELALY WORKING
-            long Json_time = ListLogic.getTimestamp();
-
-
             user = getCurrentUser();
             if (user != null) {
                 DatabaseReference time_ref = database.getReference("users").child(user.getUid()).child("LAST_CHANGE");
@@ -132,7 +127,7 @@ public class DatabaseTools {
                                 Toast.makeText(context, "Failed to load database from Internal storage" + e.getStackTrace(), Toast.LENGTH_SHORT);
                                 e.printStackTrace();
                             }
-                        
+
                     }
 
                     @Override
