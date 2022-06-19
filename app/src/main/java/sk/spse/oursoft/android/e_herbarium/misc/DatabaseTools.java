@@ -707,7 +707,7 @@ public class DatabaseTools {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
                     Toast.makeText(context, "Failed to Save Image", Toast.LENGTH_SHORT).show();
-                    ImageCallback.onImageCallback(getDefaultURI());
+//                    ImageCallback.onImageCallback(getDefaultURI());
 
                 }
             });

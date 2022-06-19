@@ -311,13 +311,12 @@ public class ListLogic extends AppCompatActivity {
                 System.out.println(subItem);
             }
         }
-        int i = 0;
         for (Item item : itemList) {
-            if (ItemNotInList(item)) {
-                list.add(item);
+            if (ItemNotInList(item,list)) {
+
+                list.add(new Item(item.getItemTitle(),new ArrayList<SubItem>()));
             }
             int ItemPosition = findItemPosition(item.getItemTitle(), list);
-
 
             for (SubItem subItem : item.getSubItemList()) {
                 if (URLUtil.isValidUrl(subItem.getImageUri()) && !subItem.getImageUri().equals(databaseTools.getDefaultURI().toString())) {
@@ -330,13 +329,14 @@ public class ListLogic extends AppCompatActivity {
 
                         @Override
                         public void onImageCallback(Uri uri) {
+
                             System.out.println("SAVED THE IMAGE AT THE URI " + uri);
                             subItem.setImageUri(uri.toString());
 
                             databaseTools.saveImage(uri, item.getItemTitle());
                             databaseTools.addEditSubItem(item, subItem);
+                            System.out.println("ITEM POSITION IS " + ItemPosition);
                             addOne(subItem, ItemPosition);
-                            saveAll();
 
                             itemAdapter.notifyItemChanged(findSubItemPosition(subItem.getHerbName(), item.getSubItemList()));
                         }
@@ -360,9 +360,7 @@ public class ListLogic extends AppCompatActivity {
     public static int findItemPosition(String itemTitle, List<Item> itemList) {
         for (int i = 0; i < itemList.size(); i++) {
             if (itemTitle.equals(itemList.get(i).getItemTitle())) {
-
                 return i;
-
             }
         }
         return -1;
@@ -379,7 +377,7 @@ public class ListLogic extends AppCompatActivity {
     }
 
 
-    private static boolean ItemNotInList(Item ItemToFind) {
+    private static boolean ItemNotInList(Item ItemToFind,List<Item> list) {
         for (Item item : list) {
             if (item.getItemTitle().equals(ItemToFind.getItemTitle())) {
                 return false;
