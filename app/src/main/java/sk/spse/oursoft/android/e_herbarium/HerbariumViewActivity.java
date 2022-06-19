@@ -238,6 +238,9 @@ public class HerbariumViewActivity extends AppCompatActivity {
 
                     if (imageFile != null) {
                         Uri imageUri = Uri.fromFile(imageFile);
+                        if(dialogReference.getClass().toString().equals("class sk.spse.oursoft.android.e_herbarium.EditItemDialog")){
+                            ((EditItemDialog) dialogReference).setImageURI(imageUri);
+                        }
                         ((AddItemDialog) dialogReference).setImageURI(imageUri);
 
 //                        databaseTools.saveImage(imageUri,ItemName);
@@ -273,6 +276,11 @@ public class HerbariumViewActivity extends AppCompatActivity {
                     File imageFile = storeImage(imageBitmap, RESULT_LOAD_IMAGE);
                     if (imageFile != null) {
                         Uri imageUri = Uri.fromFile(imageFile);
+                        System.out.println("THIS IS A TITLE" + dialogReference.getClass());
+                        if(dialogReference.getClass().toString().equals("class sk.spse.oursoft.android.e_herbarium.EditItemDialog")){
+                            System.out.println("EDIT ITEM DIALOG");
+                            ((EditItemDialog) dialogReference).setImageURI(imageUri);
+                        }
                         ((AddItemDialog) dialogReference).setImageURI(imageUri);
 
                         //saves the image and the image ref in the firebase storage
