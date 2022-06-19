@@ -49,7 +49,7 @@ public class EditItemDialog extends Dialog {
         ImageButton editDismissButton = (ImageButton) findViewById(R.id.editDismissButton);
         EditText editNameInput = (EditText) findViewById(R.id.editNameInput);
         EditText editDescriptionInput = (EditText) findViewById(R.id.editDescriptionInput);
-        Button editItemButton = (Button) findViewById(R.id.editItemButton);
+        Button editItemButton = (Button) findViewById(R.id.xdlmao);
 
         editImage.setImageURI(Uri.parse(subItem.getImageUri()));
 
@@ -109,48 +109,56 @@ public class EditItemDialog extends Dialog {
                         bottomSheetDialog.dismiss();
                     }
                 });
-                
-                editItemButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                        if(editNameInput.getText().toString().equals("") || editNameInput.getText().toString().length() == 0){
-                            Toast.makeText(view.getContext(), "You have to enter a name!", Toast.LENGTH_SHORT).show();
-
-                        }else if (stringContainsInvalidCharacters(editNameInput.getText().toString())){
-                            Toast.makeText(context, "Characters " + Arrays.toString(invalidCharacters) + " aren't allowed!", Toast.LENGTH_SHORT).show();
-
-                        }else {
-
-
-                            SubItem editedSubItem = new SubItem();
-
-                            editedSubItem.setHerbName(editNameInput.getText().toString());
-                            editedSubItem.setHerbDescription(editDescriptionInput.getText().toString());
-                            editedSubItem.setIcon(subItem.getIcon());
-                            editedSubItem.setHerbId(subItem.getHerbId());
-
-                            DatabaseTools databaseTools = new DatabaseTools(context);
-
-                            FirebaseUser user = databaseTools.getCurrentUser();
-                            if (user != null) {
-                                try {
-                                    String UserName = user.getUid();
-
-                                    databaseTools.addEditSubItem(item, editedSubItem);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }else {
-                                Toast.makeText(context, "Not signed In", Toast.LENGTH_SHORT).show();
-                            }
-
-                        }
-                    }
-                });
 
                 bottomSheetDialog.show();
                 
+            }
+        });
+
+        editItemButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(editNameInput.getText().toString().equals("") || editNameInput.getText().toString().length() == 0){
+                    Toast.makeText(view.getContext(), "You have to enter a name!", Toast.LENGTH_SHORT).show();
+
+                }else if (stringContainsInvalidCharacters(editNameInput.getText().toString())){
+                    Toast.makeText(context, "Characters " + Arrays.toString(invalidCharacters) + " aren't allowed!", Toast.LENGTH_SHORT).show();
+
+                }else {
+
+                    int subItemPosition = findSubItemPosition(subItem.getHerbName(), subItemList);
+
+                    SubItem editedSubItem = new SubItem();
+
+                    editedSubItem.setHerbName(editNameInput.getText().toString());
+                    editedSubItem.setHerbDescription(editDescriptionInput.getText().toString());
+                    editedSubItem.setIcon(subItem.getIcon());
+                    editedSubItem.setHerbId(subItem.getHerbId());
+
+                    DatabaseTools databaseTools = new DatabaseTools(context);
+
+                    FirebaseUser user = databaseTools.getCurrentUser();
+                    if (user != null) {
+                        try {
+                            String UserName = user.getUid();
+
+                            databaseTools.addEditSubItem(item, editedSubItem);
+                            ListLogic.editOne(item.getItemTitle(), subItemPosition, editedSubItem);
+                            subItemAdapter.notifyItemChanged(subItemPosition);
+
+                            EditItemDialog.this.dismiss();
+
+                            Toast.makeText(view.getContext(), "Item has been edited", Toast.LENGTH_SHORT).show();
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }else {
+                        Toast.makeText(context, "Not signed In", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
             }
         });
 
@@ -164,5 +172,15 @@ public class EditItemDialog extends Dialog {
         }
 
         return false;
+    }
+
+    public int findSubItemPosition(String subItemTitle, List<SubItem> subItemList){
+
+        for (int i = 0; i < subItemList.size(); i++){
+            if (subItemTitle.equals(subItemList.get(i).getHerbName())){
+                return i;
+            }
+        }
+        return -1;
     }
 }
