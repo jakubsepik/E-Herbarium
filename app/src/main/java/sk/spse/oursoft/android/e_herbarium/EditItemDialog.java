@@ -143,6 +143,8 @@ public class EditItemDialog extends Dialog {
 
                 }else {
 
+                    DatabaseTools databaseTools = new DatabaseTools(context);
+
                     int subItemPosition = findSubItemPosition(subItem.getHerbName(), subItemList);
 
                     SubItem editedSubItem = new SubItem();
