@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,18 +22,24 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.auth.FirebaseUser;
 
+import org.json.JSONException;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 import sk.spse.oursoft.android.e_herbarium.AddItemDialog;
 import sk.spse.oursoft.android.e_herbarium.ListLogic;
 import sk.spse.oursoft.android.e_herbarium.R;
+import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder> {
 
     private RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
     private List<Item> itemList;
+    private final String[] invalidCharacters = {".", "@", "$", "%", "&", "/", "<", ">", "?", "|", "{", "}", "[", "]"};
 
     public static final int PICK_IMAGE = 1;
 
@@ -63,7 +70,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         layoutManager.setInitialPrefetchItemCount(item.getSubItemList().size());
 
         // Create sub item view adapter
-        SubItemAdapter subItemAdapter = new SubItemAdapter(item.getSubItemList(), item.getItemTitle());
+        SubItemAdapter subItemAdapter = new SubItemAdapter(item.getSubItemList(), item.getItemTitle(), item);
 
         itemViewHolder.rvSubItem.setLayoutManager(layoutManager);
         itemViewHolder.rvSubItem.setAdapter(subItemAdapter);
@@ -105,6 +112,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
         ConstraintLayout addSubitem = bottomSheetDialog.findViewById(R.id.addSubitem);
         ConstraintLayout editGroup = bottomSheetDialog.findViewById(R.id.editGroup);
+        ConstraintLayout importLayout = bottomSheetDialog.findViewById(R.id.importLayout);
         ConstraintLayout deleteGroup = bottomSheetDialog.findViewById(R.id.deleteGroup);
 
 
@@ -150,25 +158,57 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
                         }else if (groupExists(nameInput.getText().toString())){
                             Toast.makeText(view.getContext(), "The group's name has to be unique!", Toast.LENGTH_SHORT).show();
+
+                        }else if (stringContainsInvalidCharacters(nameInput.getText().toString())){
+                            Toast.makeText(context, "Characters " + Arrays.toString(invalidCharacters) + " aren't allowed!", Toast.LENGTH_SHORT).show();
+
                         }else{
+                                String newName = nameInput.getText().toString();
 
-                            String newName = nameInput.getText().toString();
+                                int index = findItemPosition(item.getItemTitle(), itemList);
 
-                            int index = findItemPosition(item.getItemTitle(), itemList);
+                                if (index == -1) {
+                                    Toast.makeText(view.getContext(), "This group doesn't exist", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    DatabaseTools databaseTools = new DatabaseTools(context);
 
-                            if (index == -1){
-                                Toast.makeText(view.getContext(), "This group doesn't exist", Toast.LENGTH_SHORT).show();
-                            }else{
-                                ListLogic.editCategory(index, newName);
-                                ItemAdapter.this.notifyItemChanged(index);
-                            }
 
-                            editGroupDialog.dismiss();
+                                    ListLogic.editCategory(index, newName);
+                                    databaseTools.addItemToDatabase(new Item(newName));
+                                    ItemAdapter.this.notifyItemChanged(index);
+                                }
+
+                                editGroupDialog.dismiss();
                         }
                     }
                 });
 
                 editGroupDialog.show();
+
+                bottomSheetDialog.dismiss();
+            }
+        });
+
+        Objects.requireNonNull(importLayout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                    DatabaseTools databaseTools = new DatabaseTools(context);
+
+                    FirebaseUser user = databaseTools.getCurrentUser();
+                    if (user != null) {
+                        try {
+                            String UserName = user.getUid();
+
+                            ListLogic.exportGroup(item, UserName);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }else {
+                        Toast.makeText(context, "Not signed In", Toast.LENGTH_SHORT).show();
+                    }
+
+
 
                 bottomSheetDialog.dismiss();
             }
@@ -183,6 +223,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
                 SharedPreferences sharedPreferences = context.getSharedPreferences("SharedPreferences", Context.MODE_MULTI_PROCESS);
                 boolean showDialog = sharedPreferences.getBoolean("showItemDeletionDialog", true);
+                DatabaseTools databaseTools = new DatabaseTools(context);
 
                 @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -195,6 +236,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                 }else{
 
                     if (showDialog){
+
 
                         Dialog removeConfirmationDialog = new Dialog(view.getContext());
                         removeConfirmationDialog.setContentView(R.layout.confirm_subitem_removal_dialog);
@@ -221,13 +263,19 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                         confirmRemovalButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
+
                                 boolean showDialog = !dontAskAgainRemoval.isChecked();
                                 editor.putBoolean("showItemDeletionDialog", showDialog);
                                 editor.apply();
 
                                 removeConfirmationDialog.dismiss();
 
-                                removeItem(pos);
+                                databaseTools.deleteItem(ListLogic.getList().get(pos));
+                                ListLogic.deleteCategory(item.getItemTitle());
+                                ItemAdapter.this.notifyItemChanged(pos);
+
+                                notifyItemRemoved(pos);
+                                notifyItemRangeChanged(pos, getItemCount());
 
                             }
                         });
@@ -242,8 +290,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                         removeConfirmationDialog.show();
 
                     }else{
-                        removeItem(pos);
-                    }
+                        databaseTools.deleteItem(ListLogic.getList().get(pos));
+                        ListLogic.deleteCategory(item.getItemTitle());
+                        ItemAdapter.this.notifyItemChanged(pos);
+                        notifyItemRemoved(pos);
+                        notifyItemRangeChanged(pos, getItemCount());                    }
 
                 }
             }
@@ -253,12 +304,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
     }
 
 
-
-    public void removeItem(int pos){
-        itemList.remove(pos);
-        notifyItemRemoved(pos);
-        notifyItemRangeChanged(pos, getItemCount());
-    }
 
 
     public int findItemPosition(String itemTitle, List<Item> itemList){
@@ -278,6 +323,16 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
             }
         }
        return false;
+    }
+
+    protected boolean stringContainsInvalidCharacters(String string){
+        for (String character : invalidCharacters){
+            if (string.contains(character)){
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

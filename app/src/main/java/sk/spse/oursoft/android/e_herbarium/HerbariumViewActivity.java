@@ -41,6 +41,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,6 +71,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
     private final String[] invalidCharacters = {".", "@", "$", "%", "&", "/", "<", ">", "?", "|", "{", "}", "[", "]"};
     public String TAG = "HerbariumViewActivity";
 
+    public ItemAdapter itemAdapter;
     public String currentPhotoPath;
     public DatabaseTools databaseTools;
     ListView listView;
@@ -91,42 +93,15 @@ public class HerbariumViewActivity extends AppCompatActivity {
         RecyclerView rvItem = findViewById(R.id.recyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(HerbariumViewActivity.this);
 
-        final List<Item>[] itemList = new List[]{ListLogic.getList()};
-        final ItemAdapter[] itemAdapter = {new ItemAdapter(itemList[0])};
+
+        List<Item> itemList = ListLogic.getList();
+        itemAdapter = new ItemAdapter(itemList);
+        rvItem.setAdapter(itemAdapter);
+        rvItem.setLayoutManager(layoutManager);
+        itemAdapter.notifyItemInserted(ListLogic.getList().size()-1);
         ImageButton hamburgerMenu = (ImageButton) findViewById(R.id.hamburgerMenu);
 
-
-        databaseTools.getUserItems(new UserListCallback() {
-            @Override
-            public void onDataCallback(ArrayList<Item> value) {
-                System.out.println("This callback was called");
-               //finally use the database items here
-                //od the stuff here
-                FirebaseUser user = databaseTools.getCurrentUser();
-                if(user != null) {
-                    String userName = user.getUid();
-                    //Log.d("EH",user);
-                    long timestamp = DatabaseTools.timestamp;
-                    ListLogic.begin(databaseTools.getItems(), getApplicationContext(), userName, timestamp);
-                    int tmp = ListLogic.getList().size() - 1;
-                    itemList[0] = ListLogic.getList();
-                    itemAdapter[0] = new ItemAdapter(itemList[0]);
-                    rvItem.setAdapter(itemAdapter[0]);
-                    rvItem.setLayoutManager(layoutManager);
-                    itemAdapter[0].notifyItemInserted(ListLogic.getList().size() - 1);
-
-                    databaseTools.initializeNetworkCallback();
-                }else{
-                    Toast.makeText(getApplicationContext(),"user not signed in",Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onImageCallback(Uri uri) {
-
-            }
-
-        });
+//        databaseTools.initializeNetworkCallback();
 
         //tento callback daj to Landing screen Activity
         //nech sa to loadne pred tym ako zapnes toto
@@ -140,7 +115,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 FirebaseUser user = databaseTools.getCurrentUser();
-                if(user == null) {
+                if(user != null) {
                     PopupMenu popupMenu = new PopupMenu(HerbariumViewActivity.this, hamburgerMenu);
                     popupMenu.getMenuInflater().inflate(R.menu.popup_menu, popupMenu.getMenu());
 
@@ -167,8 +142,8 @@ public class HerbariumViewActivity extends AppCompatActivity {
                                         if (nameInput.getText().toString().equals("") || nameInput.getText().toString().length() == 0) {
                                             Toast.makeText(view.getContext(), "You have to enter a name!", Toast.LENGTH_SHORT).show();
 
-                                        } else if (groupExists(nameInput.getText().toString(), itemList[0])) {
-                                            Toast.makeText(view.getContext(), "The group's name has to be unique!", Toast.LENGTH_SHORT).show();
+                                    } else if (groupExists(nameInput.getText().toString(), itemList)) {
+                                        Toast.makeText(view.getContext(), "The group's name has to be unique!", Toast.LENGTH_SHORT).show();
 
 
                                         } else if (stringContainsInvalidCharacters(nameInput.getText().toString())) {
@@ -179,9 +154,9 @@ public class HerbariumViewActivity extends AppCompatActivity {
                                             List<SubItem> subItemList = new ArrayList<SubItem>();
                                             Item item = new Item(nameInput.getText().toString(), subItemList);
 
-                                            ListLogic.addCategory(item);
                                             databaseTools.addItemToDatabase(item);
-                                            itemAdapter[0].notifyItemInserted(ListLogic.getList().size() - 1);
+                                            ListLogic.addCategory(item);
+                                            itemAdapter.notifyItemInserted(ListLogic.getList().size()-1);
 
                                             addGroupDialog.dismiss();
                                         }
@@ -192,11 +167,31 @@ public class HerbariumViewActivity extends AppCompatActivity {
                             }
 
                             else if (menuItem.getTitle().equals("Import")){
+                                FirebaseUser user = databaseTools.getCurrentUser();
+                                if(user != null){
+                                    String userName = user.getUid();
+                                    Intent chooseFile = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                                    chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
+                                    chooseFile.setType("*/*");
+                                    startActivityForResult(chooseFile, REQUEST_IMPORT_FILE);
 
+                                }else{
+                                    Toast.makeText(getApplicationContext(), "Not signed In", Toast.LENGTH_SHORT).show();
+                                }
                             }
 
                             else if(menuItem.getTitle().equals("Export")){
-
+                                FirebaseUser user = databaseTools.getCurrentUser();
+                                if(user != null){
+                                    try {
+                                        String userName = user.getUid();
+                                        ListLogic.exportHerbarium(userName);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }else{
+                                    Toast.makeText(getApplicationContext(), "Not signed In", Toast.LENGTH_SHORT).show();
+                                }
                             }
 
                             return true;
@@ -246,9 +241,12 @@ public class HerbariumViewActivity extends AppCompatActivity {
 
                     if (imageFile != null) {
                         Uri imageUri = Uri.fromFile(imageFile);
+                        if(dialogReference.getClass().toString().equals("class sk.spse.oursoft.android.e_herbarium.EditItemDialog")){
+                            ((EditItemDialog) dialogReference).setImageURI(imageUri);
+                        }
                         ((AddItemDialog) dialogReference).setImageURI(imageUri);
 
-//                        databaseTools.saveImage(imageUri,ItemName);
+                        databaseTools.saveImage(imageUri,ItemName);
 
                         Toast.makeText(this, "success", Toast.LENGTH_SHORT).show();
 
@@ -281,10 +279,15 @@ public class HerbariumViewActivity extends AppCompatActivity {
                     File imageFile = storeImage(imageBitmap, RESULT_LOAD_IMAGE);
                     if (imageFile != null) {
                         Uri imageUri = Uri.fromFile(imageFile);
+                        System.out.println("THIS IS A TITLE" + dialogReference.getClass());
+                        if(dialogReference.getClass().toString().equals("class sk.spse.oursoft.android.e_herbarium.EditItemDialog")){
+                            System.out.println("EDIT ITEM DIALOG");
+                            ((EditItemDialog) dialogReference).setImageURI(imageUri);
+                        }
                         ((AddItemDialog) dialogReference).setImageURI(imageUri);
 
                         //saves the image and the image ref in the firebase storage
-//                        databaseTools.saveImage(imageUri,ItemName);
+                        databaseTools.saveImage(imageUri,ItemName);
 
                         Toast.makeText(this, "success", Toast.LENGTH_SHORT).show();
 
@@ -303,22 +306,33 @@ public class HerbariumViewActivity extends AppCompatActivity {
         } else if (requestCode == REQUEST_IMPORT_FILE && resultCode == Activity.RESULT_OK) {
             if (data != null) {
 
-                try {
+
                     //upload the files to hte JSON
                     //synchronize the internal database with hte firebase one
                     //download the images from firebase that were gotten from the file
+                    if(data.getData() != null) {
 
-                    Uri content_describer = data.getData();
+                        Uri content_describer = data.getData();
 
-                    byte[] byteData = getBytes(content_describer);
-                    ListLogic.importHerbarium(byteData);
-                    Toast.makeText(this, "Loaded file successfully at " + content_describer , Toast.LENGTH_SHORT).show();
+                        byte[] byteData = getBytes(content_describer);
+                        if(byteData != null) {
+                            System.out.println("THE DATA IS " + new String(byteData, StandardCharsets.UTF_8));
+                            try {
+                                ListLogic.importHerbarium(byteData, itemAdapter);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
 
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    Log.e("Error selecting file", e.getMessage());
-                }
+                        }else{
+                            Toast.makeText(this, "couldn't load the file from the given location move the file", Toast.LENGTH_SHORT).show();
+
+                        }
+                    }else{
+                        Toast.makeText(this, "Couldn't load file from given locatino" , Toast.LENGTH_SHORT).show();
+                    }
+
 
             } else {
                 Toast.makeText(this, "Didn't file successfully ", Toast.LENGTH_SHORT).show();
@@ -479,47 +493,6 @@ public class HerbariumViewActivity extends AppCompatActivity {
         return false;
     }
 
-    private boolean isPermissionGranted(String permission) {
-
-        int permissionCheck = ActivityCompat.checkSelfPermission(this, permission);
-        return permissionCheck == PackageManager.PERMISSION_GRANTED;
-    }
-
-    /*
-    *
-    * FirebaseUser user = databaseTools.getCurrentUser();
-
-        if(user != null) {
-            String userName = user.getUid();
-
-            Intent chooseFile = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
-            chooseFile.setType("*//*");
-    startActivityForResult(chooseFile, REQUEST_IMPORT_FILE);
 }
-*/
-    @RequiresApi(api = Build.VERSION_CODES.R)
-    public void testActivituButton(View view) throws JSONException {
-
-        Item tempItem = new Item("1",null);
 
 
-        //        ListLogic.exportGroup(tempItem,userName);
-//        ListLogic.exportHerbarium(userName);
-//        databaseTools.synchronizeInternalStorageToDatabase();
-//        Item tempItem = new Item("1",null);
-//            // MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE is an
-//            // app-defined int constant that should be quite unique
-//
-//        FirebaseUser user = databaseTools.getCurrentUser();
-//        String userName = user.getEmail().split("\\.")[0];
-//        ListLogic.exportGroup(tempItem,userName);
-//        ListLogic.exportHerbarium(userName);
-
-
-// If you don't have access, launch a new activity to show the user the system's dialog
-// to allow access to the external storage
-
-        }
-
-}

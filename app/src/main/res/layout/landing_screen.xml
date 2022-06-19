@@ -16,7 +16,6 @@
         android:id="@+id/name_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/message_text"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="255dp"
@@ -43,30 +42,6 @@
         android:textColor="#EBEBEB"
         android:textSize="27sp" />
 
-
-    <Button
-        android:id="@+id/test_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="608dp"
-        android:layout_marginEnd="116dp"
-        android:onClick="test_connection"
-        android:text="Tets_connectino"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/testing_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="608dp"
-        android:layout_marginEnd="-11dp"
-        android:onClick="testing_button"
-        android:text="Teting_connectino"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/open"
@@ -96,7 +71,7 @@
         app:rippleColor="#F8F8F8" />
 
     <TextView
-        android:id="@+id/message_text"
+        android:id="@+id/login_status_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="false"
@@ -104,27 +79,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginStart="127dp"
         android:layout_marginTop="170dp"
-        android:text="You Are Signed In"
+        android:text="You Are Not Signed In"
         android:textColor="#F8F8F8"
         android:textSize="20sp" />
-
-    <TextView
-        android:id="@+id/login_status_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="34dp"
-        android:layout_marginTop="36dp"
-        android:layout_marginEnd="68dp"
-        android:layout_marginBottom="12dp"
-        android:text="TextView"
-        android:textSize="20sp"
-        android:textColor="@color/white"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/login_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.816" />
 
 </RelativeLayout>

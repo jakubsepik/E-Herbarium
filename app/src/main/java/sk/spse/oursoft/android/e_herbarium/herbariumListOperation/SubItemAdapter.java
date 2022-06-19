@@ -32,12 +32,14 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
 
     private List<SubItem> subItemList;
     private String itemTitle;
+    private Item item;
 
     Context context;
 
-    SubItemAdapter(List<SubItem> subItemList, String itemTitle) {
+    SubItemAdapter(List<SubItem> subItemList, String itemTitle, Item item) {
         this.subItemList = subItemList;
         this.itemTitle = itemTitle;
+        this.item = item;
     }
 
     @NonNull
@@ -86,7 +88,7 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
                 editButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        EditItemDialog editItemDialog = new EditItemDialog(view.getContext(), android.R.style.Theme_Black_NoTitleBar_Fullscreen, subItem, subItemList);
+                        EditItemDialog editItemDialog = new EditItemDialog(view.getContext(), android.R.style.Theme_Black_NoTitleBar_Fullscreen, subItem, subItemList, SubItemAdapter.this, item);
 
                         editItemDialog.show();
 
