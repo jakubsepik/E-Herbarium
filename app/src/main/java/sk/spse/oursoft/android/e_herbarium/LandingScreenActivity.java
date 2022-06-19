@@ -23,6 +23,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
+import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.ItemAdapter;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
 import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
 
@@ -97,20 +98,24 @@ public class LandingScreenActivity extends Activity {
         databaseTools.getUserItems(new UserListCallback() {
             @Override
             public void onDataCallback(ArrayList<Item> value) {
-
+                System.out.println("This callback was called");
                 //finally use the database items here
                 //od the stuff here
-                System.out.println(databaseTools.getItems());
-
+                FirebaseUser user = databaseTools.getCurrentUser();
+                if(user != null) {
+                    String userName = user.getUid();
+                    //Log.d("EH",user);
+                    long timestamp = DatabaseTools.timestamp;
+                    ListLogic.begin(databaseTools.getItems(), getApplicationContext(), userName, timestamp);
+                    int tmp = ListLogic.getList().size() - 1;
+                }
             }
 
             @Override
             public void onImageCallback(Uri uri) {
-
+                int a =0;
             }
-
         });
-
     }
 
 
