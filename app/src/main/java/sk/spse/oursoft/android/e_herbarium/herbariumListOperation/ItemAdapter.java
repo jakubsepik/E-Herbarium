@@ -252,6 +252,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                         confirmRemovalButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
+
+                                DatabaseTools databaseTools = new DatabaseTools(context);
                                 boolean showDialog = !dontAskAgainRemoval.isChecked();
                                 editor.putBoolean("showItemDeletionDialog", showDialog);
                                 editor.apply();
@@ -259,6 +261,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                                 removeConfirmationDialog.dismiss();
 
                                 removeItem(pos);
+                                databaseTools.deleteItem(ListLogic.getList().get(pos));
 
                             }
                         });

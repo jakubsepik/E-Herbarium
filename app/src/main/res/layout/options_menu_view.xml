@@ -99,7 +99,7 @@
             android:layout_marginStart="69dp"
             android:layout_marginTop="12dp"
             android:fontFamily="@font/segoe_regular"
-            android:text="Import"
+            android:text="Export"
             android:textColor="#EBEBEB"
             android:textSize="25sp"
             app:layout_constraintStart_toStartOf="parent"

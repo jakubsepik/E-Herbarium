@@ -276,7 +276,7 @@ public class DatabaseTools {
 
             Log.i("add/edit subitem", "success");
 
-            database.getReference().child("LAST_CHANGE").setValue(System.currentTimeMillis());
+            myRef.child(user.getUid()).child("LAST_CHANGE").setValue(System.currentTimeMillis());
 
 
         } else {
@@ -297,7 +297,8 @@ public class DatabaseTools {
             myRef = database.getReference().child("users").child(userName).child("herbarium").child(item.getItemTitle());
             myRef.child(subItem.getHerbId()).removeValue();
 
-            database.getReference().child("LAST_CHANGE").setValue(System.currentTimeMillis());
+            myRef.child(user.getUid()).child("LAST_CHANGE").setValue(System.currentTimeMillis());
+
 
         } else {
             Toast.makeText(context, "User not signed in", Toast.LENGTH_SHORT).show();
@@ -312,7 +313,7 @@ public class DatabaseTools {
     }
 
     //deletes an item
-    public void deleteItem(Item item, SubItem subItem) {
+    public void deleteItem(Item item) {
 
         user = getCurrentUser();
         if (user != null) {
@@ -320,7 +321,8 @@ public class DatabaseTools {
             myRef = database.getReference().child("users").child(userName).child("herbarium");
             myRef.child(item.getItemTitle()).removeValue();
 
-            database.getReference().child("LAST_CHANGE").setValue(System.currentTimeMillis());
+            myRef.child(user.getUid()).child("LAST_CHANGE").setValue(System.currentTimeMillis());
+
         } else {
             Toast.makeText(context, "User not signed in", Toast.LENGTH_SHORT).show();
             Log.i("delete item", "user not signed in");
@@ -340,6 +342,7 @@ public class DatabaseTools {
         //removed letters that can't be added to a database it is a useless line, but I don't want to delete it
 
         myRef.child(user.getUid()).setValue(new User(user.getEmail(), "herbarium"));
+        myRef.child(user.getUid()).child("LAST_CHANGE").setValue(System.currentTimeMillis());
 
     }
 
@@ -732,7 +735,7 @@ public class DatabaseTools {
             });
 
         } catch (Exception e) {
-            Log.e("Importing image erro", e.getMessage());
+            Log.e("Importing image error", e.getMessage());
         }
 
     }
