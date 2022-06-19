@@ -89,30 +89,7 @@ public class DatabaseTools {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        long Database_time =  (long) dataSnapshot.getValue();
 
-
-                        Log.i("DATABASE_TIME", String.valueOf(Database_time));
-
-                        if (Database_time > Json_time) {
-                            Toast.makeText(context, "Loading values from Database", Toast.LENGTH_SHORT).show();
-
-                            //hadze to error :(
-
-                            getUserItems(new UserListCallback() {
-                                @Override
-                                public void onDataCallback(ArrayList<Item> value) {
-                                    ListLogic.setList(value);
-                                }
-
-                                @Override
-                                public void onImageCallback(Uri uri) {
-
-                                }
-
-                            });
-
-                        } else {
                             //database = json
                             ArrayList<Item> JsonItems = new ArrayList<>();
                             Toast.makeText(context, "Loading values from Json", Toast.LENGTH_SHORT).show();
@@ -155,7 +132,7 @@ public class DatabaseTools {
                                 Toast.makeText(context, "Failed to load database from Internal storage" + e.getStackTrace(), Toast.LENGTH_SHORT);
                                 e.printStackTrace();
                             }
-                        }
+                        
                     }
 
                     @Override
