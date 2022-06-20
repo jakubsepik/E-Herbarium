@@ -42,7 +42,7 @@ public class AddItemDialog extends Dialog {
     private SubItem subItem;
 
     private ImageView insertImage;
-
+    private Item item;
     private final String[] invalidCharacters = {".", "@", "$", "%", "&", "/", "<", ">", "?", "|", "{", "}", "[", "]"};
 
     private final int[] iconList = {R.drawable.listocek_symbolik, R.drawable.kricek_symbolik, R.drawable.klasocek_symbolik, R.drawable.stromcek_symbolik};
@@ -66,7 +66,7 @@ public class AddItemDialog extends Dialog {
         DatabaseTools databaseTools = new DatabaseTools(this.getContext());
 
         HerbariumViewActivity.setCurrentDialog(this);
-
+        this.item = item;
         this.setContentView(R.layout.add_subitem_view);
 
         insertImage = this.findViewById(R.id.insertImage);
@@ -439,6 +439,10 @@ public class AddItemDialog extends Dialog {
 
         return false;
     }
+    public Item getCurrentItem(){
+        return  this.item;
+    }
+
 
 
 }

@@ -30,6 +30,11 @@ public class EditItemDialog extends Dialog {
     private final int RESULT_LOAD_IMAGE = 2;
 
     public EditItemDialog(@NonNull Context context, int theme_Black_NoTitleBar_Fullscreen, SubItem subItem, List<SubItem> subItemList) {
+    public Uri imageURI;
+    public ImageView editImage;
+    private final String[] invalidCharacters = {".", "@", "$", "%", "&", "/", "<", ">", "?", "|", "{", "}", "[", "]"};
+    private Item item;
+    public EditItemDialog(@NonNull Context context, int theme_Black_NoTitleBar_Fullscreen, SubItem subItem, List<SubItem> subItemList, SubItemAdapter subItemAdapter, Item item) {
         super(context, theme_Black_NoTitleBar_Fullscreen);
 
         HerbariumViewActivity.setCurrentDialog(this);
@@ -37,6 +42,8 @@ public class EditItemDialog extends Dialog {
         this.setContentView(R.layout.edit_subitem_view);
 
         ImageView editImage = (ImageView) findViewById(R.id.editImage);
+        this.item = item;
+        editImage = (ImageView) findViewById(R.id.editImage);
         ImageButton editDismissButton = (ImageButton) findViewById(R.id.editDismissButton);
         EditText editNameInput = (EditText) findViewById(R.id.editNameInput);
         EditText editDescriptionInput = (EditText) findViewById(R.id.editDescriptionInput);
@@ -108,4 +115,37 @@ public class EditItemDialog extends Dialog {
         });
 
     }
+
+    protected boolean stringContainsInvalidCharacters(String string){
+        for (String character : invalidCharacters){
+            if (string.contains(character)){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public int findSubItemPosition(String subItemTitle, List<SubItem> subItemList){
+
+        for (int i = 0; i < subItemList.size(); i++){
+            if (subItemTitle.equals(subItemList.get(i).getHerbName())){
+                return i;
+            }
+        }
+        return -1;
+    }
+    public void setImageURI(Uri pictureURI) {
+
+        this.imageURI = pictureURI;
+        Toast.makeText(this.getContext(), imageURI.toString(), Toast.LENGTH_SHORT).show();
+        Log.e("IMAGEURI",pictureURI.toString());
+        editImage.setImageURI(imageURI);
+
+
+    }
+    public Item getCurrentItem(){
+        return  this.item;
+    }
+
 }
