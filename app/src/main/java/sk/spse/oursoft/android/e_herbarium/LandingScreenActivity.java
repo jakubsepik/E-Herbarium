@@ -110,7 +110,6 @@ public class LandingScreenActivity extends Activity {
 
             @Override
             public void onImageCallback(Uri uri) {
-                int a = 0;
             }
         });
     }
