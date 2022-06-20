@@ -140,18 +140,18 @@ public class ListLogic extends AppCompatActivity {
         list.get(index).setItemTitle(name);
     }
 
-    public static void editOne( String itemTitle,int index, SubItem subItem) {
-        for(Item item : list){
-            if(item.getItemTitle().equals(itemTitle)){
+    public static void editOne(String itemTitle, int index, SubItem subItem) {
+        for (Item item : list) {
+            if (item.getItemTitle().equals(itemTitle)) {
                 List<SubItem> subItems = item.getSubItemList();
-                subItems.set(index,subItem);
+                subItems.set(index, subItem);
                 item.setSubItemList(subItems);
                 return;
             }
         }
     }
 
-    static void deleteCategory(String category) {
+    public static void deleteCategory(String category) {
         saveAll();
         for (int i = 0; i < list.toArray().length; i++) {
             if (list.get(i).getItemTitle().equals(category)) {
@@ -192,7 +192,6 @@ public class ListLogic extends AppCompatActivity {
     }
 
     public static void exportHerbarium(String currentUserName) throws JSONException {
-
 
 
         JSONObject jsonObject = getObject();
@@ -253,10 +252,10 @@ public class ListLogic extends AppCompatActivity {
     }
 
 
-    public static void importHerbarium(byte[] fileContent,ItemAdapter itemAdapter) throws IOException, JSONException {
+    public static void importHerbarium(byte[] fileContent, ItemAdapter itemAdapter) throws IOException, JSONException {
 
         JSONObject jsonObject = null;
-        String fileData = new String(fileContent);
+        String fileData = new String(fileContent, StandardCharsets.UTF_8);
 
         Log.i("Database", fileData);
 
@@ -300,7 +299,7 @@ public class ListLogic extends AppCompatActivity {
 
             }
 
-            for(SubItem subitem : subItems){
+            for (SubItem subitem : subItems) {
                 System.out.println(subitem);
             }
             itemList.add(new Item(key, subItems));
@@ -313,46 +312,45 @@ public class ListLogic extends AppCompatActivity {
             }
         }
         for (Item item : itemList) {
-            if (ItemNotInList(item)) {
-                list.add(item);
+            if (ItemNotInList(item,list)) {
+
+                list.add(new Item(item.getItemTitle(),new ArrayList<SubItem>()));
             }
             int ItemPosition = findItemPosition(item.getItemTitle(), list);
 
             for (SubItem subItem : item.getSubItemList()) {
+                if (URLUtil.isValidUrl(subItem.getImageUri()) && !subItem.getImageUri().equals(databaseTools.getDefaultURI().toString())) {
 
-                try {
-                    if (URLUtil.isValidUrl(subItem.getImageUri()) && !subItem.getImageUri().equals(databaseTools.getDefaultURI().toString())) {
-                        databaseTools.ImportImagesFromSubItem(UserName, item, subItem, new UserListCallback() {
-                            @Override
-                            public void onDataCallback(ArrayList<Item> value) {
-                            }
+                    databaseTools.ImportImagesFromSubItem(UserName, item, subItem, new UserListCallback() {
 
-                            @Override
-                            public void onImageCallback(Uri uri) {
-                                System.out.println("SAVED THE IMAGE AT THE URI " + uri);
-                                subItem.setImageUri(uri.toString());
+                        @Override
+                        public void onDataCallback(ArrayList<Item> value) {
+                        }
 
-                                databaseTools.saveImage(uri, item.getItemTitle());
-                                databaseTools.addEditSubItem(item, subItem);
-                                addOne(subItem, ItemPosition);
-                                saveAll();
+                        @Override
+                        public void onImageCallback(Uri uri) {
 
-                                itemAdapter.notifyItemChanged(findSubItemPosition(subItem.getHerbName(),item.getSubItemList()));
-                            }
-                        });
+                            System.out.println("SAVED THE IMAGE AT THE URI " + uri);
+                            subItem.setImageUri(uri.toString());
 
-                    } else {
-                        subItem.setImageUri(databaseTools.getDefaultURI().toString());
-                        databaseTools.addEditSubItem(item, subItem);
-                        addOne(subItem, ItemPosition);
-                        itemAdapter.notifyItemChanged(findSubItemPosition(subItem.getHerbName(),item.getSubItemList()));
+                            databaseTools.saveImage(uri, item.getItemTitle());
+                            databaseTools.addEditSubItem(item, subItem);
+                            System.out.println("ITEM POSITION IS " + ItemPosition);
+                            addOne(subItem, ItemPosition);
 
-                        saveAll();
+                            itemAdapter.notifyItemChanged(findSubItemPosition(subItem.getHerbName(), item.getSubItemList()));
+                        }
+                    });
 
-                    }
-                } catch (Exception e) {
-                    //remove all those things I just added , pain xdxdxdxdxdxdxs
+                } else {
+                    subItem.setImageUri(databaseTools.getDefaultURI().toString());
+                    databaseTools.addEditSubItem(item, subItem);
+                    addOne(subItem, ItemPosition);
+                    saveAll();
+
                 }
+                itemAdapter.notifyItemChanged(findSubItemPosition(subItem.getHerbName(), item.getSubItemList()));
+
             }
 
         }
@@ -367,10 +365,11 @@ public class ListLogic extends AppCompatActivity {
         }
         return -1;
     }
-    public static int findSubItemPosition(String subItemTitle, List<SubItem> subItemList){
 
-        for (int i = 0; i < subItemList.size(); i++){
-            if (subItemTitle.equals(subItemList.get(i).getHerbName())){
+    public static int findSubItemPosition(String subItemTitle, List<SubItem> subItemList) {
+
+        for (int i = 0; i < subItemList.size(); i++) {
+            if (subItemTitle.equals(subItemList.get(i).getHerbName())) {
                 return i;
             }
         }
@@ -378,8 +377,7 @@ public class ListLogic extends AppCompatActivity {
     }
 
 
-
-    private static boolean ItemNotInList(Item ItemToFind) {
+    private static boolean ItemNotInList(Item ItemToFind,List<Item> list) {
         for (Item item : list) {
             if (item.getItemTitle().equals(ItemToFind.getItemTitle())) {
                 return false;

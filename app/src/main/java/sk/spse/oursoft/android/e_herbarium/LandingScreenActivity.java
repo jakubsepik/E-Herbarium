@@ -85,13 +85,10 @@ public class LandingScreenActivity extends Activity {
 
         //I have to initalize the callback here or else every time i move to the herbarium view activity the callback gets called
         databaseTools = new DatabaseTools(getApplicationContext());
-        databaseTools.initializeNetworkCallback();
 
         //runs this method coz else it is one cycle behind
         items = new ArrayList<>();
-        //ListLogic.begin(items, getApplicationContext());
-
-//        databaseTools.synchronizeDatabaseImages();
+        databaseTools.synchronizeInternalStorageToDatabase();
 
         databaseTools.getUserItems(new UserListCallback() {
             @Override
@@ -106,6 +103,8 @@ public class LandingScreenActivity extends Activity {
                     long timestamp = DatabaseTools.timestamp;
                     ListLogic.begin(databaseTools.getItems(), getApplicationContext(), userName, timestamp);
                     int tmp = ListLogic.getList().size() - 1;
+
+                    databaseTools.initializeNetworkCallback();
                 }
             }
 

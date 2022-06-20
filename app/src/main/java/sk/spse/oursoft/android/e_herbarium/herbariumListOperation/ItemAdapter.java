@@ -223,6 +223,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
                 SharedPreferences sharedPreferences = context.getSharedPreferences("SharedPreferences", Context.MODE_MULTI_PROCESS);
                 boolean showDialog = sharedPreferences.getBoolean("showItemDeletionDialog", true);
+                DatabaseTools databaseTools = new DatabaseTools(context);
 
                 @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -235,6 +236,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                 }else{
 
                     if (showDialog){
+
 
                         Dialog removeConfirmationDialog = new Dialog(view.getContext());
                         removeConfirmationDialog.setContentView(R.layout.confirm_subitem_removal_dialog);
@@ -262,16 +264,18 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                             @Override
                             public void onClick(View view) {
 
-                                DatabaseTools databaseTools = new DatabaseTools(context);
                                 boolean showDialog = !dontAskAgainRemoval.isChecked();
                                 editor.putBoolean("showItemDeletionDialog", showDialog);
                                 editor.apply();
 
                                 removeConfirmationDialog.dismiss();
 
-                                removeItem(pos);
                                 databaseTools.deleteItem(ListLogic.getList().get(pos));
+                                ListLogic.deleteCategory(item.getItemTitle());
                                 ItemAdapter.this.notifyItemChanged(pos);
+
+                                notifyItemRemoved(pos);
+                                notifyItemRangeChanged(pos, getItemCount());
 
                             }
                         });
@@ -286,8 +290,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                         removeConfirmationDialog.show();
 
                     }else{
-                        removeItem(pos);
-                    }
+                        databaseTools.deleteItem(ListLogic.getList().get(pos));
+                        ListLogic.deleteCategory(item.getItemTitle());
+                        ItemAdapter.this.notifyItemChanged(pos);
+                        notifyItemRemoved(pos);
+                        notifyItemRangeChanged(pos, getItemCount());                    }
 
                 }
             }
@@ -297,12 +304,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
     }
 
 
-
-    public void removeItem(int pos){
-        itemList.remove(pos);
-        notifyItemRemoved(pos);
-        notifyItemRangeChanged(pos, getItemCount());
-    }
 
 
     public int findItemPosition(String itemTitle, List<Item> itemList){
