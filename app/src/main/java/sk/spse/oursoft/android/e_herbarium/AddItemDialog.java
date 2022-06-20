@@ -172,7 +172,7 @@ public class AddItemDialog extends Dialog {
 
                         subItem.setImageUri(uri.toString());
 
-                        Toast.makeText(context, String.valueOf(uri), Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(context, String.valueOf(uri), Toast.LENGTH_SHORT).show();
 
                         try {
                             setImageURI(uri);
@@ -419,7 +419,7 @@ public class AddItemDialog extends Dialog {
         this.imageURI = pictureURI;
 
         insertImage.setImageURI(null);
-        Toast.makeText(this.getContext(), imageURI.toString(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this.getContext(), imageURI.toString(), Toast.LENGTH_SHORT).show();
 
         Log.e("IMAGEURI",pictureURI.toString());
 
