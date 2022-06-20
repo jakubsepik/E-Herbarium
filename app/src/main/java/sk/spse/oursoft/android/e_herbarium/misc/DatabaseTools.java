@@ -88,7 +88,7 @@ public class DatabaseTools {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        long Database_time =  (long) dataSnapshot.getValue();
+                        long Database_time =  0;//(long) dataSnapshot.getValue();
 
 
                         Log.i("DATABASE_TIME", String.valueOf(Database_time));
