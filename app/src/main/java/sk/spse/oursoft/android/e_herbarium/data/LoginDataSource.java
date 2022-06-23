@@ -1,8 +1,8 @@
 package sk.spse.oursoft.android.e_herbarium.data;
 
-import sk.spse.oursoft.android.e_herbarium.data.model.LoggedInUser;
-
 import java.io.IOException;
+
+import sk.spse.oursoft.android.e_herbarium.data.model.LoggedInUser;
 
 /**
  * Class that handles authentication w/ login credentials and retrieves user information.

@@ -1,8 +1,5 @@
 package sk.spse.oursoft.android.e_herbarium;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
@@ -11,6 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -24,14 +24,13 @@ import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
 
 
 public class RegisterActivity extends AppCompatActivity {
+    private final int NETWORK_STATUS_NOT_CONNECTED = 0;
+    private final int NETWORK_STATUS_CONNECTED = 1;
     private FirebaseAuth mAuth;
     private EditText email, password;
     private Button btnRegister;
     private TextView textLogin;
     private DatabaseTools databaseTools;
-
-    private final int NETWORK_STATUS_NOT_CONNECTED = 0;
-    private final int NETWORK_STATUS_CONNECTED = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +113,7 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                 });
             }
-        
+
         }
     }
 }

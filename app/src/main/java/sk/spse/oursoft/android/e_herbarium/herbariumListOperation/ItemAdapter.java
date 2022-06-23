@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,13 +36,11 @@ import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder> {
 
-    private RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
-    private List<Item> itemList;
-    private final String[] invalidCharacters = {".", "@", "$", "%", "&", "/", "<", ">", "?", "|", "{", "}", "[", "]"};
-
     public static final int PICK_IMAGE = 1;
-
+    private final String[] invalidCharacters = {".", "@", "$", "%", "&", "/", "<", ">", "?", "|", "{", "}", "[", "]"};
     Context context;
+    private final RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
+    private final List<Item> itemList;
 
     public ItemAdapter(List<Item> itemList) {
         this.itemList = itemList;
@@ -90,21 +87,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         return itemList.size();
     }
 
-    class ItemViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvItemTitle;
-        private RecyclerView rvSubItem;
-        private ImageButton optionsMenuButton;
-
-        ItemViewHolder(View itemView) {
-            super(itemView);
-            tvItemTitle = (TextView) itemView.findViewById(R.id.tv_item_title);
-            rvSubItem = (RecyclerView) itemView.findViewById(R.id.subRecyclerView);
-            optionsMenuButton = (ImageButton) itemView.findViewById(R.id.optionsMenuButton);
-
-        }
-    }
-
-    private void showBottomSheetDialog(Context context, Item item, SubItemAdapter subItemAdapter){
+    private void showBottomSheetDialog(Context context, Item item, SubItemAdapter subItemAdapter) {
         final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
         bottomSheetDialog.setContentView(R.layout.options_menu_view);
 
@@ -153,32 +136,32 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                 editGroupButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(nameInput.getText().toString().equals("") || nameInput.getText().toString().length() == 0){
+                        if (nameInput.getText().toString().equals("") || nameInput.getText().toString().length() == 0) {
                             Toast.makeText(view.getContext(), "You have to enter a name!", Toast.LENGTH_SHORT).show();
 
-                        }else if (groupExists(nameInput.getText().toString())){
+                        } else if (groupExists(nameInput.getText().toString())) {
                             Toast.makeText(view.getContext(), "The group's name has to be unique!", Toast.LENGTH_SHORT).show();
 
-                        }else if (stringContainsInvalidCharacters(nameInput.getText().toString())){
+                        } else if (stringContainsInvalidCharacters(nameInput.getText().toString())) {
                             Toast.makeText(context, "Characters " + Arrays.toString(invalidCharacters) + " aren't allowed!", Toast.LENGTH_SHORT).show();
 
-                        }else{
-                                String newName = nameInput.getText().toString();
+                        } else {
+                            String newName = nameInput.getText().toString();
 
-                                int index = findItemPosition(item.getItemTitle(), itemList);
+                            int index = findItemPosition(item.getItemTitle(), itemList);
 
-                                if (index == -1) {
-                                    Toast.makeText(view.getContext(), "This group doesn't exist", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    DatabaseTools databaseTools = new DatabaseTools(context);
+                            if (index == -1) {
+                                Toast.makeText(view.getContext(), "This group doesn't exist", Toast.LENGTH_SHORT).show();
+                            } else {
+                                DatabaseTools databaseTools = new DatabaseTools(context);
 
 
-                                    ListLogic.editCategory(index, newName);
-                                    databaseTools.addItemToDatabase(new Item(newName));
-                                    ItemAdapter.this.notifyItemChanged(index);
-                                }
+                                ListLogic.editCategory(index, newName);
+                                databaseTools.addItemToDatabase(new Item(newName));
+                                ItemAdapter.this.notifyItemChanged(index);
+                            }
 
-                                editGroupDialog.dismiss();
+                            editGroupDialog.dismiss();
                         }
                     }
                 });
@@ -193,21 +176,20 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
             @Override
             public void onClick(View view) {
 
-                    DatabaseTools databaseTools = new DatabaseTools(context);
+                DatabaseTools databaseTools = new DatabaseTools(context);
 
-                    FirebaseUser user = databaseTools.getCurrentUser();
-                    if (user != null) {
-                        try {
-                            String UserName = user.getUid();
+                FirebaseUser user = databaseTools.getCurrentUser();
+                if (user != null) {
+                    try {
+                        String UserName = user.getUid();
 
-                            ListLogic.exportGroup(item, UserName);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }else {
-                        Toast.makeText(context, "Not signed In", Toast.LENGTH_SHORT).show();
+                        ListLogic.exportGroup(item, UserName);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-
+                } else {
+                    Toast.makeText(context, "Not signed In", Toast.LENGTH_SHORT).show();
+                }
 
 
                 bottomSheetDialog.dismiss();
@@ -229,13 +211,13 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
                 int pos = findItemPosition(item.getItemTitle(), itemList);
 
-                if (pos == -1){
+                if (pos == -1) {
 
                     Toast.makeText(view.getContext(), "This Item Doesn't Exist", Toast.LENGTH_SHORT).show();
 
-                }else{
+                } else {
 
-                    if (showDialog){
+                    if (showDialog) {
 
 
                         Dialog removeConfirmationDialog = new Dialog(view.getContext());
@@ -289,12 +271,13 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
                         removeConfirmationDialog.show();
 
-                    }else{
+                    } else {
                         databaseTools.deleteItem(ListLogic.getList().get(pos));
                         ListLogic.deleteCategory(item.getItemTitle());
                         ItemAdapter.this.notifyItemChanged(pos);
                         notifyItemRemoved(pos);
-                        notifyItemRangeChanged(pos, getItemCount());                    }
+                        notifyItemRangeChanged(pos, getItemCount());
+                    }
 
                 }
             }
@@ -303,36 +286,47 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         bottomSheetDialog.show();
     }
 
+    public int findItemPosition(String itemTitle, List<Item> itemList) {
 
-
-
-    public int findItemPosition(String itemTitle, List<Item> itemList){
-
-        for (int i = 0; i < itemList.size(); i++){
-            if (itemTitle.equals(itemList.get(i).getItemTitle())){
+        for (int i = 0; i < itemList.size(); i++) {
+            if (itemTitle.equals(itemList.get(i).getItemTitle())) {
                 return i;
             }
         }
         return -1;
     }
 
-    public boolean groupExists(String itemTitle){
-        for (Item item : itemList){
-            if(item.getItemTitle().equals(itemTitle)){
+    public boolean groupExists(String itemTitle) {
+        for (Item item : itemList) {
+            if (item.getItemTitle().equals(itemTitle)) {
                 return true;
             }
         }
-       return false;
+        return false;
     }
 
-    protected boolean stringContainsInvalidCharacters(String string){
-        for (String character : invalidCharacters){
-            if (string.contains(character)){
+    protected boolean stringContainsInvalidCharacters(String string) {
+        for (String character : invalidCharacters) {
+            if (string.contains(character)) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    class ItemViewHolder extends RecyclerView.ViewHolder {
+        private final TextView tvItemTitle;
+        private final RecyclerView rvSubItem;
+        private final ImageButton optionsMenuButton;
+
+        ItemViewHolder(View itemView) {
+            super(itemView);
+            tvItemTitle = (TextView) itemView.findViewById(R.id.tv_item_title);
+            rvSubItem = (RecyclerView) itemView.findViewById(R.id.subRecyclerView);
+            optionsMenuButton = (ImageButton) itemView.findViewById(R.id.optionsMenuButton);
+
+        }
     }
 
 }
