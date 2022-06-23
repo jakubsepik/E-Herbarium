@@ -14,25 +14,15 @@ public class SubItem {
         this.herbId = herbId;
         this.icon = icon;
     }
-    public SubItem(){}
 
-    public SubItem(String herbId,String herbName,int icon) {
+    public SubItem() {
+    }
+
+    public SubItem(String herbId, String herbName, int icon) {
         this.herbId = herbId;
         this.herbDescription = "";
         this.herbName = herbName;
         this.icon = icon;
-    }
-
-    @NonNull
-    @Override
-    public String toString() {
-        return "{" +
-                "      \"id\": \""+this.herbId+"\"," +
-                "      \"name\": \""+this.herbName+"\"," +
-                "      \"description\": \""+this.herbDescription+"\"," +
-                "      \"image\": \""+this.imageUri+"\"," +
-                "      \"icon\": \""+this.icon+"\""+
-                "    }";
     }
 
     public SubItem(String herbId, String herbName, String herbDescription, int icon) {
@@ -41,14 +31,16 @@ public class SubItem {
         this.herbName = herbName;
         this.icon = icon;
     }
-    public SubItem(String herbId,String herbName,int icon,String imageUri){
+
+    public SubItem(String herbId, String herbName, int icon, String imageUri) {
         this.herbId = herbId;
         this.herbDescription = "";
         this.herbName = herbName;
         this.icon = icon;
         this.imageUri = imageUri;
     }
-    public SubItem(String herbId,String herbName,String herbDescription,int icon,String imageUri){
+
+    public SubItem(String herbId, String herbName, String herbDescription, int icon, String imageUri) {
         this.herbId = herbId;
         this.herbDescription = herbDescription;
         this.herbName = herbName;
@@ -56,6 +48,17 @@ public class SubItem {
         this.imageUri = imageUri;
     }
 
+    @NonNull
+    @Override
+    public String toString() {
+        return "{" +
+                "      \"id\": \"" + this.herbId + "\"," +
+                "      \"name\": \"" + this.herbName + "\"," +
+                "      \"description\": \"" + this.herbDescription + "\"," +
+                "      \"image\": \"" + this.imageUri + "\"," +
+                "      \"icon\": \"" + this.icon + "\"" +
+                "    }";
+    }
 
     public int getIcon() {
         return icon;
@@ -88,9 +91,11 @@ public class SubItem {
     public void setHerbDescription(String herbDescription) {
         this.herbDescription = herbDescription;
     }
+
     public String getImageUri() {
         return imageUri;
     }
+
     public void setImageUri(String imageUri) {
         this.imageUri = imageUri;
     }

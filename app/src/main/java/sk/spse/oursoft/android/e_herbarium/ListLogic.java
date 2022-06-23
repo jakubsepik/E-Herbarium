@@ -1,56 +1,32 @@
 package sk.spse.oursoft.android.e_herbarium;
 
-import static android.content.Context.MODE_PRIVATE;
-
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.provider.ContactsContract;
-import android.provider.MediaStore;
-import android.provider.Settings;
 import android.util.Log;
 import android.webkit.URLUtil;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
-import com.google.firebase.auth.FirebaseUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import sk.spse.oursoft.android.e_herbarium.database_objects.User;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.ItemAdapter;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
@@ -312,9 +288,9 @@ public class ListLogic extends AppCompatActivity {
             }
         }
         for (Item item : itemList) {
-            if (ItemNotInList(item,list)) {
+            if (ItemNotInList(item, list)) {
 
-                list.add(new Item(item.getItemTitle(),new ArrayList<SubItem>()));
+                list.add(new Item(item.getItemTitle(), new ArrayList<SubItem>()));
             }
             int ItemPosition = findItemPosition(item.getItemTitle(), list);
 
@@ -354,7 +330,6 @@ public class ListLogic extends AppCompatActivity {
             }
 
         }
-        System.out.println("List-Database" + list);
     }
 
     public static int findItemPosition(String itemTitle, List<Item> itemList) {
@@ -377,7 +352,7 @@ public class ListLogic extends AppCompatActivity {
     }
 
 
-    private static boolean ItemNotInList(Item ItemToFind,List<Item> list) {
+    private static boolean ItemNotInList(Item ItemToFind, List<Item> list) {
         for (Item item : list) {
             if (item.getItemTitle().equals(ItemToFind.getItemTitle())) {
                 return false;

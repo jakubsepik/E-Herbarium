@@ -8,5 +8,6 @@ import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
 
 public interface UserListCallback {
     void onDataCallback(ArrayList<Item> value);
+
     void onImageCallback(Uri uri);
 }

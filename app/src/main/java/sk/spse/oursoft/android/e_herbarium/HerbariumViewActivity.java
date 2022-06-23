@@ -1,20 +1,16 @@
 package sk.spse.oursoft.android.e_herbarium;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.net.ConnectivityManager;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.FileUtils;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,22 +21,21 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseUser;
+
+import org.json.JSONException;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -53,13 +48,6 @@ import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.ItemAdapter;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
 import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
-import sk.spse.oursoft.android.e_herbarium.misc.UserListCallback;
-
-import android.graphics.Matrix;
-
-import com.google.firebase.auth.FirebaseUser;
-
-import org.json.JSONException;
 
 
 public class HerbariumViewActivity extends AppCompatActivity {
@@ -78,6 +66,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
     int[] icons = {R.drawable.listocek_symbolik, R.drawable.klasocek_symbolik, R.drawable.kricek_symbolik, R.drawable.stromcek_symbolik};
     Random rd = new Random();
     String[] herbNames = {"Mint", "Echinacea", "Thyme"};
+
 
     public static void setCurrentDialog(Dialog d) {
         dialogReference = d;
@@ -98,7 +87,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
         itemAdapter = new ItemAdapter(itemList);
         rvItem.setAdapter(itemAdapter);
         rvItem.setLayoutManager(layoutManager);
-        itemAdapter.notifyItemInserted(ListLogic.getList().size()-1);
+        itemAdapter.notifyItemInserted(ListLogic.getList().size() - 1);
         ImageButton hamburgerMenu = (ImageButton) findViewById(R.id.hamburgerMenu);
 
 //        databaseTools.initializeNetworkCallback();
@@ -109,13 +98,12 @@ public class HerbariumViewActivity extends AppCompatActivity {
         //jake meno ?
 
 
-
         hamburgerMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 FirebaseUser user = databaseTools.getCurrentUser();
-                if(user != null) {
+                if (user != null) {
                     PopupMenu popupMenu = new PopupMenu(HerbariumViewActivity.this, hamburgerMenu);
                     popupMenu.getMenuInflater().inflate(R.menu.popup_menu, popupMenu.getMenu());
 
@@ -142,8 +130,8 @@ public class HerbariumViewActivity extends AppCompatActivity {
                                         if (nameInput.getText().toString().equals("") || nameInput.getText().toString().length() == 0) {
                                             Toast.makeText(view.getContext(), "You have to enter a name!", Toast.LENGTH_SHORT).show();
 
-                                    } else if (groupExists(nameInput.getText().toString(), itemList)) {
-                                        Toast.makeText(view.getContext(), "The group's name has to be unique!", Toast.LENGTH_SHORT).show();
+                                        } else if (groupExists(nameInput.getText().toString(), itemList)) {
+                                            Toast.makeText(view.getContext(), "The group's name has to be unique!", Toast.LENGTH_SHORT).show();
 
 
                                         } else if (stringContainsInvalidCharacters(nameInput.getText().toString())) {
@@ -156,7 +144,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
 
                                             databaseTools.addItemToDatabase(item);
                                             ListLogic.addCategory(item);
-                                            itemAdapter.notifyItemInserted(ListLogic.getList().size()-1);
+                                            itemAdapter.notifyItemInserted(ListLogic.getList().size() - 1);
 
                                             addGroupDialog.dismiss();
                                         }
@@ -164,32 +152,28 @@ public class HerbariumViewActivity extends AppCompatActivity {
                                 });
 
                                 addGroupDialog.show();
-                            }
-
-                            else if (menuItem.getTitle().equals("Import")){
+                            } else if (menuItem.getTitle().equals("Import")) {
                                 FirebaseUser user = databaseTools.getCurrentUser();
-                                if(user != null){
+                                if (user != null) {
                                     String userName = user.getUid();
                                     Intent chooseFile = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                                     chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
                                     chooseFile.setType("*/*");
                                     startActivityForResult(chooseFile, REQUEST_IMPORT_FILE);
 
-                                }else{
+                                } else {
                                     Toast.makeText(getApplicationContext(), "Not signed In", Toast.LENGTH_SHORT).show();
                                 }
-                            }
-
-                            else if(menuItem.getTitle().equals("Export")){
+                            } else if (menuItem.getTitle().equals("Export")) {
                                 FirebaseUser user = databaseTools.getCurrentUser();
-                                if(user != null){
+                                if (user != null) {
                                     try {
                                         String userName = user.getUid();
                                         ListLogic.exportHerbarium(userName);
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
-                                }else{
+                                } else {
                                     Toast.makeText(getApplicationContext(), "Not signed In", Toast.LENGTH_SHORT).show();
                                 }
                             }
@@ -201,12 +185,13 @@ public class HerbariumViewActivity extends AppCompatActivity {
 
                     popupMenu.show();
 
-                }else {
+                } else {
                     Toast.makeText(getApplicationContext(), "user not signed in", Toast.LENGTH_SHORT).show();
                 }
 
             }
         });
+
 
     }
 
@@ -214,10 +199,10 @@ public class HerbariumViewActivity extends AppCompatActivity {
     protected void onPause() {
         try {
             ListLogic.saveAll();
-        }catch (java.lang.RuntimeException e){
-            Log.e("Pause error","error because there is no data in the herbarium");
-        }catch (Exception e){
-            Log.e("View Activity pause",e.getMessage());
+        } catch (java.lang.RuntimeException e) {
+            Log.e("Pause error", "error because there is no data in the herbarium");
+        } catch (Exception e) {
+            Log.e("View Activity pause", e.getMessage());
         }
         super.onPause();
     }
@@ -226,6 +211,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        //this is urn when a camera picture is taken
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
 
             if (data == null) {
@@ -236,23 +222,35 @@ public class HerbariumViewActivity extends AppCompatActivity {
                 try {
                     Bundle extras = data.getExtras();
                     Bitmap imageBitmap = (Bitmap) extras.get("data");
-                    String ItemName = (String) extras.get("ItemName");
-                    File imageFile = storeImage(imageBitmap, REQUEST_IMAGE_CAPTURE);
 
-                    if (imageFile != null) {
+
+                    //so I know what dialog to set the given uri
+                    if (dialogReference.getClass().toString().equals("class sk.spse.oursoft.android.e_herbarium.EditItemDialog")) {
+                        Uri SourceImageUri = ((EditItemDialog) dialogReference).getImageUri();
+
+                        //the path is so the edit one gets overwritten
+                        File imageFile = storeImage(imageBitmap, REQUEST_IMAGE_CAPTURE, SourceImageUri.getPath());
                         Uri imageUri = Uri.fromFile(imageFile);
-                        if(dialogReference.getClass().toString().equals("class sk.spse.oursoft.android.e_herbarium.EditItemDialog")){
+                        if (imageFile != null) {
+                            System.out.println("EDIT ITEM DIALOG");
                             ((EditItemDialog) dialogReference).setImageURI(imageUri);
+
+                        } else {
+                            Log.e("Gallery", "failed to save image");
+                            Toast.makeText(this, "Couldn't save image", Toast.LENGTH_SHORT).show();
                         }
-                        ((AddItemDialog) dialogReference).setImageURI(imageUri);
-
-                        databaseTools.saveImage(imageUri,ItemName);
-
-                        Toast.makeText(this, "success", Toast.LENGTH_SHORT).show();
-
                     } else {
-                        Log.e("Camera", "failed to save image");
-                        Toast.makeText(this, "Couldn't save image", Toast.LENGTH_SHORT).show();
+
+                        //if the imaeg path is null it stored in a generated place
+                        File imageFile = storeImage(imageBitmap, RESULT_LOAD_IMAGE, null);
+                        if (imageFile != null) {
+                            Uri imageUri = Uri.fromFile(imageFile);
+
+                            ((AddItemDialog) dialogReference).setImageURI(imageUri);
+                        } else {
+                            Log.e("Gallery", "failed to save image");
+                            Toast.makeText(this, "Couldn't save image", Toast.LENGTH_SHORT).show();
+                        }
                     }
 
 
@@ -263,6 +261,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
 
             }
 
+            //this is run when an image is selected form the gallery
         } else if (requestCode == RESULT_LOAD_IMAGE && resultCode == Activity.RESULT_OK) {
 
             if (data == null) {
@@ -270,30 +269,36 @@ public class HerbariumViewActivity extends AppCompatActivity {
                 Toast.makeText(this, "No Image Selected", Toast.LENGTH_SHORT).show();
             } else {
                 try {
-                    Bundle extras = data.getExtras();
-                    String ItemName = (String) extras.get("ItemName");
-                    Uri imageURI = data.getData();
-                    Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageURI);
 
+                    Uri newImageUri = data.getData();
+                    Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), newImageUri);
 
-                    File imageFile = storeImage(imageBitmap, RESULT_LOAD_IMAGE);
-                    if (imageFile != null) {
+                    //processes the image and either overwrites the pevious one or writes a new one
+                    if (dialogReference.getClass().toString().equals("class sk.spse.oursoft.android.e_herbarium.EditItemDialog")) {
+                        Uri SourceImageUri = ((EditItemDialog) dialogReference).getImageUri();
+
+                        File imageFile = storeImage(imageBitmap, RESULT_LOAD_IMAGE, SourceImageUri.getPath());
                         Uri imageUri = Uri.fromFile(imageFile);
-                        System.out.println("THIS IS A TITLE" + dialogReference.getClass());
-                        if(dialogReference.getClass().toString().equals("class sk.spse.oursoft.android.e_herbarium.EditItemDialog")){
+                        if (imageFile != null) {
                             System.out.println("EDIT ITEM DIALOG");
                             ((EditItemDialog) dialogReference).setImageURI(imageUri);
+
+                        } else {
+                            Log.e("Gallery", "failed to save image");
+                            Toast.makeText(this, "Couldn't save image", Toast.LENGTH_SHORT).show();
                         }
-                        ((AddItemDialog) dialogReference).setImageURI(imageUri);
-
-                        //saves the image and the image ref in the firebase storage
-                        databaseTools.saveImage(imageUri,ItemName);
-
-                        Toast.makeText(this, "success", Toast.LENGTH_SHORT).show();
-
                     } else {
-                        Log.e("Gallery", "failed to save image");
-                        Toast.makeText(this, "Couldn't save image", Toast.LENGTH_SHORT).show();
+
+                        //if the imaeg path is null it stored in a generated place
+                        File imageFile = storeImage(imageBitmap, RESULT_LOAD_IMAGE, null);
+                        if (imageFile != null) {
+                            Uri imageUri = Uri.fromFile(imageFile);
+
+                            ((AddItemDialog) dialogReference).setImageURI(imageUri);
+                        } else {
+                            Log.e("Gallery", "failed to save image");
+                            Toast.makeText(this, "Couldn't save image", Toast.LENGTH_SHORT).show();
+                        }
                     }
 
 
@@ -301,48 +306,44 @@ public class HerbariumViewActivity extends AppCompatActivity {
                     Log.e("Gallery", "failed to load image from gallery" + Arrays.toString(e.getStackTrace()));
                     Toast.makeText(this, "Couldn't set image", Toast.LENGTH_SHORT).show();
                 }
-
             }
+            //THis is run when  an imort is requested
         } else if (requestCode == REQUEST_IMPORT_FILE && resultCode == Activity.RESULT_OK) {
             if (data != null) {
-
-
-                    //upload the files to hte JSON
-                    //synchronize the internal database with hte firebase one
-                    //download the images from firebase that were gotten from the file
-                    if(data.getData() != null) {
-
-                        Uri content_describer = data.getData();
-
-                        byte[] byteData = getBytes(content_describer);
-                        if(byteData != null) {
-                            System.out.println("THE DATA IS " + new String(byteData, StandardCharsets.UTF_8));
-                            try {
-                                ListLogic.importHerbarium(byteData, itemAdapter);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
-                        }else{
-                            Toast.makeText(this, "couldn't load the file from the given location move the file", Toast.LENGTH_SHORT).show();
-
+                //upload the files to hte JSON
+                //synchronize the internal database with hte firebase one
+                //download the images from firebase that were gotten from the file
+                if (data.getData() != null) {
+                    Uri content_describer = data.getData();
+                    byte[] byteData = getBytes(content_describer);
+                    if (byteData != null) {
+                        System.out.println("THE DATA IS " + new String(byteData, StandardCharsets.UTF_8));
+                        try {
+                            ListLogic.importHerbarium(byteData, itemAdapter);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    }else{
-                        Toast.makeText(this, "Couldn't load file from given locatino" , Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "couldn't load the file from the given location move the file", Toast.LENGTH_SHORT).show();
                     }
-
-
+                } else {
+                    Toast.makeText(this, "Couldn't load file from given locatino", Toast.LENGTH_SHORT).show();
+                }
             } else {
                 Toast.makeText(this, "Didn't file successfully ", Toast.LENGTH_SHORT).show();
-
             }
-        } else {
+        }else {
             Toast.makeText(this, "Error occurred", Toast.LENGTH_SHORT).show();
         }
-    }
-    byte[] getBytes( Uri uri) {
+        }
+
+
+
+
+
+    byte[] getBytes(Uri uri) {
         InputStream inputStream = null;
         try {
             inputStream = this.getContentResolver().openInputStream(uri);
@@ -355,7 +356,7 @@ public class HerbariumViewActivity extends AppCompatActivity {
             }
             return outputStream.toByteArray();
         } catch (Exception ex) {
-            Log.e("Error", ex.getMessage().toString());
+            Log.e("Error", ex.getMessage());
             Toast.makeText(this, "getBytes error:" + ex.getMessage(), Toast.LENGTH_LONG).show();
             return null;
         }
@@ -363,23 +364,28 @@ public class HerbariumViewActivity extends AppCompatActivity {
 
 
     //    Selecting image from the gallery
-    private File storeImage(Bitmap image, int requestCode) {
+    private File storeImage(Bitmap image, int requestCode, String imagePath) {
 
-        //gets a file path
-        File pictureFile = getOutputMediaFile();
-
+        //if there is a predetermined path use that
+        File pictureFile = null;
+        if (imagePath == null) {
+            //gets a file path
+            pictureFile = getOutputMediaFile();
+        } else {
+            pictureFile = new File(imagePath);
+        }
         if (pictureFile == null) {
             Log.d("Store image", "Error creating media file, check storage permissions: ");// e.getMessage());
             return null;
         }
         try {
 
-            image = getResizedBitmap(image, 650, 800);
-
-            if (image == null) {
-                Log.e("Resize image", "Failed to resize image");
-                return null;
-            }
+//            image = getResizedBitmap(image, 650, 800);
+//
+//            if (image == null) {
+//                Log.e("Resize image", "Failed to resize image");
+//                return null;
+//            }
             if (requestCode == REQUEST_IMAGE_CAPTURE) {
 
                 FileOutputStream fos = new FileOutputStream(pictureFile);

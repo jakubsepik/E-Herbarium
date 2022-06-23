@@ -6,12 +6,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Matrix;
-import android.media.Image;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -23,20 +18,11 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseUser;
 
-import org.json.JSONException;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
@@ -48,9 +34,11 @@ public class EditItemDialog extends Dialog {
 
     private final int REQUEST_IMAGE_CAPTURE = 1;
     private final int RESULT_LOAD_IMAGE = 2;
+    private final String[] invalidCharacters = {".", "@", "$", "%", "&", "/", "<", ">", "?", "|", "{", "}", "[", "]"};
     public Uri imageURI;
     public ImageView editImage;
-    private final String[] invalidCharacters = {".", "@", "$", "%", "&", "/", "<", ">", "?", "|", "{", "}", "[", "]"};
+    private DatabaseTools databaseTools;
+    private Item item;
 
     public EditItemDialog(@NonNull Context context, int theme_Black_NoTitleBar_Fullscreen, SubItem subItem, List<SubItem> subItemList, SubItemAdapter subItemAdapter, Item item) {
         super(context, theme_Black_NoTitleBar_Fullscreen);
@@ -65,9 +53,10 @@ public class EditItemDialog extends Dialog {
         EditText editDescriptionInput = (EditText) findViewById(R.id.editDescriptionInput);
         Button editItemButton = (Button) findViewById(R.id.editSubItemButton);
 
-        imageURI = null;
-
+        imageURI = Uri.parse(subItem.getImageUri());
+        this.item = item;
         editImage.setImageURI(Uri.parse(subItem.getImageUri()));
+        databaseTools  = new DatabaseTools(context);
 
         editNameInput.setText(subItem.getHerbName());
         editDescriptionInput.setText(subItem.getHerbDescription());
@@ -97,9 +86,8 @@ public class EditItemDialog extends Dialog {
 
                         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         try {
-                            Activity activity =  (Activity) ((ContextWrapper) context).getBaseContext();;
+                            Activity activity = (Activity) ((ContextWrapper) context).getBaseContext();
                             activity.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-
                         } catch (ActivityNotFoundException e) {
                             Toast.makeText(context, "error opening camera", Toast.LENGTH_SHORT).show();
                             Log.e("Camera", "error occured while taking the image" + e.getStackTrace());
@@ -116,7 +104,7 @@ public class EditItemDialog extends Dialog {
                     public void onClick(View view) {
                         Intent galleryChoose = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         try {
-                            Activity activity =  (Activity) ((ContextWrapper) context).getBaseContext();;
+                            Activity activity = (Activity) ((ContextWrapper) context).getBaseContext();
                             activity.startActivityForResult(galleryChoose, RESULT_LOAD_IMAGE);
 
                         } catch (Exception e) {
@@ -129,7 +117,7 @@ public class EditItemDialog extends Dialog {
                 });
 
                 bottomSheetDialog.show();
-                
+
             }
         });
 
@@ -137,15 +125,14 @@ public class EditItemDialog extends Dialog {
             @Override
             public void onClick(View view) {
 
-                if(editNameInput.getText().toString().equals("") || editNameInput.getText().toString().length() == 0){
+                if (editNameInput.getText().toString().equals("") || editNameInput.getText().toString().length() == 0) {
                     Toast.makeText(view.getContext(), "You have to enter a name!", Toast.LENGTH_SHORT).show();
 
-                }else if (stringContainsInvalidCharacters(editNameInput.getText().toString())){
+                } else if (stringContainsInvalidCharacters(editNameInput.getText().toString())) {
                     Toast.makeText(context, "Characters " + Arrays.toString(invalidCharacters) + " aren't allowed!", Toast.LENGTH_SHORT).show();
 
-                }else {
+                } else {
 
-                    DatabaseTools databaseTools = new DatabaseTools(context);
 
                     int subItemPosition = findSubItemPosition(subItem.getHerbName(), subItemList);
 
@@ -158,9 +145,9 @@ public class EditItemDialog extends Dialog {
 
                     System.out.println("THE SUB ITEM URI " + subItem.getImageUri());
 
-                    if(imageURI == null){
+                    if (imageURI == null) {
                         editedSubItem.setImageUri(subItem.getImageUri());
-                    }else{
+                    } else {
                         editedSubItem.setImageUri(imageURI.toString());
                     }
 
@@ -174,7 +161,7 @@ public class EditItemDialog extends Dialog {
                             System.out.println("ITEM POSITION " + subItemPosition);
                             ListLogic.editOne(item.getItemTitle(), subItemPosition, editedSubItem);
                             subItemAdapter.notifyItemChanged(subItemPosition);
-
+                            databaseTools.saveImage(imageURI,item.getItemTitle());
                             EditItemDialog.this.dismiss();
 
                             Toast.makeText(view.getContext(), "Item has been edited", Toast.LENGTH_SHORT).show();
@@ -182,7 +169,7 @@ public class EditItemDialog extends Dialog {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                    }else {
+                    } else {
                         Toast.makeText(context, "Not signed In", Toast.LENGTH_SHORT).show();
                     }
 
@@ -192,9 +179,9 @@ public class EditItemDialog extends Dialog {
 
     }
 
-    protected boolean stringContainsInvalidCharacters(String string){
-        for (String character : invalidCharacters){
-            if (string.contains(character)){
+    protected boolean stringContainsInvalidCharacters(String string) {
+        for (String character : invalidCharacters) {
+            if (string.contains(character)) {
                 return true;
             }
         }
@@ -202,23 +189,28 @@ public class EditItemDialog extends Dialog {
         return false;
     }
 
-    public int findSubItemPosition(String subItemTitle, List<SubItem> subItemList){
+    public int findSubItemPosition(String subItemTitle, List<SubItem> subItemList) {
 
-        for (int i = 0; i < subItemList.size(); i++){
-            if (subItemTitle.equals(subItemList.get(i).getHerbName())){
+        for (int i = 0; i < subItemList.size(); i++) {
+            if (subItemTitle.equals(subItemList.get(i).getHerbName())) {
                 return i;
             }
         }
         return -1;
     }
+
     public void setImageURI(Uri pictureURI) {
 
         this.imageURI = pictureURI;
         Toast.makeText(this.getContext(), imageURI.toString(), Toast.LENGTH_SHORT).show();
-        Log.e("IMAGEURI",pictureURI.toString());
+        editImage.setImageURI(databaseTools.getDefaultURI());
         editImage.setImageURI(imageURI);
 
 
+
+    }
+    public Uri getImageUri() {
+        return this.imageURI;
     }
 
 }

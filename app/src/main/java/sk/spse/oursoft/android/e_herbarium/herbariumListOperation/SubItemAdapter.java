@@ -30,11 +30,10 @@ import sk.spse.oursoft.android.e_herbarium.R;
 
 public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemViewHolder> {
 
-    private List<SubItem> subItemList;
-    private String itemTitle;
-    private Item item;
-
     Context context;
+    private final List<SubItem> subItemList;
+    private final String itemTitle;
+    private final Item item;
 
     SubItemAdapter(List<SubItem> subItemList, String itemTitle, Item item) {
         this.subItemList = subItemList;
@@ -70,9 +69,9 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
 
                 ImageView image = (ImageView) itemDialog.findViewById(R.id.insertImage);
 
-                if (subItem.getImageUri() == null){
+                if (subItem.getImageUri() == null) {
                     image.setImageResource(subItem.getIcon());
-                }else{
+                } else {
                     image.setImageURI(Uri.parse(subItem.getImageUri()));
                 }
 
@@ -112,37 +111,19 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
         });
     }
 
-    class SubItemViewHolder extends RecyclerView.ViewHolder {
-        TextView textViewHerbName;
-        ImageView imageViewHerbIcon;
-        ImageButton removeSubItem;
-
-        LinearLayout subLinearLayout;
-
-        SubItemViewHolder(View itemView) {
-            super(itemView);
-            textViewHerbName = (TextView) itemView.findViewById(R.id.herbName);
-            imageViewHerbIcon = (ImageView) itemView.findViewById(R.id.herbIcon);
-            removeSubItem = (ImageButton) itemView.findViewById(R.id.removeSubitem);
-
-            subLinearLayout = (LinearLayout) itemView.findViewById(R.id.subLinearLayout);
-        }
-    }
-
-
-    public void removeItem(int pos, String itemTitle){
+    public void removeItem(int pos, String itemTitle) {
         ListLogic.deleteOne(pos, itemTitle);
         notifyItemRemoved(pos);
         notifyItemRangeChanged(pos, getItemCount());
     }
 
-    public void addSubItem(){
-        notifyItemInserted(subItemList.size()-1);
+    public void addSubItem() {
+        notifyItemInserted(subItemList.size() - 1);
     }
 
-    public int findItemPosition(String herbName, List<SubItem> subItemList){
-        for (int i = 0; i < subItemList.size(); i++){
-            if (herbName.equals(subItemList.get(i).getHerbName())){
+    public int findItemPosition(String herbName, List<SubItem> subItemList) {
+        for (int i = 0; i < subItemList.size(); i++) {
+            if (herbName.equals(subItemList.get(i).getHerbName())) {
                 return i;
             }
         }
@@ -155,11 +136,11 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
         return subItemList.size();
     }
 
-    public List<SubItem> getSubItemList(){
+    public List<SubItem> getSubItemList() {
         return subItemList;
     }
 
-    public void removeItemMethod(Context context, SubItem subItem, View view, String itemTitle){
+    public void removeItemMethod(Context context, SubItem subItem, View view, String itemTitle) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("SharedPreferences", Context.MODE_MULTI_PROCESS);
         boolean showDialog = sharedPreferences.getBoolean("showSubitemDeletionDialog", true);
 
@@ -167,13 +148,13 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
 
         int pos = findItemPosition(subItem.getHerbName(), subItemList);
 
-        if (pos == -1){
+        if (pos == -1) {
 
             Toast.makeText(view.getContext(), "This Item Doesn't Exist", Toast.LENGTH_SHORT).show();
 
-        }else{
+        } else {
 
-            if (showDialog){
+            if (showDialog) {
 
                 Dialog removeConfirmationDialog = new Dialog(view.getContext());
                 removeConfirmationDialog.setContentView(R.layout.confirm_subitem_removal_dialog);
@@ -221,11 +202,28 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
 
                 removeConfirmationDialog.show();
 
-            }else{
+            } else {
                 removeItem(pos, itemTitle);
             }
 
         }
 
+    }
+
+    class SubItemViewHolder extends RecyclerView.ViewHolder {
+        TextView textViewHerbName;
+        ImageView imageViewHerbIcon;
+        ImageButton removeSubItem;
+
+        LinearLayout subLinearLayout;
+
+        SubItemViewHolder(View itemView) {
+            super(itemView);
+            textViewHerbName = (TextView) itemView.findViewById(R.id.herbName);
+            imageViewHerbIcon = (ImageView) itemView.findViewById(R.id.herbIcon);
+            removeSubItem = (ImageButton) itemView.findViewById(R.id.removeSubitem);
+
+            subLinearLayout = (LinearLayout) itemView.findViewById(R.id.subLinearLayout);
+        }
     }
 }

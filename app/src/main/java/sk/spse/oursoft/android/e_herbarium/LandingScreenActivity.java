@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -19,19 +18,12 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-
-import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
-import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.ItemAdapter;
-import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
-import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
-
-import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
-import sk.spse.oursoft.android.e_herbarium.misc.UserListCallback;
-
 import java.io.File;
 import java.util.ArrayList;
+
+import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
+import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
+import sk.spse.oursoft.android.e_herbarium.misc.UserListCallback;
 
 
 public class LandingScreenActivity extends Activity {
@@ -88,7 +80,8 @@ public class LandingScreenActivity extends Activity {
 
         //runs this method coz else it is one cycle behind
         items = new ArrayList<>();
-        databaseTools.synchronizeInternalStorageToDatabase();
+
+        //I run it here to clean up the database when the user logs in and
 
         databaseTools.getUserItems(new UserListCallback() {
             @Override
@@ -104,6 +97,17 @@ public class LandingScreenActivity extends Activity {
                     ListLogic.begin(databaseTools.getItems(), getApplicationContext(), userName, timestamp);
                     int tmp = ListLogic.getList().size() - 1;
 
+                    String CallingActivity = getIntent().getStringExtra("Activity");
+                    if(CallingActivity != null){
+                        if(CallingActivity.equals("LoginActivity")){
+                            System.out.println("THIS IS RUns");
+                            databaseTools.synchronizeDatabaseToInternalImageStorage();
+                        }
+                    }else{
+                        // happened to delete images also works for import
+//                        databaseTools.synchronizeInternalImageStorageToDatabase();
+                    }
+                    System.out.println("THE DEFAULT URI IS " + databaseTools.getDefaultURI());
                     databaseTools.initializeNetworkCallback();
                 }
             }
@@ -112,6 +116,9 @@ public class LandingScreenActivity extends Activity {
             public void onImageCallback(Uri uri) {
             }
         });
+
+
+
     }
 
 

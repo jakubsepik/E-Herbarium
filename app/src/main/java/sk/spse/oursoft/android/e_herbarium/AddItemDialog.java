@@ -21,40 +21,32 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
-
 import androidx.annotation.NonNull;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.Arrays;
 
-
+import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.Item;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItem;
 import sk.spse.oursoft.android.e_herbarium.herbariumListOperation.SubItemAdapter;
 import sk.spse.oursoft.android.e_herbarium.misc.DatabaseTools;
 
 public class AddItemDialog extends Dialog {
 
+    private final String[] invalidCharacters = {".", "@", "$", "%", "&", "/", "<", ">", "?", "|", "{", "}", "[", "]"};
+    private final int[] iconList = {R.drawable.listocek_symbolik, R.drawable.kricek_symbolik, R.drawable.klasocek_symbolik, R.drawable.stromcek_symbolik};
+    private final int REQUEST_IMAGE_CAPTURE = 1;
+    private final int RESULT_LOAD_IMAGE = 2;
     private String herbName;
     private String herbDescription;
-
-    private SubItem subItem;
-
-    private ImageView insertImage;
-
-    private final String[] invalidCharacters = {".", "@", "$", "%", "&", "/", "<", ">", "?", "|", "{", "}", "[", "]"};
-
-    private final int[] iconList = {R.drawable.listocek_symbolik, R.drawable.kricek_symbolik, R.drawable.klasocek_symbolik, R.drawable.stromcek_symbolik};
-
+    private final SubItem subItem;
+    private final ImageView insertImage;
     private boolean leavesPicked = false;
     private boolean bushPicked = false;
     private boolean earPicked = false;
     private boolean treePicked = false;
     private boolean continueWithoutIcon = false;
-
-    private final int REQUEST_IMAGE_CAPTURE = 1;
-    private final int RESULT_LOAD_IMAGE = 2;
     private Uri imageURI;
 
 
@@ -94,7 +86,7 @@ public class AddItemDialog extends Dialog {
 
                         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         try {
-                            takePictureIntent.putExtra("itemName",item.getItemTitle());
+
                             ((Activity) context).startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
 
                         } catch (ActivityNotFoundException e) {
@@ -113,7 +105,6 @@ public class AddItemDialog extends Dialog {
                     public void onClick(View view) {
                         Intent galleryChoose = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         try {
-                            galleryChoose.putExtra("itemName",item.getItemTitle());
                             ((Activity) context).startActivityForResult(galleryChoose, RESULT_LOAD_IMAGE);
 
                         } catch (Exception e) {
@@ -148,15 +139,15 @@ public class AddItemDialog extends Dialog {
                 if (herbName.length() == 0) {
                     Toast.makeText(context, "Please input a valid herb name.", Toast.LENGTH_SHORT).show();
 
-                }else if (subItemAdapter.findItemPosition(herbName, subItemAdapter.getSubItemList()) != -1){
+                } else if (subItemAdapter.findItemPosition(herbName, subItemAdapter.getSubItemList()) != -1) {
 
                     Toast.makeText(context, "Please input a unique herb name", Toast.LENGTH_SHORT).show();
 
-                }else if(stringContainsInvalidCharacters(herbName)){
+                } else if (stringContainsInvalidCharacters(herbName)) {
 
                     Toast.makeText(context, "Characters " + Arrays.toString(invalidCharacters) + " aren't allowed!", Toast.LENGTH_SHORT).show();
 
-                }else{
+                } else {
 
                     subItem.setHerbName(herbName);
                     subItem.setHerbDescription(herbDescription);
@@ -398,8 +389,8 @@ public class AddItemDialog extends Dialog {
                                 ListLogic.addOne(subItem, index);
                                 subItemAdapter.addSubItem();
 
-                                databaseTools.addEditSubItem(item,subItem);
-                                databaseTools.saveImage(imageURI,item.getItemTitle());
+                                databaseTools.addEditSubItem(item, subItem);
+                                databaseTools.saveImage(imageURI, item.getItemTitle());
 
                             }
                         }
@@ -421,7 +412,7 @@ public class AddItemDialog extends Dialog {
         insertImage.setImageURI(null);
         //Toast.makeText(this.getContext(), imageURI.toString(), Toast.LENGTH_SHORT).show();
 
-        Log.e("IMAGEURI",pictureURI.toString());
+        Log.e("IMAGEURI", pictureURI.toString());
 
         insertImage.setImageURI(imageURI);
 
@@ -430,9 +421,9 @@ public class AddItemDialog extends Dialog {
 
     }
 
-    protected boolean stringContainsInvalidCharacters(String string){
-        for (String character : invalidCharacters){
-            if (string.contains(character)){
+    protected boolean stringContainsInvalidCharacters(String string) {
+        for (String character : invalidCharacters) {
+            if (string.contains(character)) {
                 return true;
             }
         }

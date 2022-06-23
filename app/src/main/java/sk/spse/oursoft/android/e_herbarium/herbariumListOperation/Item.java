@@ -1,7 +1,5 @@
 package sk.spse.oursoft.android.e_herbarium.herbariumListOperation;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +16,8 @@ public class Item {
         this.itemTitle = itemTitle;
         this.subItemList = new ArrayList<>();
     }
-    public void addSubItem(SubItem subItem){
+
+    public void addSubItem(SubItem subItem) {
         subItemList.add(subItem);
     }
 
@@ -33,14 +32,14 @@ public class Item {
 
     @Override
     public String toString() {
-        StringBuilder output= new StringBuilder();
-        for(int i=subItemList.size()-1;i>=0;i--){
-            if(i==subItemList.size()-1)
+        StringBuilder output = new StringBuilder();
+        for (int i = subItemList.size() - 1; i >= 0; i--) {
+            if (i == subItemList.size() - 1)
                 output.insert(0, subItemList.get(i).toString());
             else
                 output.insert(0, subItemList.get(i).toString() + ",");
         }
-        return "\""+this.itemTitle+"\":["+output.toString()+"]";
+        return "\"" + this.itemTitle + "\":[" + output.toString() + "]";
     }
 
     public List<SubItem> getSubItemList() {
