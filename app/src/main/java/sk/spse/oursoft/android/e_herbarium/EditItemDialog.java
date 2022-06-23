@@ -37,6 +37,8 @@ public class EditItemDialog extends Dialog {
     private final String[] invalidCharacters = {".", "@", "$", "%", "&", "/", "<", ">", "?", "|", "{", "}", "[", "]"};
     public Uri imageURI;
     public ImageView editImage;
+    private DatabaseTools databaseTools;
+    private Item item;
 
     public EditItemDialog(@NonNull Context context, int theme_Black_NoTitleBar_Fullscreen, SubItem subItem, List<SubItem> subItemList, SubItemAdapter subItemAdapter, Item item) {
         super(context, theme_Black_NoTitleBar_Fullscreen);
@@ -52,8 +54,9 @@ public class EditItemDialog extends Dialog {
         Button editItemButton = (Button) findViewById(R.id.editSubItemButton);
 
         imageURI = Uri.parse(subItem.getImageUri());
-
+        this.item = item;
         editImage.setImageURI(Uri.parse(subItem.getImageUri()));
+        databaseTools  = new DatabaseTools(context);
 
         editNameInput.setText(subItem.getHerbName());
         editDescriptionInput.setText(subItem.getHerbDescription());
@@ -131,7 +134,6 @@ public class EditItemDialog extends Dialog {
 
                 } else {
 
-                    DatabaseTools databaseTools = new DatabaseTools(context);
 
                     int subItemPosition = findSubItemPosition(subItem.getHerbName(), subItemList);
 
@@ -160,7 +162,7 @@ public class EditItemDialog extends Dialog {
                             System.out.println("ITEM POSITION " + subItemPosition);
                             ListLogic.editOne(item.getItemTitle(), subItemPosition, editedSubItem);
                             subItemAdapter.notifyItemChanged(subItemPosition);
-
+                            databaseTools.saveImage(imageURI,item.getItemTitle());
                             EditItemDialog.this.dismiss();
 
                             Toast.makeText(view.getContext(), "Item has been edited", Toast.LENGTH_SHORT).show();
@@ -202,7 +204,6 @@ public class EditItemDialog extends Dialog {
 
         this.imageURI = pictureURI;
         Toast.makeText(this.getContext(), imageURI.toString(), Toast.LENGTH_SHORT).show();
-        Log.e("IMAGEURI", pictureURI.toString());
         editImage.setImageURI(imageURI);
 
 
