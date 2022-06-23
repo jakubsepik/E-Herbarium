@@ -88,7 +88,6 @@ public class EditItemDialog extends Dialog {
                         try {
                             Activity activity = (Activity) ((ContextWrapper) context).getBaseContext();
                             activity.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-
                         } catch (ActivityNotFoundException e) {
                             Toast.makeText(context, "error opening camera", Toast.LENGTH_SHORT).show();
                             Log.e("Camera", "error occured while taking the image" + e.getStackTrace());
@@ -204,7 +203,9 @@ public class EditItemDialog extends Dialog {
 
         this.imageURI = pictureURI;
         Toast.makeText(this.getContext(), imageURI.toString(), Toast.LENGTH_SHORT).show();
+        editImage.setImageURI(databaseTools.getDefaultURI());
         editImage.setImageURI(imageURI);
+
 
 
     }

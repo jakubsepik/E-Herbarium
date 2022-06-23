@@ -380,12 +380,12 @@ public class HerbariumViewActivity extends AppCompatActivity {
         }
         try {
 
-            image = getResizedBitmap(image, 650, 800);
-
-            if (image == null) {
-                Log.e("Resize image", "Failed to resize image");
-                return null;
-            }
+//            image = getResizedBitmap(image, 650, 800);
+//
+//            if (image == null) {
+//                Log.e("Resize image", "Failed to resize image");
+//                return null;
+//            }
             if (requestCode == REQUEST_IMAGE_CAPTURE) {
 
                 FileOutputStream fos = new FileOutputStream(pictureFile);
