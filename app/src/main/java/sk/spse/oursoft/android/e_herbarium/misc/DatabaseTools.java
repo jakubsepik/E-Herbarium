@@ -64,6 +64,8 @@ public class DatabaseTools {
     private final Context context;
     private DatabaseReference myRef;
     private FirebaseUser user;
+
+    //This gets run on a network change
     ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {
         @Override
         public void onAvailable(Network network) {
@@ -164,6 +166,7 @@ public class DatabaseTools {
 
     }
 
+    //initializes the network callback
     public void initializeNetworkCallback() {
 
         ConnectivityManager connectivityManager =
@@ -178,6 +181,7 @@ public class DatabaseTools {
         }
     }
 
+    //returns the tree placeholder
     public Uri getDefaultURI() {
         return (new Uri.Builder())
                 .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
@@ -201,9 +205,8 @@ public class DatabaseTools {
         return status;
     }
 
+    //This method adds the item to the database or overwrites it to edit it
     public void addEditItem(Item item) {
-
-
         user = getCurrentUser();
         if (user != null) {
             String userName = user.getUid();
@@ -373,6 +376,7 @@ public class DatabaseTools {
         return items;
     }
 
+    //adds an item with the value null to the database
     public void addItemToDatabase(Item item) {
 
         user = getCurrentUser();
@@ -419,10 +423,12 @@ public class DatabaseTools {
         }
     }
 
+    //returns the current user
     public FirebaseUser getCurrentUser() {
         return FirebaseAuth.getInstance().getCurrentUser();
     }
 
+    //saves the image to the firebase database
     public void saveImage(Uri imageUri, String ItemName) {
 
         user = getCurrentUser();
@@ -481,6 +487,9 @@ public class DatabaseTools {
 
     }
 
+    //synchronizes the firebase images with the internal storage on logging
+    // so a user logged in on another device has the same images.
+
     public void synchronizeDatabaseToInternalImageStorage() {
 
         user = getCurrentUser();
@@ -520,7 +529,7 @@ public class DatabaseTools {
     //This method checks the user items in the internal storage and uploads them to the firebase storage
     //It also deletes images from the firebase storage that are not located in the internal storage
 
-    public void synchronizeInternalImageStorageToDatabase() {
+    public void synchronizeInternalImageStorgeToDatabase() {
         user = getCurrentUser();
 
         if (user != null) {
@@ -592,6 +601,7 @@ public class DatabaseTools {
         }
     }
 
+    //deletes an unused image from firebase storage
     private void deleteImageFromStorage(Item item, String ImageName) {
         user = getCurrentUser();
         if (user != null) {
@@ -669,6 +679,7 @@ public class DatabaseTools {
         }
     }
 
+    //downloads the image from the firebase database so the internal storage has the same file as the firebase database.
     public void ImportImagesFromSubItem(String userName, Item item, SubItem subItem, final UserListCallback ImageCallback) {
 
         try {

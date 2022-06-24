@@ -38,7 +38,6 @@ public class EditItemDialog extends Dialog {
     public Uri imageURI;
     public ImageView editImage;
     private DatabaseTools databaseTools;
-    private Item item;
 
     public EditItemDialog(@NonNull Context context, int theme_Black_NoTitleBar_Fullscreen, SubItem subItem, List<SubItem> subItemList, SubItemAdapter subItemAdapter, Item item) {
         super(context, theme_Black_NoTitleBar_Fullscreen);
@@ -54,7 +53,6 @@ public class EditItemDialog extends Dialog {
         Button editItemButton = (Button) findViewById(R.id.editSubItemButton);
 
         imageURI = Uri.parse(subItem.getImageUri());
-        this.item = item;
         editImage.setImageURI(Uri.parse(subItem.getImageUri()));
         databaseTools  = new DatabaseTools(context);
 
@@ -155,7 +153,6 @@ public class EditItemDialog extends Dialog {
                     FirebaseUser user = databaseTools.getCurrentUser();
                     if (user != null) {
                         try {
-                            String UserName = user.getUid();
 
                             databaseTools.addEditSubItem(item, editedSubItem);
                             System.out.println("ITEM POSITION " + subItemPosition);
@@ -205,10 +202,8 @@ public class EditItemDialog extends Dialog {
         Toast.makeText(this.getContext(), imageURI.toString(), Toast.LENGTH_SHORT).show();
         editImage.setImageURI(databaseTools.getDefaultURI());
         editImage.setImageURI(imageURI);
-
-
-
     }
+
     public Uri getImageUri() {
         return this.imageURI;
     }
